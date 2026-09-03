@@ -1,0 +1,9 @@
+[submodule "oss-bootloaders"]
+	path = oss-bootloaders
+	url = git@github.com:BreakingBoot/oss-bootloaders.git
+[submodule "bootloader_vuln_commits"]
+	path = bootloader_vuln_commits
+	url = git@github.com:BreakingBoot/bootloader_vuln_commits.git
+[submodule "bootloader_cve_db"]
+	path = bootloader_cve_db
+	url = git@github.com:BreakingBoot/bootloader_cve_db.git
