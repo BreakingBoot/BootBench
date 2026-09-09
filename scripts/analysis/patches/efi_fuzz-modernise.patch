@@ -1,0 +1,111 @@
+Fix efi_fuzz's build and Qiling API use
+
+efi_fuzz was last touched in March 2021 and pins none of its dependencies.
+Four upstream changes since then stop it working:
+
+1. https://bootstrap.pypa.io/get-pip.py now requires Python 3.10+, but the
+   Dockerfile is Ubuntu 20.04 (Python 3.8):
+
+       ERROR: This script does not work on Python 3.8.
+
+   pypa keeps per-version bootstrap scripts; use the 3.8 one.
+
+2. uefi-firmware-parser's main branch moved to requires-python >=3.10:
+
+       ERROR: Package 'uefi-firmware' requires a different Python:
+       3.8.10 not in '>=3.10'
+
+   1.11 is the last release that installs on 3.8.
+
+3. requirements.txt asks for an unpinned `qiling`, which now resolves to 1.4.x.
+   Pinned to 1.2.4, the last release contemporary with efi_fuzz.
+
+4. Qiling renamed the constructor's `output` string argument to `verbose`,
+   taking a QL_VERBOSE enum, before 1.2.4:
+
+       TypeError: __init__() got an unexpected keyword argument 'output'
+
+   "trace" maps to QL_VERBOSE.DISASM and "default" to QL_VERBOSE.DEFAULT.
+   The tests still use output=; they are left alone, since running them is a
+   separate exercise from running the tool.
+
+5. qiling 1.2.4 indexes x86 control registers that newer unicorn no longer
+   exports, so an unpinned unicorn gives:
+
+       NameError: name 'UC_X86_REG_CR5' is not defined
+
+   Pinned to unicorn 1.0.3, which qiling 1.2.4 was built against.
+
+diff --git a/Dockerfile b/Dockerfile
+index 12f9232..8536504 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -25,10 +25,10 @@ RUN wget https://github.com/JonathanSalwan/Triton/archive/v0.8.1.tar.gz \
+ RUN git clone https://github.com/AFLplusplus/AFLplusplus.git && cd AFLplusplus/ && git checkout 2.68c && make \
+     && cd unicorn_mode && ./build_unicorn_support.sh && cd .. && make install && cd /
+ 
+-RUN wget https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py
++RUN wget https://bootstrap.pypa.io/pip/3.8/get-pip.py && python3 get-pip.py
+ 
+ COPY requirements.txt efi_fuzz_requirements.txt
+ # uefi-firmware-parser in pypi is too old, let's use the one from github
+-RUN pip3 install git+https://github.com/theopolis/uefi-firmware-parser.git 
++RUN pip3 install "uefi-firmware==1.11" 
+ RUN pip3 install -r efi_fuzz_requirements.txt
+ RUN pip3 install debugpy
+diff --git a/core/EmulationManager.py b/core/EmulationManager.py
+index e2ed252..7d6c52e 100644
+--- a/core/EmulationManager.py
++++ b/core/EmulationManager.py
+@@ -1,6 +1,7 @@
+ import pickle
+ import rom
+ from qiling import Qiling
++from qiling.const import QL_VERBOSE
+ from . import callbacks
+ import sanitizers
+ import smm
+@@ -26,7 +27,7 @@ class EmulationManager:
+ 
+         self.ql = Qiling(extra_modules + [target_module],
+                          ".",                                        # rootfs
+-                         output="trace")
++                         verbose=QL_VERBOSE.DISASM)
+ 
+         callbacks.init_callbacks(self.ql)
+ 
+diff --git a/requirements.txt b/requirements.txt
+index 5c0f5d1..e6eb4a6 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,6 +1,7 @@
+ pefile
+-qiling
+-uefi_firmware
++qiling==1.2.4
++unicorn==1.0.3
++uefi_firmware==1.11
+ monkeyhex
+ pytest
+ mockito
+diff --git a/scripts/build_rom_db.py b/scripts/build_rom_db.py
+index 77abae8..c732fd9 100644
+--- a/scripts/build_rom_db.py
++++ b/scripts/build_rom_db.py
+@@ -3,6 +3,7 @@ import time
+ import struct
+ import pickle
+ from qiling import Qiling
++from qiling.const import QL_VERBOSE
+ from qiling.const import *
+ from unicorn import *
+ from unicorn.x86_const import *
+@@ -69,7 +70,7 @@ def run(env, rom_file, outdir, single_module_timeout):
+         if fpath is not None: 
+             executables.append(fpath)
+ 
+-    ql = Qiling(executables, ".", env=env, output="default", profile="smm/smm.ini")
++    ql = Qiling(executables, ".", env=env, verbose=QL_VERBOSE.DEFAULT, profile="smm/smm.ini")
+     ql.state = None
+     ql.os.modules_not_yet_loaded = modules_not_yet_loaded
+     ql.os.outdir = outdir

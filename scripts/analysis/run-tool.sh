@@ -24,11 +24,12 @@ by = collections.defaultdict(list)
 for t in tools:
     by[t["status"]].append(t)
 labels = {"runnable": "Runnable here",
+          "slow": "Runs, but no completed pass yet",
           "needs-image": "Runnable, but you supply a firmware image",
           "needs-license": "Needs commercial software",
           "needs-hardware": "Needs physical hardware or a specific target",
           "manual": "No runner: setup is bespoke"}
-for status in ("runnable", "needs-image", "needs-license", "needs-hardware", "manual"):
+for status in ("runnable", "slow", "needs-image", "needs-license", "needs-hardware", "manual"):
     group = by.get(status)
     if not group:
         continue

@@ -30,6 +30,9 @@ implementation and cover one attack surface: of the 25 techniques it surveyed,
 only 3 covered more than one. This directory is the practical side of that
 finding — what is actually available to run.
 
+See [`tools/OVERVIEW.md`](../tools/OVERVIEW.md) for which of these run, and
+what each one applies to.
+
 ```bash
 git submodule update --init --recursive analysis-tools     # all of them
 git submodule update --init analysis-tools/dynamic/tsffs   # or just one

@@ -573,6 +573,22 @@ class TestManifests(unittest.TestCase):
                 self.assertIn(tool["name"], rendered)
             self.assertIn(tool["category"], generate_tools_table.ORDER)
 
+    def test_every_tool_says_what_it_applies_to(self):
+        runners = json.loads((HERE / "analysis_runners.json").read_text())
+        for entry in runners:
+            with self.subTest(tool=entry["name"]):
+                self.assertTrue(entry.get("applies_to"),
+                                f"{entry['name']} does not say which bootloaders it applies to")
+
+    def test_overview_matches_the_manifest(self):
+        overview = HERE / "OVERVIEW.md"
+        if not overview.is_file():
+            self.skipTest("OVERVIEW.md not generated yet")
+        import generate_overview
+        runners = json.loads((HERE / "analysis_runners.json").read_text())
+        self.assertEqual(overview.read_text(), generate_overview.render(runners),
+                         "tools/OVERVIEW.md is stale; re-run generate_overview.py")
+
     def test_generated_index_matches_the_manifest(self):
         index = ROOT / "analysis-tools" / "README.md"
         if not index.is_file():

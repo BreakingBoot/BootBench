@@ -37,6 +37,8 @@ exists to evaluate.
 
 **[`tools/`](tools/)** — the collection, classification and validation tools,
 one document per tool in [`tools/docs/`](tools/docs/).
+[`tools/OVERVIEW.md`](tools/OVERVIEW.md) is the table of which analysis tools
+work and which bootloaders each applies to.
 
 **[`scripts/`](scripts/)** — the scripts you run: refresh a submodule, add to
 the corpus, and [`scripts/analysis/`](scripts/analysis/) to run an analysis tool
@@ -99,12 +101,12 @@ through docker, so the host needs no toolchain:
 ./scripts/analysis/run-tool.sh angr /boot/efi/EFI/ubuntu/shimx64.efi
 ```
 
-Of the 24 tools, 15 have runners verified against real targets. Five of those
-needed a patch, a template or the right container environment to get running --
-[`scripts/analysis/PATCHES.md`](scripts/analysis/PATCHES.md) documents each. The
-other 9 need a multi-gigabyte install, specific silicon, or a commercial
-licence, and the same file says which. That spread is the SoK's finding made
-concrete.
+Of the 24 tools, 17 have runners verified against real targets. Seven of those
+needed a patch, a template or a specific container environment to run at all --
+[`scripts/analysis/PATCHES.md`](scripts/analysis/PATCHES.md) documents each, and
+[`tools/OVERVIEW.md`](tools/OVERVIEW.md) is the table of what works on which
+bootloader. The rest need a host database, specific silicon, or a commercial
+licence. That spread is the SoK's finding made concrete.
 
 **To evaluate a bug-finding tool**, pick a fix commit from
 `bootloader_vuln_commits` and check out its `parent`. That parent is the last

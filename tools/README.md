@@ -11,6 +11,9 @@ python3 test_tools.py            # 47 tests, no network needed
 python3 validate_dataset.py --root ..
 ```
 
+**[`OVERVIEW.md`](OVERVIEW.md)** answers the question people actually arrive
+with: which analysis tools work, and which bootloaders each one applies to.
+
 ## The tools
 
 | Tool | Does | Docs |
@@ -23,6 +26,7 @@ python3 validate_dataset.py --root ..
 | [`validate_dataset.py`](validate_dataset.py) | Consistency checks across all three submodules | [docs](docs/validate_dataset.md) |
 | [`refresh_dataset.py`](refresh_dataset.py) | Stage a refresh, diff it, apply only on request | [docs](docs/refresh_dataset.md) |
 | [`generate_tools_table.py`](generate_tools_table.py) | Render `analysis-tools/README.md` from the tool manifest | [docs](docs/generate_tools_table.md) |
+| [`generate_overview.py`](generate_overview.py) | Render [`OVERVIEW.md`](OVERVIEW.md) from the runner manifest | — |
 | [`test_tools.py`](test_tools.py) | Test suite for all of the above | [docs](docs/test_tools.md) |
 
 Two JSON manifests sit alongside them:
