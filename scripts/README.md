@@ -33,7 +33,8 @@ a bootloader is [`analysis/run-tool.sh`](analysis/):
 ```
 
 Everything there works through docker, so the host needs no toolchain. See
-[`analysis/README.md`](analysis/README.md).
+[`analysis/README.md`](analysis/README.md), and
+[`analysis/PATCHES.md`](analysis/PATCHES.md) for what the harder tools need.
 
 ## Checking things
 

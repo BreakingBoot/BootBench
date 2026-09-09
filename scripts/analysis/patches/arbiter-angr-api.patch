@@ -1,0 +1,145 @@
+Fix arbiter against angr 9.2.x, and initialise its taint globals
+
+Three defects stop arbiter running on a real binary:
+
+1. setup.py pins angr==9.0.10576, but the Dockerfile installs angr unpinned,
+   so a fresh build resolves 9.2.x. In 9.2 archinfo is no longer re-exported
+   from the angr package:
+
+       ImportError: cannot import name 'archinfo' from 'angr'
+
+   archinfo has always been a separate distribution and is an angr dependency
+   either way, so importing it directly works on both.
+
+2. CheckpointHook guards its initialisation of state.globals['sym_vars'] with
+   `state.globals.get('globals')`, a key that never exists. The guard is
+   therefore meaningless.
+
+3. Every hook appends to state.globals['sym_vars'] and ['derefs'] assuming an
+   earlier hook created them. Which hook fires first depends on the target, so
+   on a real binary the first one raises:
+
+       KeyError: 'sym_vars'
+
+   Guarded with a helper that creates both lists on demand.
+
+With this applied, arbiter completes a run over a bootloader binary.
+
+diff --git a/arbiter/target.py b/arbiter/target.py
+index 2a74ac1..6f14982 100644
+--- a/arbiter/target.py
++++ b/arbiter/target.py
+@@ -302,6 +302,19 @@ class ArbiterReport:
+         return self._function_history
+ 
+ 
++def _ensure_taint_globals(state):
++    """Create the taint bookkeeping lists if no hook has done so yet.
++
++    Hook execution order depends on the target binary, so any of these
++    SimProcedures can be the first to run. Previously the first one to fire
++    raised KeyError: 'sym_vars'.
++    """
++    if state.globals.get('sym_vars', None) is None:
++        state.globals['sym_vars'] = []
++    if state.globals.get('derefs', None) is None:
++        state.globals['derefs'] = []
++
++
+ class DerefHook():
+     def _find_in_list(self, child, sym_vars):
+         for x in sym_vars:
+@@ -395,7 +408,7 @@ class DerefHook():
+         sym_var = claripy.BVS('df_var', state.inspect.mem_read_length*8)
+         state.globals['derefs'].append(expr)
+         state.globals['sym_vars'].append(sym_var)
+-        state.memory.store(expr, sym_var, endness=angr.archinfo.Endness.LE)
++        state.memory.store(expr, sym_var, endness=archinfo.Endness.LE)
+         state.inspect.mem_read_expr = sym_var
+ 
+ 
+@@ -422,6 +435,7 @@ class DefaultHook(angr.SimProcedure, DerefHook):
+     def run(self):
+         expr = claripy.BVS('sim_retval', self.state.project.arch.bits)
+         self.state.solver.add(expr != 0)
++        _ensure_taint_globals(self.state)
+         self.state.globals['sym_vars'].append(expr)
+         return expr
+ 
+@@ -429,6 +443,7 @@ class FirstArgHook(angr.SimProcedure):
+     def run(self, arg):
+         expr = claripy.BVS('sim_retval', self.state.project.arch.bits)
+         self.state.solver.add(expr == arg)
++        _ensure_taint_globals(self.state)
+         self.state.globals['sym_vars'].append(expr)
+         return arg
+ 
+@@ -436,14 +451,16 @@ class CheckpointHook(DefaultHook):
+     def run(self, **kwargs):
+         assert 'arg_num' in kwargs['kwargs']
+         arg_num = kwargs['kwargs']['arg_num']
+-        if self.state.globals.get('globals', None) is None:
++        if self.state.globals.get('sym_vars', None) is None:
+             self.state.globals['sym_vars'] = []
+         if arg_num == 0:
+             sym_var = claripy.BVS('ret', self.state.arch.bits)
++            _ensure_taint_globals(self.state)
+             self.state.globals['sym_vars'].append(sym_var)
+             return sym_var
+ 
+         expr = self._nth_arg(self.state, arg_num)
++        _ensure_taint_globals(self.state)
+         self.state.globals['sym_vars'].append(expr)
+ 
+ 
+@@ -454,6 +471,7 @@ class StrlenHook(DefaultHook):
+             inp = self.state.stack_pop()
+         elif self.state.project.arch.bits == 64:
+             inp = self.state.regs.rdi
++        _ensure_taint_globals(self.state)
+         sym_vars = self.state.globals['sym_vars']
+         expr = claripy.BVS('len_retval', self.state.project.arch.bits)
+         self.state.solver.add(expr < 2 ** int(self.state.project.arch.bits/2))
+@@ -462,6 +480,7 @@ class StrlenHook(DefaultHook):
+             return expr
+ 
+         self.state.solver.add(expr != 0)
++        _ensure_taint_globals(self.state)
+         self.state.globals['sym_vars'].append(expr)
+         return expr
+ 
+@@ -472,6 +491,7 @@ class StrchrHook(DefaultHook):
+             inp = self.state.stack_pop()
+         elif self.state.project.arch.bits == 64:
+             inp = self.state.regs.rdi
++        _ensure_taint_globals(self.state)
+         sym_vars = self.state.globals['sym_vars']
+         expr = claripy.BVS('chr_retval', self.state.project.arch.bits)
+ 
+@@ -481,6 +501,7 @@ class StrchrHook(DefaultHook):
+         self.state.solver.add(expr != 0)
+         self.state.solver.add(expr < 2 ** int(self.state.project.arch.bits/2))
+         retval = expr + inp
++        _ensure_taint_globals(self.state)
+         self.state.globals['sym_vars'].append(expr)
+         return retval
+ 
+@@ -488,5 +509,6 @@ class StrchrHook(DefaultHook):
+ class GetenvHook(DefaultHook):
+     def run(self):
+         expr = claripy.BVS('env_retval', self.state.project.arch.bits)
++        _ensure_taint_globals(self.state)
+         self.state.globals['sym_vars'].append(expr)
+         return expr
+diff --git a/arbiter/utils.py b/arbiter/utils.py
+index 30cb827..a58fd60 100644
+--- a/arbiter/utils.py
++++ b/arbiter/utils.py
+@@ -1,6 +1,6 @@
+ import angr
+ from capstone.x86 import *
+-from angr import archinfo
++import archinfo
+ from archinfo.arch_x86 import ArchX86
+ from archinfo.arch_amd64 import ArchAMD64
+ 

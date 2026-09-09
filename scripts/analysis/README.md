@@ -20,10 +20,13 @@ which records, for all 24 tools, what each consumes and what blocks it.
 
 | Status | Meaning | Count |
 |---|---|---|
-| `runnable` | Has a runner, verified against a real target | 10 |
-| `needs-license` | Requires commercial software (Simics, IDA Pro) | 2 |
-| `needs-hardware` | Requires the live platform or specific silicon | 3 |
-| `manual` | Setup is bespoke; the project ships its own | 9 |
+| `runnable` | Has a runner, verified against a real target | 15 |
+| `manual` | Runner written or possible, but a heavy prerequisite is missing | 6 |
+| `needs-hardware` | Requires specific silicon or non-distributable images | 2 |
+| `needs-license` | Requires commercial software (Intel Simics) | 1 |
+
+[PATCHES.md](PATCHES.md) explains what each blocked tool needs, and carries the
+patches for the ones that only needed a code fix.
 
 That spread *is* the SoK's finding in practice: most bootloader tooling is tied
 to one implementation, one image format, or one piece of hardware. A runner is
@@ -34,7 +37,9 @@ than it is — in those cases the manifest says what to do instead.
 
 Every tool below was run against a real target and produced real output. The
 UEFI targets are built from the corpus itself: `edk2` -> OVMF -> UEFIExtract ->
-individual DXE modules.
+individual DXE modules. `shimx64.efi` and `fbx64.efi` are the host's own signed
+bootloaders; BootStomp's Qualcomm LK is the same bootloader the corpus carries
+as `type2/lk`.
 
 | Tool | Target | Result |
 |---|---|---|
@@ -47,14 +52,19 @@ individual DXE modules.
 | `UEFITool` | OVMF.fd | 578 entries; --extract yielded 1,471 files |
 | `MEAnalyzer` | OVMF.fd | correctly reports no Intel ME region present |
 | `chipsec` | OVMF.fd | EFI volumes parsed offline (chipsec_util -n uefi decode) |
+| `fwupd` | shimx64.efi | Authenticode hash and PE section layout |
+| `uefi_retool` | OVMF.fd | 113 named UEFI modules extracted |
+| `BootStomp` | Qualcomm LK (unpatched, bundled) | 2 sink alerts, 2 loop alerts, 1 dereference alert |
+| `arbiter` | kexec | 10 integer-overflow findings with taint histories |
 | `pesign` | shimx64.efi | signed by Microsoft Corporation UEFI CA 2011 |
+| `top4grep` | keyword 'bootloader' | 4 papers across the top-4 venues |
 
-`shimx64.efi` and `fbx64.efi` are the host's own signed bootloaders;
-`kexec-tools` and `OVMF.fd` are built from the corpus.
+Five of these needed work to get running -- a patch, a template, or the right
+container environment. [PATCHES.md](PATCHES.md) documents each.
 
-`fwhunt-scan` drives rizin, and rizin is slow on large modules: a 25 KB DXE
-driver finishes in about a minute, while 966 KB (`shimx64.efi`, which bundles
-OpenSSL) had not finished in twelve. Start small.
+`fwhunt-scan` drives rizin, which is slow on large modules: a 25 KB DXE driver
+takes about a minute, while 966 KB (`shimx64.efi`, which bundles OpenSSL) had
+not finished in twelve. Start small.
 
 ### Building OVMF
 

@@ -84,11 +84,12 @@
   {
     "name": "fwupd",
     "input": "host",
-    "status": "needs-hardware",
-    "blocker": "Talks to the firmware update stack on the running machine.",
+    "status": "runnable",
+    "blocker": "Applying an update needs a privileged daemon on real hardware.",
     "summary": "Firmware update delivery; the write side of the boot chain.",
-    "runner": null,
-    "notes": null
+    "runner": "fwupd.sh",
+    "notes": "Offline firmware-parse/-extract only; the update path needs the live platform.",
+    "verified_on": "shimx64.efi -> Authenticode hash and PE section layout"
   },
   {
     "name": "tsffs",
@@ -102,11 +103,11 @@
   {
     "name": "uefi_retool",
     "input": "binary",
-    "status": "needs-license",
-    "blocker": "Requires IDA Pro.",
+    "status": "runnable",
     "summary": "IDA tooling for UEFI protocol and module reverse engineering.",
-    "runner": null,
-    "notes": null
+    "runner": "uefi_retool.sh",
+    "notes": "Only the IDA-free half. get-info and get-pp drive IDA Pro; get-images does not.",
+    "verified_on": "OVMF.fd -> 113 named UEFI modules extracted"
   },
   {
     "name": "emmutaler",
@@ -130,7 +131,7 @@
     "name": "efi_fuzz",
     "input": "binary",
     "status": "manual",
-    "blocker": null,
+    "blocker": "Builds Triton 0.8.1 and Capstone 4.0.2 from source on Ubuntu 20.04, then needs a hand-written harness per DXE driver. The image builds; the harness is per-target work.",
     "summary": "Fuzz UEFI DXE drivers on top of the Qiling emulator.",
     "runner": null,
     "notes": "Pinned to old qiling and Python; needs a per-driver harness."
@@ -139,7 +140,7 @@
     "name": "firmadyne",
     "input": "firmware-image",
     "status": "manual",
-    "blocker": null,
+    "blocker": "Needs a populated PostgreSQL database and prebuilt QEMU kernels fetched by its download.sh. Superseded by FirmAE, which automates the same workflow.",
     "summary": "Emulate Linux firmware images for dynamic analysis.",
     "runner": null,
     "notes": "Needs postgres, qemu images and a populated database; superseded by FirmAE."
@@ -148,7 +149,7 @@
     "name": "FirmAE",
     "input": "firmware-image",
     "status": "manual",
-    "blocker": null,
+    "blocker": "Its download.sh fetches multi-GB prebuilt kernels and images, and docker-init.sh expects to configure the host. Self-contained once installed, but not unattended.",
     "summary": "Arbitrated firmware emulation; higher success rate than firmadyne.",
     "runner": null,
     "notes": "Ships its own docker setup: ./download.sh && ./init.sh, then ./run.sh."
@@ -157,16 +158,16 @@
     "name": "emba",
     "input": "firmware-image",
     "status": "manual",
-    "blocker": null,
+    "blocker": "Needs `sudo ./installer.sh -d` run on the host against the checkout: it populates external/ with ~30 third-party tools, a Python venv and the NVD JSON feeds (several GB). The installer refuses to run inside the container because it wants to install and check docker itself. The runner is written and correct; only that prerequisite is missing.",
     "summary": "Orchestrates extraction and a large battery of firmware checks.",
-    "runner": null,
-    "notes": "Ships its own installer and docker compose; run ./installer.sh first."
+    "runner": "emba.sh",
+    "notes": "Do not mount the submodule over /emba without running the installer first -- the image ships an empty /emba and expects the source mounted, but a bare checkout fails the dependency check."
   },
   {
     "name": "FACT_core",
     "input": "firmware-image",
     "status": "manual",
-    "blocker": null,
+    "blocker": "Multi-container deployment with its own compose stack, database and web UI. Follow the project's installation rather than wrapping it.",
     "summary": "Firmware analysis and comparison framework with a web UI.",
     "runner": null,
     "notes": "Multi-container deployment; follow the project's docker-compose setup."
@@ -174,17 +175,17 @@
   {
     "name": "BootStomp",
     "input": "source",
-    "status": "manual",
-    "blocker": null,
+    "status": "runnable",
     "summary": "Taint analysis for Android bootloaders.",
-    "runner": null,
-    "notes": "Python 2 and a pinned old angr; run it from the project's own docker image."
+    "runner": "BootStomp.sh",
+    "notes": "Uses the authors' badnack/bootstomp image; run as -u angr and source /home/angr/.virtualenvs/angr. Needs a per-image config; it ships them with matching Android bootloader images.",
+    "verified_on": "Qualcomm LK (unpatched, bundled) -> 2 sink alerts, 2 loop alerts, 1 dereference alert"
   },
   {
     "name": "karonte",
     "input": "binary",
     "status": "manual",
-    "blocker": null,
+    "blocker": "No packaging of any kind, and pinned to an angr generation that no longer installs. Needs the same treatment as BootStomp: a period-correct container image, which the authors did not publish.",
     "summary": "Static taint tracking across firmware binaries.",
     "runner": null,
     "notes": "Pinned to an old angr; use the project's docker image."
@@ -192,11 +193,11 @@
   {
     "name": "arbiter",
     "input": "binary",
-    "status": "manual",
-    "blocker": null,
+    "status": "runnable",
     "summary": "Static and symbolic detection of specific bug classes.",
-    "runner": null,
-    "notes": "Needs a per-bug-class specification; see the project's examples."
+    "runner": "arbiter.sh",
+    "notes": "Needs patches/arbiter-angr-api.patch and a real template; templates/bootloader_CWE190.py targets UEFI/U-Boot/libc allocation sinks.",
+    "verified_on": "kexec -> 10 integer-overflow findings with taint histories"
   },
   {
     "name": "pesign",
@@ -210,10 +211,10 @@
   {
     "name": "top4grep",
     "input": "corpus",
-    "status": "manual",
-    "blocker": "Superseded here by tools/collect_papers.py, which searches the same dblp source across all eight venues the SoK surveyed rather than four.",
+    "status": "runnable",
     "summary": "Grep the top four security conferences.",
-    "runner": null,
-    "notes": "Already wrapped, with wider venue coverage, by tools/collect_papers.py."
+    "runner": "top4grep.sh",
+    "notes": "Needs nltk corpora in the image. tools/collect_papers.py covers eight venues instead of four.",
+    "verified_on": "keyword 'bootloader' -> 4 papers across the top-4 venues"
   }
 ]
