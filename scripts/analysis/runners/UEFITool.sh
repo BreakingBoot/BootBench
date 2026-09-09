@@ -62,4 +62,9 @@ if [ -f "$OUT/image.report.txt" ]; then
     mv "$OUT/image.report.txt" "$OUT/report.txt"
     say "$(wc -l < "$OUT/report.txt") entries -> $OUT/report.txt"
 fi
-[ -d "$OUT/image.dump" ] && { mv "$OUT/image.dump" "$OUT/dump"; say "files extracted to $OUT/dump"; }
+# An `[ test ] && { ... }` as the final statement makes the script exit 1
+# whenever the test is false, which for report mode it always is.
+if [ -d "$OUT/image.dump" ]; then
+    mv "$OUT/image.dump" "$OUT/dump"
+    say "files extracted to $OUT/dump"
+fi
