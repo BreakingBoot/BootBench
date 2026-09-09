@@ -7,3 +7,75 @@
 [submodule "bootloader_cve_db"]
 	path = bootloader_cve_db
 	url = git@github.com:BreakingBoot/bootloader_cve_db.git
+[submodule "analysis-tools/static/codeql"]
+	path = analysis-tools/static/codeql
+	url = https://github.com/github/codeql.git
+[submodule "analysis-tools/static/angr"]
+	path = analysis-tools/static/angr
+	url = https://github.com/angr/angr.git
+[submodule "analysis-tools/static/arbiter"]
+	path = analysis-tools/static/arbiter
+	url = https://github.com/jkrshnmenon/arbiter.git
+[submodule "analysis-tools/static/BootStomp"]
+	path = analysis-tools/static/BootStomp
+	url = https://github.com/ucsb-seclab/BootStomp.git
+[submodule "analysis-tools/static/karonte"]
+	path = analysis-tools/static/karonte
+	url = https://github.com/ucsb-seclab/karonte.git
+[submodule "analysis-tools/static/fwhunt-scan"]
+	path = analysis-tools/static/fwhunt-scan
+	url = https://github.com/binarly-io/fwhunt-scan.git
+[submodule "analysis-tools/dynamic/tsffs"]
+	path = analysis-tools/dynamic/tsffs
+	url = https://github.com/intel/tsffs.git
+[submodule "analysis-tools/dynamic/efi_fuzz"]
+	path = analysis-tools/dynamic/efi_fuzz
+	url = https://github.com/Sentinel-One/efi_fuzz.git
+[submodule "analysis-tools/dynamic/ASPFuzz"]
+	path = analysis-tools/dynamic/ASPFuzz
+	url = https://github.com/TeumessianFox/ASPFuzz.git
+[submodule "analysis-tools/dynamic/emmutaler"]
+	path = analysis-tools/dynamic/emmutaler
+	url = https://github.com/galli-leo/emmutaler.git
+[submodule "analysis-tools/dynamic/firmadyne"]
+	path = analysis-tools/dynamic/firmadyne
+	url = https://github.com/firmadyne/firmadyne.git
+[submodule "analysis-tools/dynamic/FirmAE"]
+	path = analysis-tools/dynamic/FirmAE
+	url = https://github.com/pr0v3rbs/FirmAE.git
+[submodule "analysis-tools/dynamic/emba"]
+	path = analysis-tools/dynamic/emba
+	url = https://github.com/e-m-b-a/emba.git
+[submodule "analysis-tools/inspection/UEFITool"]
+	path = analysis-tools/inspection/UEFITool
+	url = https://github.com/LongSoft/UEFITool.git
+[submodule "analysis-tools/inspection/uefi_retool"]
+	path = analysis-tools/inspection/uefi_retool
+	url = https://github.com/yeggor/uefi_retool.git
+[submodule "analysis-tools/inspection/uefi-firmware-parser"]
+	path = analysis-tools/inspection/uefi-firmware-parser
+	url = https://github.com/theopolis/uefi-firmware-parser.git
+[submodule "analysis-tools/inspection/MEAnalyzer"]
+	path = analysis-tools/inspection/MEAnalyzer
+	url = https://github.com/platomav/MEAnalyzer.git
+[submodule "analysis-tools/inspection/fiano"]
+	path = analysis-tools/inspection/fiano
+	url = https://github.com/linuxboot/fiano.git
+[submodule "analysis-tools/inspection/binwalk"]
+	path = analysis-tools/inspection/binwalk
+	url = https://github.com/ReFirmLabs/binwalk.git
+[submodule "analysis-tools/inspection/FACT_core"]
+	path = analysis-tools/inspection/FACT_core
+	url = https://github.com/fkie-cad/FACT_core.git
+[submodule "analysis-tools/platform/chipsec"]
+	path = analysis-tools/platform/chipsec
+	url = https://github.com/chipsec/chipsec.git
+[submodule "analysis-tools/platform/fwupd"]
+	path = analysis-tools/platform/fwupd
+	url = https://github.com/fwupd/fwupd.git
+[submodule "analysis-tools/platform/pesign"]
+	path = analysis-tools/platform/pesign
+	url = https://github.com/rhboot/pesign.git
+[submodule "analysis-tools/survey/top4grep"]
+	path = analysis-tools/survey/top4grep
+	url = https://github.com/Kyle-Kyle/top4grep.git

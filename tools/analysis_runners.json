@@ -1,0 +1,219 @@
+[
+  {
+    "name": "codeql",
+    "input": "source",
+    "status": "runnable",
+    "summary": "Build a CodeQL database from a bootloader build, run a query suite.",
+    "runner": "codeql.sh",
+    "notes": "Needs a working build; recipes in tools/build_commands.json.",
+    "verified_on": "kexec-tools (source) -> 78 results, 7 cpp/unbounded-write, 3 cpp/path-injection"
+  },
+  {
+    "name": "angr",
+    "input": "binary",
+    "status": "runnable",
+    "summary": "Load a compiled image and build a CFG; the base other angr tools sit on.",
+    "runner": "angr.sh",
+    "notes": "Raw blobs need --base and --arch.",
+    "verified_on": "shimx64.efi -> 3,017 functions; OVMF MnpDxe -> CFG recovered"
+  },
+  {
+    "name": "binwalk",
+    "input": "firmware-image",
+    "status": "runnable",
+    "summary": "Identify and carve structures out of a flash dump.",
+    "runner": "binwalk.sh",
+    "notes": "You supply the image; the corpus holds source, not builds.",
+    "verified_on": "OVMF.fd -> LZMA DXE volume + SecMain PE located"
+  },
+  {
+    "name": "uefi-firmware-parser",
+    "input": "firmware-image",
+    "status": "runnable",
+    "summary": "Parse UEFI volumes, files and the Intel flash descriptor.",
+    "runner": "uefi-firmware-parser.sh",
+    "notes": "You supply the image.",
+    "verified_on": "OVMF.fd -> firmware volumes, SecMain, PE32 sections"
+  },
+  {
+    "name": "fiano",
+    "input": "firmware-image",
+    "status": "runnable",
+    "summary": "Walk and rebuild UEFI images (utk).",
+    "runner": "fiano.sh",
+    "notes": "You supply the image.",
+    "verified_on": "OVMF.fd -> full FV/file/section tree"
+  },
+  {
+    "name": "fwhunt-scan",
+    "input": "firmware-image",
+    "status": "runnable",
+    "summary": "Match UEFI modules against FwHunt threat rules.",
+    "runner": "fwhunt-scan.sh",
+    "notes": "Analyses a single UEFI module; --rules matches against a FwHunt rule set.",
+    "verified_on": "OVMF MnpDxe -> 94 boot services, 32 protocols, 11 GUIDs"
+  },
+  {
+    "name": "UEFITool",
+    "input": "firmware-image",
+    "status": "runnable",
+    "summary": "Browse and edit UEFI images; UEFIExtract is the CLI.",
+    "runner": "UEFITool.sh",
+    "notes": "UEFIExtract report/unpack; --extract yields the individual DXE modules.",
+    "verified_on": "OVMF.fd -> 578 entries; --extract yielded 1,471 files"
+  },
+  {
+    "name": "MEAnalyzer",
+    "input": "firmware-image",
+    "status": "runnable",
+    "summary": "Analyse Intel ME/CSME/TXE regions.",
+    "runner": "MEAnalyzer.sh",
+    "notes": "Takes an ME region split out of a flash image, not a whole image.",
+    "verified_on": "OVMF.fd -> correctly reports no Intel ME region present"
+  },
+  {
+    "name": "chipsec",
+    "input": "host",
+    "status": "runnable",
+    "blocker": "Offline image decoding only. The on-target modules -- SMM, SPI protection, Secure Boot configuration -- need a kernel driver on the live platform and cannot run in a container.",
+    "summary": "Assess platform configuration: SMM, SPI protection, Secure Boot.",
+    "runner": "chipsec.sh",
+    "notes": "Offline image checks exist (chipsec_util) but the security value is in the on-target modules.",
+    "verified_on": "OVMF.fd -> EFI volumes parsed offline (chipsec_util -n uefi decode)"
+  },
+  {
+    "name": "fwupd",
+    "input": "host",
+    "status": "needs-hardware",
+    "blocker": "Talks to the firmware update stack on the running machine.",
+    "summary": "Firmware update delivery; the write side of the boot chain.",
+    "runner": null,
+    "notes": null
+  },
+  {
+    "name": "tsffs",
+    "input": "source",
+    "status": "needs-license",
+    "blocker": "Requires Intel Simics, which is not freely redistributable.",
+    "summary": "Fuzz firmware inside a Simics full-system simulation.",
+    "runner": null,
+    "notes": null
+  },
+  {
+    "name": "uefi_retool",
+    "input": "binary",
+    "status": "needs-license",
+    "blocker": "Requires IDA Pro.",
+    "summary": "IDA tooling for UEFI protocol and module reverse engineering.",
+    "runner": null,
+    "notes": null
+  },
+  {
+    "name": "emmutaler",
+    "input": "binary",
+    "status": "needs-hardware",
+    "blocker": "Needs decrypted Apple iBoot images, which are not distributable.",
+    "summary": "Fuzz Apple's iBoot second-stage bootloader.",
+    "runner": null,
+    "notes": null
+  },
+  {
+    "name": "ASPFuzz",
+    "input": "binary",
+    "status": "needs-hardware",
+    "blocker": "Targets the AMD Secure Processor ROM on specific silicon.",
+    "summary": "Fuzz the AMD ASP on-chip bootloader.",
+    "runner": null,
+    "notes": null
+  },
+  {
+    "name": "efi_fuzz",
+    "input": "binary",
+    "status": "manual",
+    "blocker": null,
+    "summary": "Fuzz UEFI DXE drivers on top of the Qiling emulator.",
+    "runner": null,
+    "notes": "Pinned to old qiling and Python; needs a per-driver harness."
+  },
+  {
+    "name": "firmadyne",
+    "input": "firmware-image",
+    "status": "manual",
+    "blocker": null,
+    "summary": "Emulate Linux firmware images for dynamic analysis.",
+    "runner": null,
+    "notes": "Needs postgres, qemu images and a populated database; superseded by FirmAE."
+  },
+  {
+    "name": "FirmAE",
+    "input": "firmware-image",
+    "status": "manual",
+    "blocker": null,
+    "summary": "Arbitrated firmware emulation; higher success rate than firmadyne.",
+    "runner": null,
+    "notes": "Ships its own docker setup: ./download.sh && ./init.sh, then ./run.sh."
+  },
+  {
+    "name": "emba",
+    "input": "firmware-image",
+    "status": "manual",
+    "blocker": null,
+    "summary": "Orchestrates extraction and a large battery of firmware checks.",
+    "runner": null,
+    "notes": "Ships its own installer and docker compose; run ./installer.sh first."
+  },
+  {
+    "name": "FACT_core",
+    "input": "firmware-image",
+    "status": "manual",
+    "blocker": null,
+    "summary": "Firmware analysis and comparison framework with a web UI.",
+    "runner": null,
+    "notes": "Multi-container deployment; follow the project's docker-compose setup."
+  },
+  {
+    "name": "BootStomp",
+    "input": "source",
+    "status": "manual",
+    "blocker": null,
+    "summary": "Taint analysis for Android bootloaders.",
+    "runner": null,
+    "notes": "Python 2 and a pinned old angr; run it from the project's own docker image."
+  },
+  {
+    "name": "karonte",
+    "input": "binary",
+    "status": "manual",
+    "blocker": null,
+    "summary": "Static taint tracking across firmware binaries.",
+    "runner": null,
+    "notes": "Pinned to an old angr; use the project's docker image."
+  },
+  {
+    "name": "arbiter",
+    "input": "binary",
+    "status": "manual",
+    "blocker": null,
+    "summary": "Static and symbolic detection of specific bug classes.",
+    "runner": null,
+    "notes": "Needs a per-bug-class specification; see the project's examples."
+  },
+  {
+    "name": "pesign",
+    "input": "binary",
+    "status": "runnable",
+    "summary": "Sign and inspect PE binaries for Secure Boot.",
+    "runner": "pesign.sh",
+    "notes": "Reports Authenticode signatures via sbverify and pesign.",
+    "verified_on": "shimx64.efi -> signed by Microsoft Corporation UEFI CA 2011"
+  },
+  {
+    "name": "top4grep",
+    "input": "corpus",
+    "status": "manual",
+    "blocker": "Superseded here by tools/collect_papers.py, which searches the same dblp source across all eight venues the SoK surveyed rather than four.",
+    "summary": "Grep the top four security conferences.",
+    "runner": null,
+    "notes": "Already wrapped, with wider venue coverage, by tools/collect_papers.py."
+  }
+]

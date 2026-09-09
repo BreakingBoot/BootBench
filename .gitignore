@@ -1,0 +1,7 @@
+# Analysis output: builds, CodeQL databases, extracted firmware, tool results.
+# All regenerable with scripts/analysis/run-tool.sh, and large.
+analysis-results/
+
+# Python
+__pycache__/
+*.pyc

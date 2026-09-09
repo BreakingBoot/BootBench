@@ -1,0 +1,93 @@
+[
+  {
+    "name": "kexec-tools",
+    "language": "cpp",
+    "build": "./bootstrap && ./configure && make -j$(nproc)",
+    "notes": "Plain autotools; builds against the host toolchain."
+  },
+  {
+    "name": "seabios",
+    "language": "cpp",
+    "build": "make -j$(nproc)",
+    "notes": "Needs iasl for the ACPI tables."
+  },
+  {
+    "name": "optiboot",
+    "language": "cpp",
+    "build": "make -C optiboot/bootloaders/optiboot atmega328",
+    "notes": "Needs avr-gcc; not in the default image."
+  },
+  {
+    "name": "petitboot",
+    "language": "cpp",
+    "build": "./bootstrap && ./configure --disable-platform-powerpc && make -j$(nproc)",
+    "notes": "autotools; some platform backends need extra libraries."
+  },
+  {
+    "name": "syslinux",
+    "language": "cpp",
+    "build": "make -j$(nproc) bios",
+    "notes": "Does not build with modern binutils: com32/elflink/ldlinux fails to link (verified on binutils 2.42/gcc 13). Needs distro patches or an older toolchain before CodeQL can watch a build.",
+    "status": "known-broken"
+  },
+  {
+    "name": "u-boot",
+    "language": "cpp",
+    "build": "make sandbox_defconfig && make -j$(nproc)",
+    "notes": "The sandbox target builds on the host with no cross toolchain."
+  },
+  {
+    "name": "barebox",
+    "language": "cpp",
+    "build": "make sandbox_defconfig && make -j$(nproc)",
+    "notes": "Same sandbox trick as U-Boot."
+  },
+  {
+    "name": "grub",
+    "language": "cpp",
+    "build": "./bootstrap && ./configure && make -j$(nproc)",
+    "notes": "bootstrap pulls gnulib; needs network on first run."
+  },
+  {
+    "name": "shim",
+    "language": "cpp",
+    "build": "make -j$(nproc)",
+    "notes": "Needs gnu-efi headers."
+  },
+  {
+    "name": "opensbi",
+    "language": "cpp",
+    "build": "make PLATFORM=generic -j$(nproc)",
+    "notes": "Needs a riscv64 cross toolchain; not in the default image."
+  },
+  {
+    "name": "trusted-firmware-m",
+    "language": "cpp",
+    "build": "cmake -S . -B build -DTFM_PLATFORM=arm/mps2/an521 && cmake --build build",
+    "notes": "Needs cmake and an arm-none-eabi toolchain."
+  },
+  {
+    "name": "mcuboot",
+    "language": "cpp",
+    "build": "make -C sim",
+    "notes": "The simulator target avoids a cross toolchain."
+  },
+  {
+    "name": "coreboot",
+    "language": "cpp",
+    "build": "make crossgcc-i386 CPUS=$(nproc) && make -j$(nproc)",
+    "notes": "Builds its own cross toolchain; slow (tens of minutes)."
+  },
+  {
+    "name": "edk2",
+    "language": "cpp",
+    "build": "make -C BaseTools && . edksetup.sh && build -a X64 -t GCC5 -p MdeModulePkg/MdeModulePkg.dsc",
+    "notes": "Needs submodules initialised inside edk2 itself."
+  },
+  {
+    "name": "petitboot",
+    "language": "cpp",
+    "build": "./bootstrap && ./configure --disable-platform-powerpc --without-ncurses && make -j$(nproc)",
+    "notes": "autotools; the ncurses UI needs extra libraries, so disable it."
+  }
+]
