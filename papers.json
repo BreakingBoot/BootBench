@@ -1,0 +1,1919 @@
+[
+  {
+    "title": "Bridge: High-Order Taint Vulnerabilities Detection in Linux-Based IoT Firmware",
+    "year": 2026,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP63933.2026.00001",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Recovering and Rehosting Mobile Local LLM Conversations and Contexts via Memory Forensics",
+    "year": 2026,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP63933.2026.00252",
+    "matched_core": [],
+    "matched_context": [
+      "rehosting"
+    ],
+    "tier": "context",
+    "contribution": "rehosting",
+    "contribution_label": "Rehosting and emulation"
+  },
+  {
+    "title": "Responsible Disclosure is a Two-Way Street: Empirically Measuring the Responsible Disclosure Contract in the Firmware Ecosystem",
+    "year": 2026,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP63933.2026.00180",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "systematization",
+    "contribution_label": "Systematization and measurement"
+  },
+  {
+    "title": "SmuFuzz: Enable Deep System Management Mode Fuzzing in Fully Featured UEFI Runtime Environment",
+    "year": 2026,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP63933.2026.00011",
+    "matched_core": [
+      "uefi",
+      "system management mode"
+    ],
+    "matched_context": [],
+    "tier": "core",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "SoK: All You Ever Wanted to Know About Bootloader Security but Were Afraid to Ask",
+    "year": 2026,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP63933.2026.00163",
+    "matched_core": [
+      "bootloader"
+    ],
+    "matched_context": [],
+    "tier": "core",
+    "contribution": "systematization",
+    "contribution_label": "Systematization and measurement"
+  },
+  {
+    "title": "Stop Starving or Stuffing Me: Boosting Firmware Fuzzing Efficiency with On-Demand Input Delivery",
+    "year": 2026,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP63933.2026.00155",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "FirmAgent: Leveraging Fuzzing to Assist LLM Agents with IoT Firmware Vulnerability Discovery",
+    "year": 2026,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/firmagent-leveraging-fuzzing-to-assist-llm-agents-with-iot-firmware-vulnerability-discovery/",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "FirmCross: Detecting Taint-style Vulnerabilities in Modern C-Lua Hybrid Web Services of Linux-based Firmware",
+    "year": 2026,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/firmcross-detecting-taint-style-vulnerabilities-in-modern-c-lua-hybrid-web-services-of-linux-based-firmware/",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Through the Authentication Maze: Detecting Authentication Bypass Vulnerabilities in Firmware Binaries",
+    "year": 2026,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/through-the-authentication-maze-detecting-authentication-bypass-vulnerabilities-in-firmware-binaries/",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "attack",
+    "contribution_label": "Attacks and case studies"
+  },
+  {
+    "title": "User-Space Dependency-Aware Rehosting for Linux-Based Firmware Binaries",
+    "year": 2026,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/user-space-dependency-aware-rehosting-for-linux-based-firmware-binaries/",
+    "matched_core": [],
+    "matched_context": [
+      "firmware",
+      "rehosting"
+    ],
+    "tier": "context",
+    "contribution": "rehosting",
+    "contribution_label": "Rehosting and emulation"
+  },
+  {
+    "title": "DisARMed: Attacking ARM TrustZone from Userspace with Memory Aliasing",
+    "year": 2026,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/woot26/presentation/henes",
+    "matched_core": [],
+    "matched_context": [
+      "trustzone"
+    ],
+    "tier": "context",
+    "contribution": "attack",
+    "contribution_label": "Attacks and case studies"
+  },
+  {
+    "title": "Flash [Re]Loaded: Body Bias Injection on Flash Memory",
+    "year": 2026,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/woot26/presentation/huber",
+    "matched_core": [],
+    "matched_context": [
+      "flash memory"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "SoK: 20 Years of Power, Privilege, and Peril in x86 System Management Mode",
+    "year": 2026,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/woot26/presentation/louka",
+    "matched_core": [
+      "system management mode"
+    ],
+    "matched_context": [],
+    "tier": "core",
+    "contribution": "systematization",
+    "contribution_label": "Systematization and measurement"
+  },
+  {
+    "title": "'We just did not have that on the embedded system': Insights and Challenges for Securing Microcontroller Systems from the Embedded CTF Competitions",
+    "year": 2025,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3719027.3765039",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system",
+      "microcontroller"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "BadAML: Exploiting Legacy Firmware Interfaces to Compromise Confidential Virtual Machines",
+    "year": 2025,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3719027.3765123",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "attack",
+    "contribution_label": "Attacks and case studies"
+  },
+  {
+    "title": "Dynamic Vulnerability Patching for Heterogeneous Embedded Systems Using Stack Frame Reconstruction",
+    "year": 2025,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3719027.3765200",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Protocol-Aware Firmware Rehosting for Effective Fuzzing of Embedded Network Stacks",
+    "year": 2025,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3719027.3765125",
+    "matched_core": [],
+    "matched_context": [
+      "firmware",
+      "rehosting"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Virtual Reality, Real Problems: A Longitudinal Security Analysis of VR Firmware",
+    "year": 2025,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3719027.3765102",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "DRIFT: Debug-based Trace Inference for Firmware Testing",
+    "year": 2025,
+    "venue": "ASE",
+    "url": "https://doi.org/10.1109/ASE63991.2025.00211",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "FirmProj: Detecting Firmware Leakage in IoT Update Processes via Companion App Analysis",
+    "year": 2025,
+    "venue": "ASE",
+    "url": "https://doi.org/10.1109/ASE63991.2025.00171",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "attack",
+    "contribution_label": "Attacks and case studies"
+  },
+  {
+    "title": "Moye: A Wallbreaker for Monolithic Firmware",
+    "year": 2025,
+    "venue": "ICSE",
+    "url": "https://doi.org/10.1109/ICSE55347.2025.00053",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "BaseBridge: Bridging the Gap Between Over-the-Air and Emulation Testing for Cellular Baseband Firmware",
+    "year": 2025,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP61157.2025.00142",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Firmrca: Towards Post-Fuzzing Analysis on ARM Embedded Firmware with Efficient Event-Based Fault Localization",
+    "year": 2025,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP61157.2025.00002",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "HouseFuzz: Service-Aware Grey-Box Fuzzing for Vulnerability Detection in Linux-Based Firmware",
+    "year": 2025,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP61157.2025.00213",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "In-Progress: Exploring Tire Pressure Monitoring Systems (TPMS) for Secure Key Generation for Intra-Vehicular Device Authentication",
+    "year": 2025,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SPW67851.2025.00050",
+    "matched_core": [],
+    "matched_context": [
+      "tpm"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "PEARTS: Provable Execution in Real-Time Embedded Systems",
+    "year": 2025,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP61157.2025.00047",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "defense",
+    "contribution_label": "Defenses, verification and hardening"
+  },
+  {
+    "title": "Stateful Analysis and Fuzzing of Commercial Baseband Firmware",
+    "year": 2025,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP61157.2025.00143",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "A Comprehensive Memory Safety Analysis of Bootloaders",
+    "year": 2025,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/a-comprehensive-memory-safety-analysis-of-bootloaders/",
+    "matched_core": [
+      "bootloader"
+    ],
+    "matched_context": [],
+    "tier": "core",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "FUZZUER: Enabling Fuzzing of UEFI Interfaces on EDK-2",
+    "year": 2025,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/fuzzuer-enabling-fuzzing-of-uefi-interfaces-on-edk-2/",
+    "matched_core": [
+      "uefi"
+    ],
+    "matched_context": [],
+    "tier": "core",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Mens Sana In Corpore Sano: Sound Firmware Corpora for Vulnerability Research",
+    "year": 2025,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/mens-sana-in-corpore-sano-sound-firmware-corpora-for-vulnerability-research/",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "SCRUTINIZER: Towards Secure Forensics on Compromised TrustZone",
+    "year": 2025,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/scrutinizer-towards-secure-forensics-on-compromised-trustzone/",
+    "matched_core": [],
+    "matched_context": [
+      "trustzone"
+    ],
+    "tier": "context",
+    "contribution": "attack",
+    "contribution_label": "Attacks and case studies"
+  },
+  {
+    "title": "TZ-DATASHIELD: Automated Data Protection for Embedded Systems via Data-Flow-Based Compartmentalization",
+    "year": 2025,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/tz-datashield-automated-data-protection-for-embedded-systems-via-data-flow-based-compartmentalization/",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "defense",
+    "contribution_label": "Defenses, verification and hardening"
+  },
+  {
+    "title": "AidFuzzer: Adaptive Interrupt-Driven Firmware Fuzzing via Run-Time State Recognition",
+    "year": 2025,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity25/presentation/wang-jianqiang",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "BOOTKITTY: A Stealthy Bootkit-Rootkit Against Modern Operating Systems",
+    "year": 2025,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/woot25/presentation/lee",
+    "matched_core": [
+      "bootkit"
+    ],
+    "matched_context": [],
+    "tier": "core",
+    "contribution": "attack",
+    "contribution_label": "Attacks and case studies"
+  },
+  {
+    "title": "From Constraints to Cracks: Constraint Semantic Inconsistencies as Vulnerability Beacons for Embedded Systems",
+    "year": 2025,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity25/presentation/zhao",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "GDMA: Fully Automated DMA Rehosting via Iterative Type Overlays",
+    "year": 2025,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity25/presentation/scharnowski",
+    "matched_core": [],
+    "matched_context": [
+      "rehosting"
+    ],
+    "tier": "context",
+    "contribution": "rehosting",
+    "contribution_label": "Rehosting and emulation"
+  },
+  {
+    "title": "Kintsugi: Secure Hotpatching for Code-Shadowing Real-Time Embedded Systems",
+    "year": 2025,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity25/presentation/mackensen",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Accurate and Efficient Recurring Vulnerability Detection for IoT Firmware",
+    "year": 2024,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3658644.3670275",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "OctopusTaint: Advanced Data Flow Analysis for Detecting Taint-Based Vulnerabilities in IoT/IIoT Firmware",
+    "year": 2024,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3658644.3690307",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Rust for Embedded Systems: Current State and Open Problems",
+    "year": 2024,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3658644.3690275",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Towards Secure Runtime Auditing of Remote Embedded System Software",
+    "year": 2024,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3658644.3690856",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "STASE: Static Analysis Guided Symbolic Execution for UEFI Vulnerability Signature Generation",
+    "year": 2024,
+    "venue": "ASE",
+    "url": "https://doi.org/10.1145/3691620.3695543",
+    "matched_core": [
+      "uefi"
+    ],
+    "matched_context": [],
+    "tier": "core",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Semantic-Enhanced Static Vulnerability Detection in Baseband Firmware",
+    "year": 2024,
+    "venue": "ICSE",
+    "url": "https://doi.org/10.1145/3597503.3639158",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Facilitating Non-Intrusive In-Vivo Firmware Testing with Stateless Instrumentation",
+    "year": 2024,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/facilitating-non-intrusive-in-vivo-firmware-testing-with-stateless-instrumentation/",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Faster and Better: Detecting Vulnerabilities in Linux-based IoT Firmware with Optimized Reaching Definition Analysis",
+    "year": 2024,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/faster-and-better-detecting-vulnerabilities-in-linux-based-iot-firmware-with-optimized-reaching-definition-analysis/",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Faults in Our Bus: Novel Bus Fault Attack to Break ARM TrustZone",
+    "year": 2024,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/faults-in-our-bus-novel-bus-fault-attack-to-break-arm-trustzone/",
+    "matched_core": [],
+    "matched_context": [
+      "trustzone"
+    ],
+    "tier": "context",
+    "contribution": "attack",
+    "contribution_label": "Attacks and case studies"
+  },
+  {
+    "title": "Achilles Heel in Secure Boot: Breaking RSA Authentication and Bitstream Recovery from Zynq-7000 SoC",
+    "year": 2024,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/woot24/presentation/ravi",
+    "matched_core": [
+      "secure boot"
+    ],
+    "matched_context": [],
+    "tier": "core",
+    "contribution": "attack",
+    "contribution_label": "Attacks and case studies"
+  },
+  {
+    "title": "CO3: Concolic Co-execution for Firmware",
+    "year": 2024,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity24/presentation/liu-changming",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "FFXE: Dynamic Control Flow Graph Recovery for Embedded Firmware Binaries",
+    "year": 2024,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity24/presentation/tsang",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "defense",
+    "contribution_label": "Defenses, verification and hardening"
+  },
+  {
+    "title": "GlobalConfusion: TrustZone Trusted Application 0-Days by Design",
+    "year": 2024,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity24/presentation/busch-globalconfusion",
+    "matched_core": [],
+    "matched_context": [
+      "trustzone"
+    ],
+    "tier": "context",
+    "contribution": "defense",
+    "contribution_label": "Defenses, verification and hardening"
+  },
+  {
+    "title": "Intellectual Property Exposure: Subverting and Securing Intellectual Property Encapsulation in Texas Instruments Microcontrollers",
+    "year": 2024,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity24/presentation/bognar",
+    "matched_core": [],
+    "matched_context": [
+      "microcontroller"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Leveraging Semantic Relations in Code and Data to Enhance Taint Analysis of Embedded Systems",
+    "year": 2024,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity24/presentation/zhao",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "MultiFuzz: A Multi-Stream Fuzzer For Testing Monolithic Firmware",
+    "year": 2024,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity24/presentation/chesser",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Operation Mango: Scalable Discovery of Taint-Style Vulnerabilities in Binary Firmware Services",
+    "year": 2024,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity24/presentation/gibbs",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Pandawan: Quantifying Progress in Linux-based Firmware Rehosting",
+    "year": 2024,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity24/presentation/angelakopoulos",
+    "matched_core": [],
+    "matched_context": [
+      "firmware",
+      "rehosting"
+    ],
+    "tier": "context",
+    "contribution": "rehosting",
+    "contribution_label": "Rehosting and emulation"
+  },
+  {
+    "title": "SOK: 3D Printer Firmware Attacks on Fused Filament Fabrication",
+    "year": 2024,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/woot24/presentation/rais",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "systematization",
+    "contribution_label": "Systematization and measurement"
+  },
+  {
+    "title": "Unveiling IoT Security in Reality: A Firmware-Centric Journey",
+    "year": 2024,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity24/presentation/nino",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Your Firmware Has Arrived: A Study of Firmware Update Vulnerabilities",
+    "year": 2024,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity24/presentation/wu-yuhao",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Poster: Combining Fuzzing with Concolic Execution for IoT Firmware Testing",
+    "year": 2023,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3576915.3624373",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "SHERLOC: Secure and Holistic Control-Flow Violation Detection on Embedded Systems",
+    "year": 2023,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3576915.3623077",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Towards Automated Embedded Systems Programming",
+    "year": 2023,
+    "venue": "ICSE",
+    "url": "https://doi.org/10.1109/ICSE-COMPANION58688.2023.00061",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Cryo-Mechanical RAM Content Extraction Against Modern Embedded Systems",
+    "year": 2023,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SPW59333.2023.00030",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "EC: Embedded Systems Compartmentalization via Intra-Kernel Isolation",
+    "year": 2023,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP46215.2023.10179285",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "defense",
+    "contribution_label": "Defenses, verification and hardening"
+  },
+  {
+    "title": "Low-Cost Privilege Separation with Compile Time Compartmentalization for Embedded Systems",
+    "year": 2023,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP46215.2023.10179388",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "defense",
+    "contribution_label": "Defenses, verification and hardening"
+  },
+  {
+    "title": "RSFuzzer: Discovering Deep SMI Handler Vulnerabilities in UEFI Firmware with Hybrid Fuzzing",
+    "year": 2023,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP46215.2023.10179421",
+    "matched_core": [
+      "uefi"
+    ],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "core",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Forming Faster Firmware Fuzzers",
+    "year": 2023,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity23/presentation/seidel",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Greenhouse: Single-Service Rehosting of Linux-Based Firmware Binaries in User-Space Emulation",
+    "year": 2023,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity23/presentation/tay",
+    "matched_core": [],
+    "matched_context": [
+      "firmware",
+      "rehosting"
+    ],
+    "tier": "context",
+    "contribution": "rehosting",
+    "contribution_label": "Rehosting and emulation"
+  },
+  {
+    "title": "Hoedur: Embedded Firmware Fuzzing using Multi-Stream Inputs",
+    "year": 2023,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity23/presentation/scharnowski",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Oops..! I Glitched It Again! How to Multi-Glitch the Glitching-Protections on ARM TrustZone-M",
+    "year": 2023,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity23/presentation/sass",
+    "matched_core": [],
+    "matched_context": [
+      "trustzone"
+    ],
+    "tier": "context",
+    "contribution": "attack",
+    "contribution_label": "Attacks and case studies"
+  },
+  {
+    "title": "UVSCAN: Detecting Third-Party Component Usage Violations in IoT Firmware",
+    "year": 2023,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity23/presentation/zhao-binbin",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "MetaEmu: An Architecture Agnostic Rehosting Framework for Automotive Firmware",
+    "year": 2022,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3548606.3559338",
+    "matched_core": [],
+    "matched_context": [
+      "firmware",
+      "rehosting"
+    ],
+    "tier": "context",
+    "contribution": "rehosting",
+    "contribution_label": "Rehosting and emulation"
+  },
+  {
+    "title": "What Your Firmware Tells You Is Not How You Should Emulate It: A Specification-Guided Approach for Firmware Emulation",
+    "year": 2022,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3548606.3559386",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "rehosting",
+    "contribution_label": "Rehosting and emulation"
+  },
+  {
+    "title": "$\\mu AFL$: Non-intrusive Feedback-driven Fuzzing for Microcontroller Firmware",
+    "year": 2022,
+    "venue": "ICSE",
+    "url": "https://doi.org/10.1145/3510003.3510208",
+    "matched_core": [],
+    "matched_context": [
+      "firmware",
+      "microcontroller"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Large-scale Security Measurements on the Android Firmware Ecosystem",
+    "year": 2022,
+    "venue": "ICSE",
+    "url": "https://doi.org/10.1145/3510003.3510072",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "A Secure Parser Generation Framework for IoT Protocols on Microcontrollers",
+    "year": 2022,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SPW54247.2022.9833866",
+    "matched_core": [],
+    "matched_context": [
+      "microcontroller"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Abusing Trust: Mobile Kernel Subversion via TrustZone Rootkits",
+    "year": 2022,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SPW54247.2022.9833891",
+    "matched_core": [],
+    "matched_context": [
+      "trustzone"
+    ],
+    "tier": "context",
+    "contribution": "attack",
+    "contribution_label": "Attacks and case studies"
+  },
+  {
+    "title": "Finding SMM Privilege-Escalation Vulnerabilities in UEFI Firmware with Protocol-Centric Static Analysis",
+    "year": 2022,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP46214.2022.9833723",
+    "matched_core": [
+      "uefi",
+      "smm"
+    ],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "core",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "HEAPSTER: Analyzing the Security of Dynamic Allocators for Monolithic Firmware Images",
+    "year": 2022,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP46214.2022.9833610",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "RT-TEE: Real-time System Availability for Cyber-physical Systems using ARM TrustZone",
+    "year": 2022,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP46214.2022.9833604",
+    "matched_core": [],
+    "matched_context": [
+      "trustzone"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Building Embedded Systems Like It's 1996",
+    "year": 2022,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/auto-draft-211/",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "FANDEMIC: Firmware Attack Construction and Deployment on Power Management Integrated Circuit and Impacts on IoT Applications",
+    "year": 2022,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/8485/",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "attack",
+    "contribution_label": "Attacks and case studies"
+  },
+  {
+    "title": "FirmWire: Transparent Dynamic Analysis for Cellular Baseband Firmware",
+    "year": 2022,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/auto-draft-200/",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Fuzzware: Using Precise MMIO Modeling for Effective Firmware Fuzzing",
+    "year": 2022,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity22/presentation/scharnowski",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Holistic Control-Flow Protection on Real-Time Embedded Systems with Kage",
+    "year": 2022,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity22/presentation/du",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "defense",
+    "contribution_label": "Defenses, verification and hardening"
+  },
+  {
+    "title": "PISTIS: Trusted Computing Architecture for Low-end Embedded Systems",
+    "year": 2022,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity22/presentation/grisafi",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "defense",
+    "contribution_label": "Defenses, verification and hardening"
+  },
+  {
+    "title": "RapidPatch: Firmware Hotpatching for Real-Time Embedded Devices",
+    "year": 2022,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity22/presentation/he-yi",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "ReZone: Disarming TrustZone with TEE Privilege Reduction",
+    "year": 2022,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity22/presentation/cerdeira",
+    "matched_core": [],
+    "matched_context": [
+      "trustzone"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Trust Dies in Darkness: Shedding Light on Samsung's TrustZone Keymaster Design",
+    "year": 2022,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity22/presentation/shakevsky",
+    "matched_core": [],
+    "matched_context": [
+      "trustzone"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Usability and Security of Trusted Platform Module (TPM) Library APIs",
+    "year": 2022,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/soups2022/presentation/rao",
+    "matched_core": [],
+    "matched_context": [
+      "tpm"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Snipuzz: Black-box Fuzzing of IoT Firmware via Message Snippet Inference",
+    "year": 2021,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3460120.3484543",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "FirmGuide: Boosting the Capability of Rehosting Embedded Linux Kernels through Model-Guided Kernel Execution",
+    "year": 2021,
+    "venue": "ASE",
+    "url": "https://doi.org/10.1109/ASE51524.2021.9678653",
+    "matched_core": [],
+    "matched_context": [
+      "rehosting"
+    ],
+    "tier": "context",
+    "contribution": "rehosting",
+    "contribution_label": "Rehosting and emulation"
+  },
+  {
+    "title": "IFIZZ: Deep-State and Efficient Fault-Scenario Generation to Test IoT Firmware",
+    "year": 2021,
+    "venue": "ASE",
+    "url": "https://doi.org/10.1109/ASE51524.2021.9678785",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Towards a workflow for model-based testing of embedded systems",
+    "year": 2021,
+    "venue": "FSE",
+    "url": "https://doi.org/10.1145/3472672.3473956",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "CANNON: Reliable and Stealthy Remote Shutdown Attacks via Unaltered Automotive Microcontrollers",
+    "year": 2021,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP40001.2021.00122",
+    "matched_core": [],
+    "matched_context": [
+      "microcontroller"
+    ],
+    "tier": "context",
+    "contribution": "attack",
+    "contribution_label": "Attacks and case studies"
+  },
+  {
+    "title": "DICE: Automatic Emulation of DMA Input Channels for Dynamic Firmware Analysis",
+    "year": 2021,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP40001.2021.00018",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "rehosting",
+    "contribution_label": "Rehosting and emulation"
+  },
+  {
+    "title": "From Library Portability to Para-rehosting: Natively Executing Microcontroller Software on Commodity Hardware",
+    "year": 2021,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/from-library-portability-to-para-rehosting-natively-executing-microcontroller-software-on-commodity-hardware/",
+    "matched_core": [],
+    "matched_context": [
+      "microcontroller",
+      "rehosting"
+    ],
+    "tier": "context",
+    "contribution": "rehosting",
+    "contribution_label": "Rehosting and emulation"
+  },
+  {
+    "title": "Automatic Firmware Emulation through Invalidity-guided Knowledge Inference",
+    "year": 2021,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity21/presentation/zhou",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "rehosting",
+    "contribution_label": "Rehosting and emulation"
+  },
+  {
+    "title": "DICE*: A Formally Verified Implementation of DICE Measured Boot",
+    "year": 2021,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity21/presentation/tao",
+    "matched_core": [
+      "measured boot"
+    ],
+    "matched_context": [],
+    "tier": "core",
+    "contribution": "defense",
+    "contribution_label": "Defenses, verification and hardening"
+  },
+  {
+    "title": "Jetset: Targeted Firmware Rehosting for Embedded Systems",
+    "year": 2021,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity21/presentation/johnson",
+    "matched_core": [],
+    "matched_context": [
+      "firmware",
+      "embedded system",
+      "rehosting"
+    ],
+    "tier": "context",
+    "contribution": "rehosting",
+    "contribution_label": "Rehosting and emulation"
+  },
+  {
+    "title": "PASAN: Detecting Peripheral Access Concurrency Bugs within Bare-Metal Embedded Applications",
+    "year": 2021,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity21/presentation/kim",
+    "matched_core": [],
+    "matched_context": [
+      "bare-metal"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Sharing More and Checking Less: Leveraging Common Input Keywords to Detect Bugs in Embedded Systems",
+    "year": 2021,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity21/presentation/chen-libo",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "FirmXRay: Detecting Bluetooth Link Layer Vulnerabilities From Bare-Metal Firmware",
+    "year": 2020,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3372297.3423344",
+    "matched_core": [],
+    "matched_context": [
+      "firmware",
+      "bare-metal"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Change impact analysis in Simulink designs of embedded systems",
+    "year": 2020,
+    "venue": "FSE",
+    "url": "https://doi.org/10.1145/3368089.3417060",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Karonte: Detecting Insecure Multi-binary Interactions in Embedded Firmware",
+    "year": 2020,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP40000.2020.00036",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "SoK: Understanding the Prevailing Security Vulnerabilities in TrustZone-assisted TEE Systems",
+    "year": 2020,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP40000.2020.00061",
+    "matched_core": [],
+    "matched_context": [
+      "trustzone"
+    ],
+    "tier": "context",
+    "contribution": "systematization",
+    "contribution_label": "Systematization and measurement"
+  },
+  {
+    "title": "µRAI: Securing Embedded Systems with Return Address Integrity",
+    "year": 2020,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/murai-securing-embedded-systems-with-return-address-integrity/",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "defense",
+    "contribution_label": "Defenses, verification and hardening"
+  },
+  {
+    "title": "BigMAC: Fine-Grained Policy Analysis of Android Firmware",
+    "year": 2020,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity20/presentation/hernandez",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "DECAF: Automatic, Adaptive De-bloating and Hardening of COTS Firmware",
+    "year": 2020,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity20/presentation/christensen",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "defense",
+    "contribution_label": "Defenses, verification and hardening"
+  },
+  {
+    "title": "FIRMSCOPE: Automatic Uncovering of Privilege-Escalation Vulnerabilities in Pre-Installed Apps in Android Firmware",
+    "year": 2020,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity20/presentation/elsabagh",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Firmware Insider: Bluetooth Randomness is Mostly Random",
+    "year": 2020,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/woot20/presentation/tillmanns",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "HALucinator: Firmware Re-hosting Through Abstraction Layer Emulation",
+    "year": 2020,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity20/presentation/clements",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "rehosting",
+    "contribution_label": "Rehosting and emulation"
+  },
+  {
+    "title": "One Exploit to Rule them All? On the Security of Drop-in Replacement and Counterfeit Microcontrollers",
+    "year": 2020,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/woot20/presentation/obermaier",
+    "matched_core": [],
+    "matched_context": [
+      "microcontroller"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "P2IM: Scalable and Hardware-independent Firmware Testing via Automatic Peripheral Interface Modeling",
+    "year": 2020,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity20/presentation/feng",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "PARTEMU: Enabling Dynamic Analysis of Real-World TrustZone Software Using Emulation",
+    "year": 2020,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity20/presentation/harrison",
+    "matched_core": [],
+    "matched_context": [
+      "trustzone"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Shattered Chain of Trust: Understanding Security Risks in Cross-Cloud IoT Access Delegation",
+    "year": 2020,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity20/presentation/yuan",
+    "matched_core": [
+      "chain of trust"
+    ],
+    "matched_context": [],
+    "tier": "core",
+    "contribution": "systematization",
+    "contribution_label": "Systematization and measurement"
+  },
+  {
+    "title": "Silhouette: Efficient Protected Shadow Stacks for Embedded Systems",
+    "year": 2020,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity20/presentation/zhou-jie",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "TPM-FAIL: TPM meets Timing and Lattice Attacks",
+    "year": 2020,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity20/presentation/moghimi-tpm",
+    "matched_core": [],
+    "matched_context": [
+      "tpm"
+    ],
+    "tier": "context",
+    "contribution": "attack",
+    "contribution_label": "Attacks and case studies"
+  },
+  {
+    "title": "Hardware-Backed Heist: Extracting ECDSA Keys from Qualcomm's TrustZone",
+    "year": 2019,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3319535.3354197",
+    "matched_core": [],
+    "matched_context": [
+      "trustzone"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Poster: Fuzzing IoT Firmware via Multi-stage Message Generation",
+    "year": 2019,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3319535.3363247",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "VoltJockey: Breaching TrustZone by Software-Controlled Voltage Manipulation over Multi-core Frequencies",
+    "year": 2019,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3319535.3354201",
+    "matched_core": [],
+    "matched_context": [
+      "trustzone"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Multifaceted automated analyses for variability-intensive embedded systems",
+    "year": 2019,
+    "venue": "ICSE",
+    "url": "https://doi.org/10.1109/ICSE.2019.00092",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Establishing Software Root of Trust Unconditionally",
+    "year": 2019,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/establishing-software-root-of-trust-unconditionally/",
+    "matched_core": [
+      "root of trust"
+    ],
+    "matched_context": [],
+    "tier": "core",
+    "contribution": "defense",
+    "contribution_label": "Defenses, verification and hardening"
+  },
+  {
+    "title": "SANCTUARY: ARMing TrustZone with User-space Enclaves",
+    "year": 2019,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss-paper/sanctuary-arming-trustzone-with-user-space-enclaves/",
+    "matched_core": [],
+    "matched_context": [
+      "trustzone"
+    ],
+    "tier": "context",
+    "contribution": "defense",
+    "contribution_label": "Defenses, verification and hardening"
+  },
+  {
+    "title": "FIRM-AFL: High-Throughput Greybox Fuzzing of IoT Firmware via Augmented Process Emulation",
+    "year": 2019,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity19/presentation/zheng",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "simTPM: User-centric TPM for Mobile Devices",
+    "year": 2019,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity19/presentation/chakraborty",
+    "matched_core": [],
+    "matched_context": [
+      "tpm"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "AutoModel: a domain-specific language for automatic modeling of real-time embedded systems",
+    "year": 2018,
+    "venue": "ICSE",
+    "url": "https://doi.org/10.1145/3183440.3190333",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Securing Real-Time Microcontroller Systems through Customized Memory View Switching",
+    "year": 2018,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/wp-content/uploads/2018/02/ndss2018_04B-2_Kim_paper.pdf",
+    "matched_core": [],
+    "matched_context": [
+      "microcontroller"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "ACES: Automatic Compartments for Embedded Systems",
+    "year": 2018,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity18/presentation/clements",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "BNV: Enabling Scalable Network Experimentation through Bare-metal Network Virtualization",
+    "year": 2018,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/cset18/presentation/kannan",
+    "matched_core": [],
+    "matched_context": [
+      "bare-metal"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Inception: System-Wide Security Testing of Real-World Embedded Systems Software",
+    "year": 2018,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity18/presentation/corteggiani",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "FirmUSB: Vetting USB Device Firmware using Domain Informed Symbolic Execution",
+    "year": 2017,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3133956.3134050",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Side-Channel Attacks on BLISS Lattice-Based Signatures: Exploiting Branch Tracing against strongSwan and Electromagnetic Emanations in Microcontrollers",
+    "year": 2017,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/3133956.3134028",
+    "matched_core": [],
+    "matched_context": [
+      "microcontroller"
+    ],
+    "tier": "context",
+    "contribution": "attack",
+    "contribution_label": "Attacks and case studies"
+  },
+  {
+    "title": "Modelling and code generation for real-time embedded systems with UML-RT and papyrus-RT",
+    "year": 2017,
+    "venue": "ICSE",
+    "url": "https://doi.org/10.1109/ICSE-C.2017.168",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "One TPM to Bind Them All: Fixing TPM 2.0 for Provably Secure Anonymous Attestation",
+    "year": 2017,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP.2017.22",
+    "matched_core": [],
+    "matched_context": [
+      "tpm"
+    ],
+    "tier": "context",
+    "contribution": "defense",
+    "contribution_label": "Defenses, verification and hardening"
+  },
+  {
+    "title": "Protecting Bare-Metal Embedded Systems with Privilege Overlays",
+    "year": 2017,
+    "venue": "IEEE S&P",
+    "url": "https://doi.org/10.1109/SP.2017.37",
+    "matched_core": [],
+    "matched_context": [
+      "bare-metal",
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "defense",
+    "contribution_label": "Defenses, verification and hardening"
+  },
+  {
+    "title": "BADFET: Defeating Modern Secure Boot Using Second-Order Pulsed Electromagnetic Fault Injection",
+    "year": 2017,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/woot17/workshop-program/presentation/cui",
+    "matched_core": [
+      "secure boot"
+    ],
+    "matched_context": [],
+    "tier": "core",
+    "contribution": "attack",
+    "contribution_label": "Attacks and case studies"
+  },
+  {
+    "title": "BootStomp: On the Security of Bootloaders in Mobile Devices",
+    "year": 2017,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity17/technical-sessions/presentation/redini",
+    "matched_core": [
+      "bootloader"
+    ],
+    "matched_context": [],
+    "tier": "core",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "Shedding too much Light on a Microcontroller's Firmware Protection",
+    "year": 2017,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/woot17/workshop-program/presentation/obermaier",
+    "matched_core": [],
+    "matched_context": [
+      "firmware",
+      "microcontroller"
+    ],
+    "tier": "context",
+    "contribution": "defense",
+    "contribution_label": "Defenses, verification and hardening"
+  },
+  {
+    "title": "fastboot oem vuln: Android Bootloader Vulnerabilities in Vendor Customizations",
+    "year": 2017,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/woot17/workshop-program/presentation/hay",
+    "matched_core": [
+      "bootloader"
+    ],
+    "matched_context": [],
+    "tier": "core",
+    "contribution": "discovery",
+    "contribution_label": "Vulnerability discovery"
+  },
+  {
+    "title": "vTZ: Virtualizing ARM TrustZone",
+    "year": 2017,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity17/technical-sessions/presentation/hua",
+    "matched_core": [],
+    "matched_context": [
+      "trustzone"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "C-FLAT: Control-Flow Attestation for Embedded Systems Software",
+    "year": 2016,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/2976749.2978358",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "defense",
+    "contribution_label": "Defenses, verification and hardening"
+  },
+  {
+    "title": "Scalable Graph-based Bug Search for Firmware Images",
+    "year": 2016,
+    "venue": "ACM CCS",
+    "url": "https://doi.org/10.1145/2976749.2978370",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Model driven design of heterogeneous synchronous embedded systems",
+    "year": 2016,
+    "venue": "ASE",
+    "url": "https://doi.org/10.1145/2970276.2970280",
+    "matched_core": [],
+    "matched_context": [
+      "embedded system"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Towards Automated Dynamic Analysis for Linux-based Embedded Firmware",
+    "year": 2016,
+    "venue": "NDSS",
+    "url": "http://wp.internetsociety.org/ndss/wp-content/uploads/sites/25/2017/09/towards-automated-dynamic-analysis-linux-based-embedded-firmware.pdf",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "fTPM: A Software-Only Implementation of a TPM Chip",
+    "year": 2016,
+    "venue": "USENIX Security",
+    "url": "https://www.usenix.org/conference/usenixsecurity16/technical-sessions/presentation/raj",
+    "matched_core": [],
+    "matched_context": [
+      "tpm"
+    ],
+    "tier": "context",
+    "contribution": "other",
+    "contribution_label": "Other boot- and firmware-related work"
+  },
+  {
+    "title": "Firmalice - Automatic Detection of Authentication Bypass Vulnerabilities in Binary Firmware",
+    "year": 2015,
+    "venue": "NDSS",
+    "url": "https://www.ndss-symposium.org/ndss2015/firmalice-automatic-detection-authentication-bypass-vulnerabilities-binary-firmware",
+    "matched_core": [],
+    "matched_context": [
+      "firmware"
+    ],
+    "tier": "context",
+    "contribution": "attack",
+    "contribution_label": "Attacks and case studies"
+  }
+]
