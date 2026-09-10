@@ -41,6 +41,11 @@ tools as submodules, grouped by what they do: static analysis, fuzzing and
 rehosting, image inspection, platform assessment. These are what BootBench
 exists to evaluate.
 
+**[`oss-bootloaders/DEFENSES.md`](https://github.com/BreakingBoot/oss-bootloaders/blob/main/DEFENSES.md)** —
+what each bootloader defends itself with: Secure Boot, measured boot, signature
+verification, rollback protection, and the mitigations a build actually enables.
+30 of 63 implement Secure Boot; 4 randomise their load address.
+
 **[`tools/`](tools/)** — the collection, classification and validation tools,
 one document per tool in [`tools/docs/`](tools/docs/).
 [`tools/OVERVIEW.md`](tools/OVERVIEW.md) is the table of which analysis tools
@@ -122,10 +127,15 @@ every record is a usable target — many describe code paths since removed — s
 expect to select rather than run the whole set. The paper does the same, using
 seven bootloaders and one commit each.
 
-**To study a vulnerability class**, start from `bootloader_cve_db`. The
-`type<N>-results.json` index carries the description, vendor and CWE-ish
-`vuln_type` for each CVE, and `stats.md` breaks each type down by class and
-year. The keyword breakdown tells you *why* each CVE was classified as it was.
+**To study a vulnerability class**, start from `bootloader_cve_db`. Each entry
+carries structured `cwe_ids` and `cvss` alongside the free-text `vuln_type`, and
+a `bootloaders` field naming the corpus projects it affects — so "every GRUB
+CVE, CWE-787 only, high severity" is a filter rather than a reading exercise.
+`stats.md` breaks each type down by CWE, severity, attack vector and year.
+
+**To study defenses**, start from `oss-bootloaders/DEFENSES.md`. It records what
+each bootloader implements and, for built artifacts, what its binary actually
+enables — the two are different claims and are kept apart.
 
 **To scope by attack surface or bootloader type**, use the type directories.
 Type 1 is where the SMM and UEFI firmware bugs are, Type 2 has the Secure Boot

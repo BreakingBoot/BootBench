@@ -33,6 +33,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 from collections import Counter
 from concurrent.futures import ProcessPoolExecutor
@@ -58,6 +59,77 @@ REJECTED: dict[str, Any] = {"__rejected__": True}
 
 def _is_rejected(value: Any) -> bool:
     return isinstance(value, dict) and value.get("__rejected__") is True
+
+
+
+CWE_ID_PATTERN = re.compile(r"CWE-(\d+)")
+
+
+def extract_cwes(containers: list[dict]) -> list[str]:
+    """Structured CWE ids, falling back to one parsed out of the description.
+
+    65% of records set cweId directly; another 2% only name the CWE in the
+    free-text description, which is still better than nothing.
+    """
+    found: list[str] = []
+    for container in containers:
+        for problem in container.get("problemTypes") or []:
+            for desc in problem.get("descriptions") or []:
+                cwe = desc.get("cweId")
+                if not cwe:
+                    match = CWE_ID_PATTERN.search(desc.get("description") or "")
+                    cwe = f"CWE-{match.group(1)}" if match else None
+                if cwe and cwe not in found:
+                    found.append(cwe)
+    return found
+
+
+def extract_cvss(containers: list[dict]) -> dict[str, Any]:
+    """Highest-version CVSS score present, with its vector."""
+    best: dict[str, Any] = {}
+    for container in containers:
+        for metric in container.get("metrics") or []:
+            for key, value in metric.items():
+                if not key.startswith("cvssV") or not isinstance(value, dict):
+                    continue
+                version = value.get("version") or key.removeprefix("cvssV")
+                score = value.get("baseScore")
+                if score is None:
+                    continue
+                if not best or str(version) > str(best.get("version", "")):
+                    best = {"version": str(version), "base_score": score,
+                            "severity": value.get("baseSeverity"),
+                            "vector": value.get("vectorString")}
+    return best
+
+
+def extract_affected(containers: list[dict]) -> list[dict[str, str]]:
+    """Every affected vendor/product pair, not just the first vendor."""
+    seen: list[dict[str, str]] = []
+    for container in containers:
+        for entry in container.get("affected") or []:
+            vendor = (entry.get("vendor") or "").strip()
+            product = (entry.get("product") or "").strip()
+            if not product and not vendor:
+                continue
+            pair = {"vendor": vendor, "product": product}
+            if pair not in seen:
+                seen.append(pair)
+    return seen
+
+
+def extract_references(containers: list[dict]) -> list[dict[str, Any]]:
+    """References, keeping the tags -- 'patch' and 'vendor-advisory' matter."""
+    seen: list[dict[str, Any]] = []
+    urls = set()
+    for container in containers:
+        for ref in container.get("references") or []:
+            url = ref.get("url")
+            if not url or url in urls:
+                continue
+            urls.add(url)
+            seen.append({"url": url, "tags": ref.get("tags") or []})
+    return seen
 
 
 def iter_cve_files(cvelist_root: Path) -> Iterator[Path]:
@@ -105,12 +177,21 @@ def parse_cve(path: Path, include_rejected: bool = False) -> dict[str, Any] | No
         if d.get("description")
     ]
 
+    containers = [cna] + (record.get("containers", {}).get("adp") or [])
+
     return {
         "cve_id": metadata.get("cveId") or path.stem,
         "description": description,
         "published_date": metadata.get("datePublished") or cna.get("datePublic") or "n/a",
         "vendor": vendors[0] if vendors else "n/a",
         "vuln_type": vuln_types[0] if vuln_types else "n/a",
+        # Structured fields the record already carries. vuln_type above is free
+        # text -- 320 distinct strings across the corpus, a third of them "n/a"
+        # or "other" -- so these are what analysis should actually use.
+        "cwe_ids": extract_cwes(containers),
+        "cvss": extract_cvss(containers),
+        "affected": extract_affected(containers),
+        "references": extract_references(containers),
         "file_path": str(path),
     }
 

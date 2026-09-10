@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         autopoint gettext imagemagick libssl-dev libdevmapper-dev \
         libncurses-dev libudev-dev pkg-config swig \
         libgnutls28-dev libelf-dev libkmod-dev uuid-dev libmount-dev \
-        libdw-dev libsystemd-dev efitools \
+        libdw-dev libsystemd-dev efitools libsdl1.2-dev libsdl2-dev \
     && rm -rf /var/lib/apt/lists/* \
     && ln -sf "$(command -v python3)" /usr/local/bin/python
 

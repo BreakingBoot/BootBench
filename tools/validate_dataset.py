@@ -188,11 +188,14 @@ def check_stats(root: Path, report: Report) -> None:
             report.fail(f"{name}: no total row in stats.md")
             continue
         stated = int(total_match.group(1))
-        years = {y for y, _ in re.findall(r"^\|\s*(\d{4})\s*\|\s*(\d+)\s*\|", text, re.M)}
+        # Only the vulnerability-type table participates in this sum. stats.md
+        # also carries CWE, severity, attack-vector and year tables, whose rows
+        # count CVEs on different axes and legitimately do not add to the total.
+        body = text[:total_match.start()]
         rows = [(label.strip(), int(count)) for label, count in
                 re.findall(r"^\|\s*(?!\*\*Total|Vulnerability Type|-)([^|]+?)\s*\|\s*(\d+)\s*\|",
-                           text, re.M)]
-        row_sum = sum(count for label, count in rows if label not in years)
+                           body, re.M)]
+        row_sum = sum(count for _, count in rows)
         if row_sum == stated:
             report.ok(f"{name}: vulnerability-type rows sum to {stated}")
         else:

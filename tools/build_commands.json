@@ -38,8 +38,8 @@
   {
     "name": "u-boot",
     "language": "cpp",
-    "build": "make sandbox_defconfig && make -j$(nproc)",
-    "notes": "The sandbox target builds on the host and CodeQL indexes it; needs python3-setuptools for pylibfdt and efitools for cert-to-efi-sig-list. Analysing the resulting database with the full security-and-quality suite takes well over half an hour.",
+    "build": "make sandbox_defconfig && make KCFLAGS=-fcommon HOSTCFLAGS=-fcommon -j$(nproc)",
+    "notes": "The sandbox target builds on the host and CodeQL indexes it. -fcommon is required for revisions before ~2020: gcc 10 made -fno-common the default and dtc then fails with multiple-definition errors, which matters when checking out an old vulnerable parent. Needs python3-setuptools, efitools and SDL headers.",
     "verified": true
   },
   {

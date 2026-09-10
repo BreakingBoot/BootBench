@@ -191,9 +191,45 @@ class TestClassifyCvesEndToEnd(unittest.TestCase):
                  "--output", str(self.out), "--jobs", "2")
         entry = self.results("type1")["CVE-2020-1001"]
         self.assertEqual(set(entry), {"cve_id", "description", "published_date",
-                                      "vendor", "vuln_type", "file_path"})
+                                      "vendor", "vuln_type", "cwe_ids", "cvss",
+                                      "affected", "references", "file_path"})
         self.assertEqual(entry["vendor"], "ExampleCorp")
         self.assertEqual(entry["vuln_type"], "CWE-787: Out-of-bounds Write")
+
+    def test_cwe_is_recovered_from_the_description_when_unstructured(self):
+        """Only 65% of records set cweId; the rest often name it in the text."""
+        run_tool("classify_cves.py", "--cvelist", str(self.corpus),
+                 "--output", str(self.out), "--jobs", "2")
+        # The fixture's problemType is "CWE-787: Out-of-bounds Write" as free
+        # text with no cweId field, so this exercises the fallback.
+        self.assertEqual(self.results("type1")["CVE-2020-1001"]["cwe_ids"], ["CWE-787"])
+
+    def test_all_affected_products_are_kept_not_just_the_first(self):
+        record = self.record("CVE-2020-1010", "A UEFI SMM flaw.")
+        record["containers"]["cna"]["affected"] = [
+            {"vendor": "Alpha", "product": "One"},
+            {"vendor": "Beta", "product": "Two"},
+        ]
+        (self.corpus / "cves" / "2020" / "1xxx" / "CVE-2020-1010.json").write_text(
+            json.dumps(record))
+        run_tool("classify_cves.py", "--cvelist", str(self.corpus),
+                 "--output", str(self.out), "--jobs", "2")
+        affected = self.results("type1")["CVE-2020-1010"]["affected"]
+        self.assertEqual([a["vendor"] for a in affected], ["Alpha", "Beta"])
+
+    def test_cvss_is_extracted_with_its_vector(self):
+        record = self.record("CVE-2020-1011", "A BIOS SMM flaw.")
+        record["containers"]["cna"]["metrics"] = [{"cvssV3_1": {
+            "version": "3.1", "baseScore": 7.8, "baseSeverity": "HIGH",
+            "vectorString": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H"}}]
+        (self.corpus / "cves" / "2020" / "1xxx" / "CVE-2020-1011.json").write_text(
+            json.dumps(record))
+        run_tool("classify_cves.py", "--cvelist", str(self.corpus),
+                 "--output", str(self.out), "--jobs", "2")
+        cvss = self.results("type1")["CVE-2020-1011"]["cvss"]
+        self.assertEqual(cvss["base_score"], 7.8)
+        self.assertEqual(cvss["severity"], "HIGH")
+        self.assertIn("AV:L", cvss["vector"])
 
     def test_vendor_is_na_rather_than_guessed(self):
         record = self.record("CVE-2020-1006", "A BIOS SMM issue.")
@@ -483,6 +519,75 @@ class TestCveStats(unittest.TestCase):
                                  f"{name}/stats.md disagrees with cve_stats.py")
 
 
+class TestBootloaderMapping(unittest.TestCase):
+    """Resolving a CVE to the bootloaders it affects."""
+
+    def setUp(self):
+        import map_cves_to_bootloaders as m
+        self.m = m
+        self.pats = m.build_patterns({"grub": "type2", "u-boot": "type3",
+                                      "firmware": "type3", "lk": "type2",
+                                      "edk2": "type1", "shim": "type2"})
+
+    def entry(self, **kw):
+        base = {"description": "", "affected": [], "references": []}
+        base.update(kw)
+        return base
+
+    def test_affected_product_is_the_strongest_signal(self):
+        hits = self.m.resolve(self.entry(
+            affected=[{"vendor": "GNU", "product": "grub2"}],
+            description="a flaw somewhere"), self.pats)
+        self.assertEqual(hits[0], {"bootloader": "grub", "matched_on": "affected"})
+
+    def test_reference_url_resolves_when_the_product_does_not(self):
+        hits = self.m.resolve(self.entry(
+            references=[{"url": "https://github.com/u-boot/u-boot/commit/abc", "tags": []}]),
+            self.pats)
+        self.assertEqual([h["bootloader"] for h in hits], ["u-boot"])
+
+    def test_generic_directory_names_do_not_match_bare(self):
+        """'firmware' is a corpus directory but also an ordinary word.
+
+        Matching it bare hit 388 CVEs that say nothing about that project.
+        """
+        hits = self.m.resolve(self.entry(description="A firmware flaw in some device."),
+                              self.pats)
+        self.assertEqual([h["bootloader"] for h in hits], [])
+
+    def test_short_names_do_not_match_bare(self):
+        hits = self.m.resolve(self.entry(description="The lk value was wrong."), self.pats)
+        self.assertNotIn("lk", [h["bootloader"] for h in hits])
+
+    def test_aliases_resolve_to_the_corpus_name(self):
+        for text, expected in (("TianoCore EDK II", "edk2"),
+                               ("GNU GRUB 2", "grub"),
+                               ("Das U-Boot", "u-boot")):
+            with self.subTest(text=text):
+                hits = self.m.resolve(self.entry(description=text), self.pats)
+                self.assertIn(expected, [h["bootloader"] for h in hits])
+
+    def test_unrelated_cve_resolves_to_nothing(self):
+        hits = self.m.resolve(self.entry(
+            affected=[{"vendor": "containerd", "product": "containerd"}],
+            description="A container runtime flaw."), self.pats)
+        self.assertEqual(hits, [])
+
+    @unittest.skipUnless(HAS_CVE_DB, "bootloader_cve_db not initialised")
+    def test_known_cves_map_to_the_right_bootloader(self):
+        known = {"CVE-2020-10713": "grub", "CVE-2023-40547": "shim",
+                 "CVE-2022-28737": "shim", "CVE-2019-13104": "u-boot"}
+        entries = {}
+        for name in TYPES:
+            entries.update(json.loads((DB / name / f"{name}-results.json").read_text()))
+        for cve_id, expected in known.items():
+            if cve_id not in entries:
+                continue
+            with self.subTest(cve=cve_id):
+                got = [h["bootloader"] for h in entries[cve_id].get("bootloaders") or []]
+                self.assertIn(expected, got)
+
+
 # ---------------------------------------------------------------------------
 # Manifests and the tools index
 # ---------------------------------------------------------------------------
@@ -610,6 +715,99 @@ class TestManifests(unittest.TestCase):
         self.assertEqual(index.read_text(), generate_tools_table.render(self.TOOLS),
                          "analysis-tools/README.md is stale; re-run "
                          "generate_tools_table.py")
+
+
+class TestDefenseScan(unittest.TestCase):
+    """Detecting declared security features and binary mitigations."""
+
+    def setUp(self):
+        import scan_defenses
+        self.d = scan_defenses
+        self.tmp = tempfile.TemporaryDirectory()
+        self.repo = Path(self.tmp.name)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def write(self, name, text):
+        p = self.repo / name
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text)
+
+    def test_declared_features_are_found(self):
+        self.write("Kconfig", "config SECURE_BOOT\n\tbool\nconfig ANTI_ROLLBACK\n")
+        self.write("src/verify.c", "int verify_signature(void) { return 0; }")
+        found = self.d.scan_source(self.repo)["features"]
+        self.assertIn("secure_boot", found)
+        self.assertIn("rollback_protection", found)
+        self.assertIn("signature_verification", found)
+
+    def test_bare_cfi_is_not_control_flow_integrity(self):
+        """In bootloaders CFI is Common Flash Interface far more often.
+
+        Matching it bare flagged u-boot's MIPS Kconfig and wolfBoot's NXP flash
+        HAL as having control-flow integrity.
+        """
+        self.write("Kconfig", "config SYS_FLASH_CFI\n\tbool 'Common Flash Interface'\n")
+        self.assertNotIn("cfi", self.d.scan_source(self.repo)["features"])
+
+    def test_real_cfi_is_still_found(self):
+        self.write("Makefile", "CFLAGS += -fsanitize=cfi\n")
+        self.assertIn("cfi", self.d.scan_source(self.repo)["features"])
+
+    def test_evidence_is_recorded_for_every_hit(self):
+        self.write("Kconfig", "config SECURE_BOOT\n")
+        feature = self.d.scan_source(self.repo)["features"]["secure_boot"]
+        self.assertTrue(feature["evidence"], "a detection must say where it came from")
+
+    def test_non_elf_binary_is_reported_as_such(self):
+        blob = self.repo / "x.efi"
+        blob.write_bytes(b"MZ" + b"\x00" * 64)
+        self.assertNotEqual(self.d.scan_binary(blob).get("format"), "elf")
+
+
+class TestEvaluationHarness(unittest.TestCase):
+    """Scoring a tool against the CVE-linked ground truth."""
+
+    def setUp(self):
+        import evaluate_tools
+        self.e = evaluate_tools
+        self.tmp = tempfile.TemporaryDirectory()
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def sarif(self, uris):
+        path = Path(self.tmp.name) / "r.sarif"
+        path.write_text(json.dumps({"runs": [{"results": [
+            {"ruleId": f"cpp/rule{i}", "locations": [{"physicalLocation": {
+                "artifactLocation": {"uri": u}}}]}
+            for i, u in enumerate(uris)]}]}))
+        return path
+
+    def test_finding_in_a_fixed_file_is_a_hit(self):
+        result = self.e.score(self.sarif(["disk/part_dos.c"]), ["disk/part_dos.c"])
+        self.assertTrue(result["file_hit"])
+        self.assertEqual(result["findings_in_fixed_files"], 1)
+
+    def test_finding_elsewhere_is_not_a_hit(self):
+        result = self.e.score(self.sarif(["cmd/unrelated.c"]), ["disk/part_dos.c"])
+        self.assertFalse(result["file_hit"])
+        self.assertEqual(result["findings_total"], 1)
+        self.assertEqual(result["findings_in_fixed_files"], 0)
+
+    def test_paths_match_across_prefix_differences(self):
+        """A worktree path and a repo-relative path name the same file."""
+        result = self.e.score(self.sarif(["src/disk/part_dos.c"]), ["disk/part_dos.c"])
+        self.assertTrue(result["file_hit"])
+
+    @unittest.skipUnless((ROOT / "bootloader_vuln_commits" /
+                          "cve-commit-links.json").is_file(), "links not built")
+    def test_targets_come_from_the_linkage(self):
+        targets = self.e.load_targets(ROOT, "u-boot")
+        self.assertTrue(targets)
+        for t in targets:
+            self.assertTrue(t["parent"], "a target without a parent cannot be checked out")
 
 
 # ---------------------------------------------------------------------------

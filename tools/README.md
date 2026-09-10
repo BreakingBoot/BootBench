@@ -24,6 +24,9 @@ with: which analysis tools work, and which bootloaders each one applies to.
 | [`collect_papers.py`](collect_papers.py) | Find bootloader papers across the eight surveyed venues | [docs](docs/collect_papers.md) |
 | [`generate_table.py`](generate_table.py) | Render the bootloader inventory table | [docs](docs/generate_table.md) |
 | [`link_cves_to_commits.py`](link_cves_to_commits.py) | Join CVEs to their fixing commits and vulnerable parents | [docs](docs/link_cves_to_commits.md) |
+| [`map_cves_to_bootloaders.py`](map_cves_to_bootloaders.py) | Resolve each CVE to the bootloaders it affects | [docs](docs/map_cves_to_bootloaders.md) |
+| [`scan_defenses.py`](scan_defenses.py) | Inventory the security mechanisms each bootloader implements | [docs](docs/scan_defenses.md) |
+| [`evaluate_tools.py`](evaluate_tools.py) | Score an analysis tool against the CVE-linked ground truth | [docs](docs/evaluate_tools.md) |
 | [`validate_dataset.py`](validate_dataset.py) | Consistency checks across all three submodules | [docs](docs/validate_dataset.md) |
 | [`refresh_dataset.py`](refresh_dataset.py) | Stage a refresh, diff it, apply only on request | [docs](docs/refresh_dataset.md) |
 | [`generate_tools_table.py`](generate_tools_table.py) | Render `analysis-tools/README.md` from the tool manifest | [docs](docs/generate_tools_table.md) |

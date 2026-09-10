@@ -124,8 +124,50 @@ def build_stats(results: dict[str, dict], normalize: bool = True) -> str:
             vendor_cell = "N/A"
         lines.append(f"| {vuln_type} | {count} | {share} | {vendor_cell} |")
 
-    lines += ["|||||", f"| **Total** | **{total}** | N/A | N/A |", "", "### Year Breakdown",
-              "| Year | Count |", "|------|-------|"]
+    lines += ["|||||", f"| **Total** | **{total}** | N/A | N/A |", ""]
+
+    # The table above groups on the free-text vuln_type the CVE record carries,
+    # which is inconsistent across assigners. The two below use the structured
+    # fields, and are what analysis should lean on.
+    cwes: Counter = Counter()
+    severities: Counter = Counter()
+    vectors: Counter = Counter()
+    scored = 0
+    for entry in results.values():
+        for cwe in entry.get("cwe_ids") or []:
+            cwes[cwe] += 1
+        cvss = entry.get("cvss") or {}
+        if cvss.get("severity"):
+            severities[cvss["severity"]] += 1
+            scored += 1
+        vector = cvss.get("vector") or ""
+        if "AV:" in vector:
+            vectors[vector.split("AV:")[1][0]] += 1
+
+    if cwes:
+        with_cwe = sum(1 for e in results.values() if e.get("cwe_ids"))
+        lines += ["### CWE Breakdown", "",
+                  f"{with_cwe} of {total} CVEs carry a CWE.", "",
+                  "| CWE | Count | Percentage |", "|-----|-------|------------|"]
+        for cwe, count in cwes.most_common(20):
+            lines.append(f"| {cwe} | {count} | {100 * count / with_cwe:.2f}% |")
+        lines.append("")
+
+    if severities:
+        order = ["CRITICAL", "HIGH", "MEDIUM", "LOW", "NONE"]
+        names = {"N": "Network", "A": "Adjacent", "L": "Local", "P": "Physical"}
+        lines += ["### CVSS Severity", "",
+                  f"{scored} of {total} CVEs carry a CVSS score.", "",
+                  "| Severity | Count |", "|----------|-------|"]
+        for level in order:
+            if severities.get(level):
+                lines.append(f"| {level} | {severities[level]} |")
+        lines += ["", "### Attack Vector", "", "| Vector | Count |", "|--------|-------|"]
+        for code, count in vectors.most_common():
+            lines.append(f"| {names.get(code, code)} | {count} |")
+        lines.append("")
+
+    lines += ["### Year Breakdown", "| Year | Count |", "|------|-------|"]
     lines += [f"| {year} | {years[year]} |" for year in sorted(years)]
     lines.append("")
     return "\n".join(lines)
