@@ -27,7 +27,10 @@ breakdown that produced the classification, and generated statistics.
 
 **[`bootloader_vuln_commits`](https://github.com/BreakingBoot/bootloader_vuln_commits)** —
 3,514 commit records mined from those repositories at their pinned revisions:
-390 that name a CVE and 3,124 matched on vulnerability keywords. These are the
+390 that name a CVE and 3,124 matched on vulnerability keywords. That is down
+from 3,656 because re-mining removed 1,151 false positives — 95% of them the
+bare `dos` keyword matching "glados", "TODOs" and "DOS header" — while adding
+843 from 17 newly-mined bootloaders. These are the
 security fixes that never got a CVE, which is most of them.
 [`cve-commit-links.json`](https://github.com/BreakingBoot/bootloader_vuln_commits/blob/main/cve-commit-links.json)
 joins the two halves: 78 CVEs resolve to a fixing commit and to the parent

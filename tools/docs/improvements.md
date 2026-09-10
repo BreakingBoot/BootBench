@@ -243,6 +243,34 @@ matching is a bounded set of precompiled patterns.
 running the script from any other directory silently disabled CWE matching with
 only a warning. Paths are now resolved relative to the script.
 
+## Where the 2026 refresh's numbers went
+
+Re-mining took the commit dataset from 3,656 records to 3,514. The net figure
+hides much larger opposing movements, so here is the decomposition, measured by
+diffing the committed data against the previous revision:
+
+| | Records |
+|---|---:|
+| False positives removed from the 46 previously-mined repositories | **−1,151** |
+| Recovered or newly matched in those same repositories | **+166** |
+| Contributed by 17 repositories mined for the first time | **+843** |
+| Two directories that were never git repositories (`Download`, `harmony3`) | 0 |
+| **Net** | **−142** |
+
+**95% of the removals are the bare `dos` keyword** — 1,090 of 1,151. The rest
+are `exploit` (39), `xss` (13), and a handful of others matched as bare
+substrings inside longer words: "glados", "kudos", "TODOs", "msdos", "DOS
+header". The `+166` are mostly plural forms the word-boundary fix would
+otherwise have lost ("buffer overflows", "race conditions") plus the added
+`vulnerable` keyword.
+
+**The pinned revisions did not cause the drop.** Every one of the 1,151
+removed commits is still reachable from its submodule's pinned revision; none
+was lost to a repository moving on. Pinning did matter while *staging* the
+refresh — an intermediate run against un-pinned newer checkouts reported 4,154
+records against 3,476 at the pins — but it contributes nothing to the
+3,656 → 3,514 change.
+
 # Known coverage gaps in the current dataset
 
 Reported by `validate_dataset.py --check coverage`:
