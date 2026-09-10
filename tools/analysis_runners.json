@@ -204,12 +204,12 @@
   {
     "name": "karonte",
     "input": "binary",
-    "status": "slow",
-    "blocker": "Setup is solved -- the runner stages Qualcomm LK from BootStomp and karonte starts and logs -- but a full multi-binary taint pass had not finished after 2.5 hours on the 3.6 MB LK image. Its paper reports comparable runtimes, so this is expected rather than broken; budget for an overnight run.",
+    "status": "runnable",
     "summary": "Static taint tracking across firmware binaries.",
     "runner": "karonte.sh",
-    "notes": "Uses badnack/karonte; run as -u karonte and source /home/karonte/.virtualenvs/karonte. Config bin paths are rewritten to the output mount because the image's tree is read-only.",
-    "applies_to": "Firmware binaries with multiple communicating components. Ships configs for Qualcomm LK (type2/lk)."
+    "notes": "Uses badnack/karonte; run as -u karonte and source its virtualenv. Configs reference Qualcomm LK images karonte does not ship -- BootStomp does, under the same names, and the runner stages them across. Budget hours, not minutes.",
+    "applies_to": "Firmware binaries with multiple communicating components. Ships configs for Qualcomm LK (type2/lk).",
+    "verified_on": "Qualcomm LK (unpatched, staged from BootStomp) -> completed, tainted-path report written"
   },
   {
     "name": "arbiter",

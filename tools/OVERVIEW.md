@@ -17,7 +17,7 @@ Generated from [`analysis_runners.json`](analysis_runners.json) by
 `generate_overview.py` — edit the manifest, not this file.
 
 
-## Working — 17 of 24
+## Working — 18 of 24
 
 | Tool | Applies to | Verified on |
 |------|-----------|-------------|
@@ -32,6 +32,7 @@ Generated from [`analysis_runners.json`](analysis_runners.json) by
 | [`fiano`](../analysis-tools) | UEFI firmware images, same as UEFITool. Go-based, good for scripting. | **OVMF.fd** — full FV/file/section tree |
 | [`fwhunt-scan`](../analysis-tools) | Individual UEFI modules (PE32+) from EDK-II, Project Mu or an OEM image. | **OVMF MnpDxe** — 94 boot services, 32 protocols, 11 GUIDs |
 | [`fwupd`](../analysis-tools) | Any firmware blob, offline. Identifies the container format and hashes it as Secure Boot would. | **shimx64.efi** — Authenticode hash and PE section layout |
+| [`karonte`](../analysis-tools) | Firmware binaries with multiple communicating components. Ships configs for Qualcomm LK (type2/lk). | **Qualcomm LK (unpatched, staged from BootStomp)** — completed, tainted-path report written |
 | [`MEAnalyzer`](../analysis-tools) | Intel ME/CSME/TXE regions, which sit beside the bootloader in the same flash part. Not present in OVMF. | **OVMF.fd** — correctly reports no Intel ME region present |
 | [`pesign`](../analysis-tools) | Signed PE bootloaders: shim, GRUB's EFI build, systemd-boot, any signed DXE module. | **shimx64.efi** — signed by Microsoft Corporation UEFI CA 2011 |
 | [`top4grep`](../analysis-tools) | Not a bootloader tool: searches conference proceedings. | **keyword 'bootloader'** — 4 papers across the top-4 venues |
@@ -39,7 +40,7 @@ Generated from [`analysis_runners.json`](analysis_runners.json) by
 | [`uefi_retool`](../analysis-tools) | UEFI firmware images, for module extraction only. Protocol recovery needs IDA Pro. | **OVMF.fd** — 113 named UEFI modules extracted |
 | [`UEFITool`](../analysis-tools) | UEFI firmware images: OVMF from edk2, Project Mu builds, OEM flash dumps. | **OVMF.fd** — 578 entries; --extract yielded 1,471 files |
 
-## Blocked — 7
+## Blocked — 6
 
 | Tool | Applies to | What it needs |
 |------|-----------|---------------|
@@ -48,7 +49,6 @@ Generated from [`analysis_runners.json`](analysis_runners.json) by
 | `FACT_core` | Whole firmware images of any kind. | Multi-container deployment with its own database, worker pool and web UI, installed by its own scripts against the host. Analyses whole firmware images rather than bootloaders specifically. |
 | `firmadyne` | Linux-based router and IoT firmware images. Not bootloaders. | Same architecture as FirmAE and superseded by it: needs a host PostgreSQL database plus prebuilt QEMU kernels. Emulates Linux router firmware, not bootloaders. |
 | `FirmAE` | Linux-based router and IoT firmware images. Not bootloaders. | Its download.sh and docker-init.sh do run unattended (the fcore image builds), but init.sh then does `sudo service postgresql restart` against a PostgreSQL instance on the host, which the fcore image does not contain. It also emulates Linux router firmware, so BootBench holds no target for it. |
-| `karonte` | Firmware binaries with multiple communicating components. Ships configs for Qualcomm LK (type2/lk). | Setup is solved -- the runner stages Qualcomm LK from BootStomp and karonte starts and logs -- but a full multi-binary taint pass had not finished after 2.5 hours on the 3.6 MB LK image. Its paper reports comparable runtimes, so this is expected rather than broken; budget for an overnight run. |
 | `tsffs` | Anything Simics can simulate, including UEFI and embedded bootloaders. | Requires Intel Simics, which is not freely redistributable. |
 
 ## Which tool for which bootloader

@@ -101,7 +101,7 @@ through docker, so the host needs no toolchain:
 ./scripts/analysis/run-tool.sh angr /boot/efi/EFI/ubuntu/shimx64.efi
 ```
 
-Of the 24 tools, 17 have runners verified against real targets. Seven of those
+Of the 24 tools, 18 have runners verified against real targets. Seven of those
 needed a patch, a template or a specific container environment to run at all --
 [`scripts/analysis/PATCHES.md`](scripts/analysis/PATCHES.md) documents each, and
 [`tools/OVERVIEW.md`](tools/OVERVIEW.md) is the table of what works on which
