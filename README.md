@@ -20,15 +20,18 @@ paper studied 47 of these; the rest were added afterwards and have no mined data
 yet.
 
 **[`bootloader_cve_db`](https://github.com/BreakingBoot/bootloader_cve_db)** —
-1,157 CVEs mined from the [CVE Project](https://github.com/CVEProject/cvelistV5)
+1,432 CVEs mined from the [CVE Project](https://github.com/CVEProject/cvelistV5)
 records and assigned a bootloader type by keyword. Each type directory holds the
 full upstream record per CVE, an index (`type<N>-results.json`), the keyword
 breakdown that produced the classification, and generated statistics.
 
 **[`bootloader_vuln_commits`](https://github.com/BreakingBoot/bootloader_vuln_commits)** —
-3,656 commit records mined from those repositories: 279 that name a CVE and
-3,377 matched on vulnerability keywords. These are the security fixes that never
-got a CVE, which is most of them.
+3,514 commit records mined from those repositories at their pinned revisions:
+390 that name a CVE and 3,124 matched on vulnerability keywords. These are the
+security fixes that never got a CVE, which is most of them.
+[`cve-commit-links.json`](https://github.com/BreakingBoot/bootloader_vuln_commits/blob/main/cve-commit-links.json)
+joins the two halves: 78 CVEs resolve to a fixing commit and to the parent
+revision that still contains the bug.
 
 **[`analysis-tools/`](analysis-tools/)** — 24 bootloader and firmware analysis
 tools as submodules, grouped by what they do: static analysis, fuzzing and
@@ -125,13 +128,18 @@ year. The keyword breakdown tells you *why* each CVE was classified as it was.
 Type 1 is where the SMM and UEFI firmware bugs are, Type 2 has the Secure Boot
 bypasses, Type 3 the embedded and MCU work.
 
-**Before trusting a number**, run `validate_dataset.py`. It currently reports 11
-real problems in the published data — withdrawn CVEs still counted, statistics
-rows that do not sum to their own totals, and a `previous_commit` field that
-points at the next *newer* commit rather than the parent. They are recorded
-rather than silently repaired, because fixing them changes numbers the paper
-cites. See [`tools/docs/improvements.md`](tools/docs/improvements.md) for each
-one, measured.
+**Before trusting a number**, run `validate_dataset.py`. It currently passes
+every check. It exists because the dataset previously did not: withdrawn CVEs
+were still counted, two CVEs were counted under two types, statistics rows did
+not sum to their own totals, and `previous_commit` pointed at the next *newer*
+commit rather than the parent. Each is measured in
+[`tools/docs/improvements.md`](tools/docs/improvements.md).
+
+**To go from a CVE to a vulnerable tree**, use
+`bootloader_vuln_commits/cve-commit-links.json`. It resolves 78 CVEs to their
+fixing commit and to that commit's parent — the revision to check out to
+reproduce the bug. [`LINKS.md`](https://github.com/BreakingBoot/bootloader_vuln_commits/blob/main/LINKS.md)
+explains the coverage and why most CVEs have no linked fix.
 
 ## Refreshing the data
 

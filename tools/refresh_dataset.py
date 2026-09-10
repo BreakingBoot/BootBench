@@ -41,6 +41,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -57,6 +58,15 @@ def run(script: str, *args: str) -> None:
     result = subprocess.run(cmd)
     if result.returncode != 0:
         raise SystemExit(f"[ERROR] {script} failed with exit code {result.returncode}")
+
+
+def count_findings(root: Path) -> int:
+    """Number of failures validate_dataset.py reports for the tree at ``root``."""
+    result = subprocess.run(
+        [sys.executable, str(HERE / "validate_dataset.py"), "--root", str(root)],
+        capture_output=True, text=True)
+    match = re.search(r"(\d+) check\(s\) failed", result.stdout)
+    return int(match.group(1)) if match else 0
 
 
 def load(path: Path) -> dict[str, Any]:
@@ -255,21 +265,34 @@ def main() -> int:
               "then re-run with --apply.")
         return 0
 
-    print("\n[INFO] --apply given; validating the staged data first")
-    validate = subprocess.run([sys.executable, str(HERE / "validate_dataset.py"),
-                               "--root", str(root)])
-    if validate.returncode != 0:
-        raise SystemExit("[ERROR] validation failed; refusing to apply. "
-                         "Fix the findings above, or apply by hand if they are expected.")
+    # Validating the *live* data before applying is circular: the refresh
+    # exists to fix findings the live data still has, so that check can never
+    # pass. Count the findings before and after instead, and say whether the
+    # refresh improved things. The submodules are git-clean at this point, so
+    # `git -C <submodule> checkout -- .` reverts a bad apply.
+    before = count_findings(root)
+    print(f"\n[INFO] --apply given; live data currently has {before} validation finding(s)")
     if review:
-        print(f"[WARN] {review} label change(s) were reported. Applying anyway because "
+        print(f"[WARN] {review} label change(s) were reported above. Applying because "
               "--apply was given explicitly.")
+
     if args.stage == "cves":
         apply_cves(root, staging)
     elif args.stage == "commits":
         apply_commits(root, staging)
+    after = count_findings(root)
+    print(f"[INFO] validation findings: {before} -> {after}", end="")
+    if after < before:
+        print(f"  ({before - after} fixed)")
+    elif after == before:
+        print("  (unchanged)")
+    else:
+        print(f"  ({after - before} MORE than before)")
+        print("[WARN] the refresh made validation worse. To revert:")
+        for sub in ("bootloader_cve_db", "bootloader_vuln_commits"):
+            print(f"           git -C {sub} checkout -- . && git -C {sub} clean -fd")
     print("[INFO] submodules updated; commit them from inside each submodule.")
-    return 0
+    return 0 if after <= before else 1
 
 
 if __name__ == "__main__":

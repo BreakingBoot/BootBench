@@ -3,91 +3,108 @@
     "name": "kexec-tools",
     "language": "cpp",
     "build": "./bootstrap && ./configure && make -j$(nproc)",
-    "notes": "Plain autotools; builds against the host toolchain."
+    "notes": "Plain autotools; builds against the host toolchain.",
+    "verified": true
   },
   {
     "name": "seabios",
     "language": "cpp",
-    "build": "make -j$(nproc)",
-    "notes": "Needs iasl for the ACPI tables."
+    "build": "make PYTHON=python3 -j$(nproc)",
+    "notes": "Needs iasl for the ACPI tables. Its Makefile hardcodes PYTHON=python, which Debian and Ubuntu no longer ship; override it rather than relying on a python symlink, which make's direct-exec path does not always honour.",
+    "verified": true
   },
   {
     "name": "optiboot",
     "language": "cpp",
     "build": "make -C optiboot/bootloaders/optiboot atmega328",
-    "notes": "Needs avr-gcc; not in the default image."
+    "notes": "Needs avr-gcc; not in the default image.",
+    "verified": false
   },
   {
     "name": "petitboot",
     "language": "cpp",
-    "build": "./bootstrap && ./configure --disable-platform-powerpc && make -j$(nproc)",
-    "notes": "autotools; some platform backends need extra libraries."
+    "build": "./bootstrap && ./configure --disable-platform-powerpc --without-ncurses && make -j$(nproc)",
+    "notes": "autotools; needs autopoint and gettext. --without-ncurses drops the UI deps.",
+    "verified": true
   },
   {
     "name": "syslinux",
     "language": "cpp",
     "build": "make -j$(nproc) bios",
     "notes": "Does not build with modern binutils: com32/elflink/ldlinux fails to link (verified on binutils 2.42/gcc 13). Needs distro patches or an older toolchain before CodeQL can watch a build.",
-    "status": "known-broken"
+    "status": "known-broken",
+    "verified": false
   },
   {
     "name": "u-boot",
     "language": "cpp",
     "build": "make sandbox_defconfig && make -j$(nproc)",
-    "notes": "The sandbox target builds on the host with no cross toolchain."
+    "notes": "The sandbox target builds on the host and CodeQL indexes it; needs python3-setuptools for pylibfdt and efitools for cert-to-efi-sig-list. Analysing the resulting database with the full security-and-quality suite takes well over half an hour.",
+    "verified": true
   },
   {
     "name": "barebox",
     "language": "cpp",
     "build": "make sandbox_defconfig && make -j$(nproc)",
-    "notes": "Same sandbox trick as U-Boot."
+    "notes": "Sandbox target builds most of the tree but fails generating the logo PNGs even with ImageMagick present. Not investigated further.",
+    "verified": false,
+    "status": "known-broken"
   },
   {
     "name": "grub",
     "language": "cpp",
     "build": "./bootstrap && ./configure && make -j$(nproc)",
-    "notes": "bootstrap pulls gnulib; needs network on first run."
+    "notes": "bootstrap pulls gnulib; needs network on first run.",
+    "verified": false
   },
   {
     "name": "shim",
     "language": "cpp",
     "build": "make -j$(nproc)",
-    "notes": "Needs gnu-efi headers."
+    "notes": "Needs gnu-efi headers.",
+    "verified": false
   },
   {
     "name": "opensbi",
     "language": "cpp",
     "build": "make PLATFORM=generic -j$(nproc)",
-    "notes": "Needs a riscv64 cross toolchain; not in the default image."
+    "notes": "Needs a riscv64 cross toolchain; not in the default image.",
+    "verified": false
   },
   {
     "name": "trusted-firmware-m",
     "language": "cpp",
     "build": "cmake -S . -B build -DTFM_PLATFORM=arm/mps2/an521 && cmake --build build",
-    "notes": "Needs cmake and an arm-none-eabi toolchain."
+    "notes": "Needs cmake and an arm-none-eabi toolchain.",
+    "verified": false
   },
   {
     "name": "mcuboot",
     "language": "cpp",
     "build": "make -C sim",
-    "notes": "The simulator target avoids a cross toolchain."
+    "notes": "The simulator target avoids a cross toolchain.",
+    "verified": false
   },
   {
     "name": "coreboot",
     "language": "cpp",
     "build": "make crossgcc-i386 CPUS=$(nproc) && make -j$(nproc)",
-    "notes": "Builds its own cross toolchain; slow (tens of minutes)."
+    "notes": "Builds its own cross toolchain; slow (tens of minutes).",
+    "verified": false
   },
   {
     "name": "edk2",
     "language": "cpp",
     "build": "make -C BaseTools && . edksetup.sh && build -a X64 -t GCC5 -p MdeModulePkg/MdeModulePkg.dsc",
-    "notes": "Needs submodules initialised inside edk2 itself."
+    "notes": "Needs submodules initialised inside edk2 itself.",
+    "verified": false
   },
   {
-    "name": "petitboot",
+    "name": "open-iscsi",
     "language": "cpp",
-    "build": "./bootstrap && ./configure --disable-platform-powerpc --without-ncurses && make -j$(nproc)",
-    "notes": "autotools; the ncurses UI needs extra libraries, so disable it."
+    "build": "make -j$(nproc) user",
+    "notes": "Needs libisns headers, which Debian does not package. Build them from source first, or configure the iSNS support out.",
+    "verified": false,
+    "status": "known-broken"
   }
 ]

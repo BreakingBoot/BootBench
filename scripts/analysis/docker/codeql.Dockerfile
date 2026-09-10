@@ -10,7 +10,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         git curl ca-certificates unzip xz-utils \
         python3 zlib1g-dev libssl-dev uuid-dev \
         nasm iasl gcc-multilib bc \
-    && rm -rf /var/lib/apt/lists/*
+        python3-setuptools python3-dev \
+        autopoint gettext imagemagick libssl-dev libdevmapper-dev \
+        libncurses-dev libudev-dev pkg-config swig \
+        libgnutls28-dev libelf-dev libkmod-dev uuid-dev libmount-dev \
+        libdw-dev libsystemd-dev efitools \
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -sf "$(command -v python3)" /usr/local/bin/python
+
+# Several bootloaders shell out to bare `python`, which Debian and Ubuntu no
+# longer ship: seabios's link-script generator fails with "python: Permission
+# denied", edk2's BaseTools with "No such file". The symlink above covers both.
 
 RUN curl -fsSL -o /tmp/codeql.zip \
       "https://github.com/github/codeql-cli-binaries/releases/download/${CODEQL_VERSION}/codeql-linux64.zip" \

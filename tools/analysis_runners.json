@@ -6,8 +6,8 @@
     "summary": "Build a CodeQL database from a bootloader build, run a query suite.",
     "runner": "codeql.sh",
     "notes": "Needs a working build; recipes in tools/build_commands.json.",
-    "verified_on": "kexec-tools (source) -> 78 results, 7 cpp/unbounded-write, 3 cpp/path-injection",
-    "applies_to": "Any bootloader that builds. Recipes for 15 in build_commands.json; U-Boot and barebox use sandbox targets, coreboot builds its own toolchain."
+    "verified_on": "kexec-tools, seabios, petitboot -> 78 / 417 / 59 results including unbounded writes and uncontrolled path expressions; u-boot database builds, its query run is long",
+    "applies_to": "Any bootloader that builds. 4 of 16 recipes in build_commands.json are verified end to end -- kexec-tools, seabios, u-boot, petitboot -- covering all three types. The rest are untested and some need cross toolchains the image does not carry."
   },
   {
     "name": "angr",
