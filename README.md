@@ -144,6 +144,13 @@ fixing commit and to that commit's parent — the revision to check out to
 reproduce the bug. [`LINKS.md`](https://github.com/BreakingBoot/bootloader_vuln_commits/blob/main/LINKS.md)
 explains the coverage and why most CVEs have no linked fix.
 
+## Where this could go next
+
+[`docs/PROPOSALS.md`](docs/PROPOSALS.md) sets out what the dataset cannot
+currently answer and what to change, measured against the data as it stands.
+The largest gap: BootBench records where bootloaders went wrong and nothing
+about what defends them, so the SoK's hardening section has no data behind it.
+
 ## Refreshing the data
 
 There is no CI. Each repository has an update script that stages a refresh
