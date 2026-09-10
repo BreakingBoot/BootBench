@@ -827,6 +827,88 @@ class TestEvaluationHarness(unittest.TestCase):
             self.assertTrue(t["parent"], "a target without a parent cannot be checked out")
 
 
+class TestAttackSurfaces(unittest.TestCase):
+    """Mapping entries onto the six surfaces the SoK defines."""
+
+    def setUp(self):
+        import map_attack_surfaces
+        self.m = map_attack_surfaces
+        self.s = kw.compile_attack_surfaces()
+
+    def test_smm_is_post_boot(self):
+        hits = self.m.classify("A flaw in the System Management Mode handler.", self.s)
+        self.assertEqual(hits[0]["surface"], "SAS3")
+
+    def test_network_boot_is_remote_access(self):
+        hits = self.m.classify("A flaw in the PXE boot path.", self.s)
+        self.assertIn("SAS1", [h["surface"] for h in hits])
+
+    def test_config_file_is_a_persistent_data_source(self):
+        hits = self.m.classify("A flaw parsing grub.cfg.", self.s)
+        self.assertIn("SAS2", [h["surface"] for h in hits])
+
+    def test_usb_is_external_hardware(self):
+        hits = self.m.classify("A malicious USB device can trigger this.", self.s)
+        self.assertIn("HAS2", [h["surface"] for h in hits])
+
+    def test_glitching_is_invasive_hardware(self):
+        hits = self.m.classify("Defeated by voltage glitch injection.", self.s)
+        self.assertIn("HAS1", [h["surface"] for h in hits])
+
+    def test_unrelated_text_maps_to_nothing(self):
+        self.assertEqual(self.m.classify("Refactor the build system.", self.s), [])
+
+    def test_every_hit_records_what_matched(self):
+        for h in self.m.classify("An SMI handler flaw reached over TFTP.", self.s):
+            with self.subTest(surface=h["surface"]):
+                self.assertTrue(h["matched"], "a classification must be checkable")
+
+    @unittest.skipUnless(HAS_CVE_DB, "bootloader_cve_db not initialised")
+    def test_dataset_carries_the_field(self):
+        entries = json.loads((DB / "type1" / "type1-results.json").read_text())
+        self.assertTrue(all("attack_surfaces" in e for e in entries.values()))
+
+
+class TestWiki(unittest.TestCase):
+    """The wiki is generated, so it must not drift from the data."""
+
+    WIKI = ROOT / "wiki"
+
+    @unittest.skipUnless((ROOT / "wiki").is_dir(), "wiki not generated")
+    def test_every_corpus_bootloader_has_a_page(self):
+        import configparser
+        parser = configparser.ConfigParser()
+        parser.read_string((ROOT / "oss-bootloaders" / ".gitmodules").read_text())
+        names = {parser.get(s, "path").split("/")[-1] for s in parser.sections()
+                 if parser.has_option(s, "path")}
+        pages = {p.stem for p in (self.WIKI / "bootloaders").glob("*.md")}
+        self.assertEqual(names - pages, set(), "bootloaders with no wiki page")
+
+    @unittest.skipUnless((ROOT / "wiki").is_dir(), "wiki not generated")
+    def test_every_bootloader_says_why_it_is_its_type(self):
+        for page in (self.WIKI / "bootloaders").glob("*.md"):
+            with self.subTest(page=page.stem):
+                text = page.read_text()
+                self.assertRegex(text, r"## Why it is Type [123]")
+                self.assertNotIn("Not yet explained", text)
+
+    @unittest.skipUnless((ROOT / "wiki").is_dir(), "wiki not generated")
+    def test_every_tool_has_a_page(self):
+        tools = {t["name"] for t in json.loads((HERE / "analysis_tools.json").read_text())}
+        pages = {p.stem for p in (self.WIKI / "tools").glob("*.md")}
+        self.assertEqual(tools - pages, set(), "tools with no wiki page")
+
+    def test_curated_prose_matches_the_corpus(self):
+        import configparser
+        from wiki_content import BOOTLOADERS
+        parser = configparser.ConfigParser()
+        parser.read_string((ROOT / "oss-bootloaders" / ".gitmodules").read_text())
+        names = {parser.get(s, "path").split("/")[-1] for s in parser.sections()
+                 if parser.has_option(s, "path")}
+        self.assertEqual(names - set(BOOTLOADERS), set(), "bootloaders with no prose")
+        self.assertEqual(set(BOOTLOADERS) - names, set(), "prose for a bootloader not in the corpus")
+
+
 # ---------------------------------------------------------------------------
 # Literature search
 # ---------------------------------------------------------------------------

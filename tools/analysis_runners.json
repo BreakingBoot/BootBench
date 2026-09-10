@@ -7,7 +7,7 @@
     "runner": "codeql.sh",
     "notes": "Needs a working build; recipes in tools/build_commands.json.",
     "verified_on": "kexec-tools, seabios, petitboot -> 78 / 417 / 59 results including unbounded writes and uncontrolled path expressions; u-boot database builds, its query run is long",
-    "applies_to": "Any bootloader that builds. 4 of 16 recipes in build_commands.json are verified end to end -- kexec-tools, seabios, u-boot, petitboot -- covering all three types. The rest are untested and some need cross toolchains the image does not carry."
+    "applies_to": "Any bootloader that builds. 7 of 16 recipes in build_commands.json are verified end to end -- edk2, grub, kexec-tools, petitboot, seabios, shim, u-boot -- covering all three types. The rest are untested, and some need cross toolchains the image does not carry."
   },
   {
     "name": "angr",

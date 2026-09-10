@@ -29,6 +29,8 @@ performs against CVEs whose fixing commit is known.
 | [`map_cves_to_bootloaders.py`](map_cves_to_bootloaders.py) | Resolve each CVE to the bootloaders it affects | [docs](docs/map_cves_to_bootloaders.md) |
 | [`scan_defenses.py`](scan_defenses.py) | Inventory the security mechanisms each bootloader implements | [docs](docs/scan_defenses.md) |
 | [`evaluate_tools.py`](evaluate_tools.py) | Score an analysis tool against the CVE-linked ground truth | [docs](docs/evaluate_tools.md) |
+| [`map_attack_surfaces.py`](map_attack_surfaces.py) | Map CVEs and commits onto the six attack surfaces | — |
+| [`generate_wiki.py`](generate_wiki.py) | Generate the bootloader and tool wiki | [docs](docs/generate_wiki.md) |
 | [`validate_dataset.py`](validate_dataset.py) | Consistency checks across all three submodules | [docs](docs/validate_dataset.md) |
 | [`refresh_dataset.py`](refresh_dataset.py) | Stage a refresh, diff it, apply only on request | [docs](docs/refresh_dataset.md) |
 | [`generate_tools_table.py`](generate_tools_table.py) | Render `analysis-tools/README.md` from the tool manifest | [docs](docs/generate_tools_table.md) |

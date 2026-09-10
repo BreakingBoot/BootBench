@@ -243,6 +243,58 @@ PAPER_CONTRIBUTION_FALLBACK = ("other", "Other boot- and firmware-related work")
 
 
 # --------------------------------------------------------------------------
+# Attack surfaces
+# --------------------------------------------------------------------------
+
+# The six surfaces the SoK defines, split into hardware (the attacker has
+# physical access) and software (the attacker reaches the bootloader through an
+# interface it exposes). Ordered most specific first: a CVE about an SMI
+# handler is post-boot, not merely "a firmware bug".
+#
+# Terms are matched with word boundaries. Bare acronyms that mean something
+# else in this domain are avoided -- "DMA" is safe, "CFI" and "dos" are not.
+ATTACK_SURFACES: tuple[tuple[str, str, str, tuple[str, ...]], ...] = (
+    ("SAS3", "software", "Post-boot features",
+     ("smm", "system management mode", "smi handler", "smi ", "smram",
+      "runtime service", "runtime services", "post-boot", "after exitbootservices",
+      "exitbootservices", "system management interrupt", "smbase")),
+    ("SAS1", "software", "Remote access",
+     ("network boot", "netboot", "pxe", "pxelinux", "tftp", "dhcp", "bootp",
+      "iscsi", "http boot", "httpboot", "http response", "http request",
+      "http header", "ipv4", "ipv6", "remote attacker", "remote code execution",
+      "remotely", "network stack", "network packet", "udp", "tcp/ip")),
+    ("SAS4", "software", "Boot-time features",
+     ("boot menu", "grub shell", "uefi shell", "efi shell", "command line",
+      "interactive shell", "recovery mode", "boot prompt", "rescue mode",
+      "fastboot", "download mode", "unlock command")),
+    ("SAS2", "software", "Persistent data source",
+     ("grub.cfg", "grub configuration", "boot configuration data", "bcd",
+      "uefi variable", "nvram", "efi variable", "setvariable", "getvariable",
+      "boot logo", "splash", "bmp image", "acpi table", "device tree",
+      "partition table", "file system", "filesystem", "squashfs", "ext4",
+      "boot image", "configuration file", "environment variable")),
+    ("HAS2", "hardware", "External hardware",
+     ("usb", "dma", "thunderbolt", "pci express", "pcie", "firewire",
+      "external device", "removable media", "sd card", "peripheral device",
+      "malicious device")),
+    ("HAS1", "hardware", "Invasive hardware",
+     ("spi flash", "flash chip", "jtag", "debug port", "chip-off", "soldering",
+      "bus pirate", "voltage glitch", "fault injection", "electromagnetic",
+      "side-channel", "power analysis", "physical access to the flash")),
+)
+
+
+def compile_attack_surfaces() -> list[tuple[str, str, str, re.Pattern[str]]]:
+    """Compile the surface definitions into (id, kind, label, pattern)."""
+    compiled = []
+    for surface_id, kind, label, terms in ATTACK_SURFACES:
+        alternation = "|".join(re.escape(t) for t in sorted(terms, key=len, reverse=True))
+        compiled.append((surface_id, kind, label,
+                         re.compile(r"\b(?:" + alternation + r")", re.IGNORECASE)))
+    return compiled
+
+
+# --------------------------------------------------------------------------
 # CWE matching
 # --------------------------------------------------------------------------
 
