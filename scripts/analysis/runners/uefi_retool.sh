@@ -24,6 +24,9 @@ need_docker
 IMG="$(cd "$(dirname "$IMG")" && pwd)/$(basename "$IMG")"
 NAME="$(basename "$IMG")"
 OUT="${OUT:-$ROOT/analysis-results/uefi_retool/$NAME}"; mkdir -p "$OUT"; check_mount "$OUT"
+# A runner that die()s partway leaves root-owned output behind, which the
+# invoking user then cannot delete. Reclaim on any exit, not just success.
+trap 'reclaim_output "$OUT"' EXIT
 
 SRC="$ROOT/analysis-tools/inspection/uefi_retool"
 [ -f "$SRC/uefi_retool.py" ] || die "uefi_retool submodule not checked out. Run:
@@ -47,6 +50,5 @@ docker run --rm -v "$IMG:/work/image:ro" -v "$OUT:/out" "$IMAGE" bash -eo pipefa
     cd /src && python3 uefi_retool.py get-images /work/image 2>&1 | tail -20
     if [ -d modules ]; then cp -a modules /out/ && echo "modules: $(ls modules | wc -l)"; fi
 ' | tee "$OUT/extract.txt"
-reclaim_output "$OUT"
 [ -d "$OUT/modules" ] && say "$(ls "$OUT/modules" | wc -l) modules -> $OUT/modules"
 say "Output: $OUT/extract.txt"

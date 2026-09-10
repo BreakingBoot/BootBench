@@ -22,6 +22,9 @@ done
 [ -n "$KEYWORDS" ] || KEYWORDS="bootloader"
 need_docker
 OUT="${OUT:-$ROOT/analysis-results/top4grep}"; mkdir -p "$OUT"; check_mount "$OUT"
+# A runner that die()s partway leaves root-owned output behind, which the
+# invoking user then cannot delete. Reclaim on any exit, not just success.
+trap 'reclaim_output "$OUT"' EXIT
 
 SRC="$ROOT/analysis-tools/survey/top4grep"
 [ -f "$SRC/setup.py" ] || die "top4grep submodule not checked out. Run:
@@ -48,5 +51,4 @@ docker run --rm -v "$OUT:/out" "$IMAGE" bash -eo pipefail -c "
     $( [ "$BUILD_DB" = "1" ] && echo 'top4grep --build-db 2>&1 | tail -5;' )
     top4grep -k '$KEYWORDS' 2>&1
 " | tee "$OUT/results.txt"
-reclaim_output "$OUT"
 say "Output: $OUT/results.txt"

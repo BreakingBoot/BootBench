@@ -26,6 +26,9 @@ MOD="$(cd "$(dirname "$MOD")" && pwd)/$(basename "$MOD")"
 NAME="$(basename "$MOD")"
 OUT="${OUT:-$ROOT/analysis-results/fwhunt-scan/$NAME}"; mkdir -p "$OUT"
 check_mount "$OUT"
+# A runner that die()s partway leaves root-owned output behind, which the
+# invoking user then cannot delete. Reclaim on any exit, not just success.
+trap 'reclaim_output "$OUT"' EXIT
 
 IMAGE=bootbench/fwhunt
 # fwhunt-scan needs rizin, which it builds from source. Its own Dockerfile
@@ -52,5 +55,4 @@ else
     docker run --rm -v "$MOD:/work/module:ro" "$IMAGE" \
         analyze-module /work/module | tee "$OUT/analysis.txt"
 fi
-reclaim_output "$OUT"
 say "Output: $OUT"

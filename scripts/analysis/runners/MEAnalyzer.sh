@@ -25,6 +25,9 @@ IMG="$(cd "$(dirname "$IMG")" && pwd)/$(basename "$IMG")"
 NAME="$(basename "$IMG")"
 OUT="${OUT:-$ROOT/analysis-results/MEAnalyzer/$NAME}"; mkdir -p "$OUT"
 check_mount "$OUT"
+# A runner that die()s partway leaves root-owned output behind, which the
+# invoking user then cannot delete. Reclaim on any exit, not just success.
+trap 'reclaim_output "$OUT"' EXIT
 
 SRC="$ROOT/analysis-tools/inspection/MEAnalyzer"
 [ -f "$SRC/MEA.py" ] || die "MEAnalyzer submodule not checked out. Run:
@@ -40,5 +43,4 @@ docker run --rm -t -v "$SRC:/mea:ro" -v "$IMG:/work/image:ro" -v "$OUT:/out" "$I
         cp -a /mea /tmp/mea && cd /tmp/mea
         python3 MEA.py -skip -exit /work/image 2>&1
     ' | tee "$OUT/analysis.txt"
-reclaim_output "$OUT"
 say "Output: $OUT/analysis.txt"

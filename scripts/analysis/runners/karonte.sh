@@ -43,6 +43,9 @@ fi
     List them with: run-tool.sh karonte --list"
 
 OUT="${OUT:-$ROOT/analysis-results/karonte/${CONFIG%.config.json}}"; mkdir -p "$OUT"; check_mount "$OUT"
+# A runner that die()s partway leaves root-owned output behind, which the
+# invoking user then cannot delete. Reclaim on any exit, not just success.
+trap 'reclaim_output "$OUT"' EXIT
 
 # The config names ./firmware/lk/<name>; BootStomp ships exactly those files.
 BIN=$("$PYTHON" -c "import json,sys;print(json.load(open(sys.argv[1]))['bin'][0])" "$SRC/config/lk/$CONFIG")
@@ -76,5 +79,4 @@ json.dump(c, open('/out/run.json','w'))
 \"
     python tool/karonte.py /out/run.json /out/karonte.log 2>&1 | tail -40
 " | tee "$OUT/run.txt"
-reclaim_output "$OUT"
 say "Output: $OUT"

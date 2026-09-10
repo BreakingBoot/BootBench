@@ -23,6 +23,9 @@ MOD="$(cd "$(dirname "$MOD")" && pwd)/$(basename "$MOD")"
 NAME="$(basename "$MOD")"
 OUT="${OUT:-$ROOT/analysis-results/pesign/$NAME}"; mkdir -p "$OUT"
 check_mount "$OUT"
+# A runner that die()s partway leaves root-owned output behind, which the
+# invoking user then cannot delete. Reclaim on any exit, not just success.
+trap 'reclaim_output "$OUT"' EXIT
 
 IMAGE=bootbench/pesign
 if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
@@ -40,5 +43,4 @@ docker run --rm -v "$MOD:/work/module:ro" "$IMAGE" bash -c '
     echo "== sbverify --list =="; sbverify --list /work/module 2>&1 || true
     echo; echo "== pesign -S =="; pesign -i /work/module -S 2>&1 || true
 ' | tee "$OUT/signatures.txt"
-reclaim_output "$OUT"
 say "Output: $OUT/signatures.txt"

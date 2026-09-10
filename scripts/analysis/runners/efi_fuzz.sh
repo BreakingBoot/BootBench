@@ -41,6 +41,9 @@ fi
     List them with: run-tool.sh efi_fuzz --list"
 
 OUT="${OUT:-$ROOT/analysis-results/efi_fuzz/$EXAMPLE}"; mkdir -p "$OUT"; check_mount "$OUT"
+# A runner that die()s partway leaves root-owned output behind, which the
+# invoking user then cannot delete. Reclaim on any exit, not just success.
+trap 'reclaim_output "$OUT"' EXIT
 
 IMAGE=bootbench/efi_fuzz
 # The Dockerfile copies only requirements.txt, so the source is mounted at run
@@ -71,5 +74,4 @@ docker run --rm -v "$PATCHED:/src:ro" -v "$OUT:/out" "$IMAGE" bash -c "
     cp -a /src /tmp/ef && cd /tmp/ef/examples/$EXAMPLE
     python3 ../../efi_fuzz.py run $TARGET.efi -j $TARGET.json 2>&1 | tail -40
 " | tee "$OUT/run.txt"
-reclaim_output "$OUT"
 say "Output: $OUT/run.txt"

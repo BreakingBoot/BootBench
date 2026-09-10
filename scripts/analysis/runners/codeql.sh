@@ -36,6 +36,9 @@ NAME="$(basename "$SRC")"
 OUT="${OUT:-$ROOT/analysis-results/codeql/$NAME}"
 mkdir -p "$OUT"
 check_mount "$OUT"
+# A runner that die()s partway leaves root-owned output behind, which the
+# invoking user then cannot delete. Reclaim on any exit, not just success.
+trap 'reclaim_output "$OUT"' EXIT
 
 if [ -z "$BUILD" ]; then
     BUILD="$(build_command_for "$NAME")"
@@ -50,13 +53,21 @@ build_image_if_needed "$IMAGE" "$ANALYSIS_DIR/docker/codeql.Dockerfile"
 say "Creating CodeQL database for $NAME"
 # /src is mounted read-only because the build must not touch the checkout;
 # it is copied to a writable path inside the container first.
+# Write the build command to a file rather than embedding it in the command
+# string. A recipe containing quotes -- grub needs TARGET_CFLAGS="-no-pie
+# -fno-PIE" -- otherwise collides with the quoting around codeql's --command
+# and is silently truncated.
+printf '%s\n' "$BUILD" > "$OUT/build.sh"
+
+# /src is mounted read-only because the build must not touch the checkout;
+# it is copied to a writable path inside the container first.
 docker run --rm \
     -v "$SRC:/src:ro" -v "$OUT:/out" \
-    -w /work "$IMAGE" bash -eo pipefail -c "
+    -w /work "$IMAGE" bash -eo pipefail -c '
         mkdir -p /work/src && cp -a /src/. /work/src/ && cd /work/src
         codeql database create /out/db --language=cpp --overwrite \
-              --command='bash -c \"$BUILD\"' 2>&1 | tail -40
-    " || die "database creation failed. The build did not run to completion;
+              --command="bash /out/build.sh" 2>&1 | tail -40
+    ' || die "database creation failed. The build did not run to completion;
     see the log above. Try a different --build command."
 
 # A bare suite name is expanded to the scoped pack path CodeQL expects;
@@ -74,7 +85,6 @@ docker run --rm -v "$OUT:/out" "$IMAGE" bash -eo pipefail -c "
         --output=/out/results.csv --download '$SUITE' >/dev/null 2>&1 || true
 "
 
-reclaim_output "$OUT"
 if [ -f "$OUT/results.sarif" ]; then
     "$PYTHON" - "$OUT/results.sarif" <<'PY'
 import json, sys, collections

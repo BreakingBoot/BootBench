@@ -41,6 +41,9 @@ fi
     List them with: run-tool.sh BootStomp --list"
 
 OUT="${OUT:-$ROOT/analysis-results/BootStomp/$CONFIG}"; mkdir -p "$OUT"; check_mount "$OUT"
+# A runner that die()s partway leaves root-owned output behind, which the
+# invoking user then cannot delete. Reclaim on any exit, not just success.
+trap 'reclaim_output "$OUT"' EXIT
 
 IMAGE=badnack/bootstomp
 docker image inspect "$IMAGE" >/dev/null 2>&1 || { say "Pulling $IMAGE (first run only)"; docker pull -q "$IMAGE" >/dev/null; }
@@ -60,5 +63,4 @@ docker run --rm -u angr -v "$OUT:/out" "$IMAGE" bash -lc "
         python taint_analysis/result_pretty_print.py \"\$f\" 2>&1 | tail -50
     done
 " | tee "$OUT/taint.txt"
-reclaim_output "$OUT"
 say "Output: $OUT/taint.txt"

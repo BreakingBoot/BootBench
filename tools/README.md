@@ -13,6 +13,8 @@ python3 validate_dataset.py --root ..
 
 **[`OVERVIEW.md`](OVERVIEW.md)** answers the question people actually arrive
 with: which analysis tools work, and which bootloaders each one applies to.
+**[`EVALUATION.md`](EVALUATION.md)** is the other half: how a tool actually
+performs against CVEs whose fixing commit is known.
 
 ## The tools
 

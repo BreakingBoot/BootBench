@@ -27,6 +27,9 @@ BIN="$(cd "$(dirname "$BIN")" && pwd)/$(basename "$BIN")"
 NAME="$(basename "$BIN")"
 OUT="${OUT:-$ROOT/analysis-results/angr/$NAME}"; mkdir -p "$OUT"
 check_mount "$OUT"
+# A runner that die()s partway leaves root-owned output behind, which the
+# invoking user then cannot delete. Reclaim on any exit, not just success.
+trap 'reclaim_output "$OUT"' EXIT
 
 IMAGE=bootbench/pytools
 build_image_if_needed "$IMAGE" "$ANALYSIS_DIR/docker/pytools.Dockerfile"
@@ -58,5 +61,4 @@ for n, name in summary['largest'][:8]:
     print(f'    {n:5d} blocks  {name}')
 PY
 "
-reclaim_output "$OUT"
 say "Summary: $OUT/cfg-summary.json"

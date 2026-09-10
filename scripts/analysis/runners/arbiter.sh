@@ -32,6 +32,9 @@ TEMPLATE="${TEMPLATE:-$ANALYSIS_DIR/templates/bootloader_CWE190.py}"
 [ -f "$TEMPLATE" ] || die "template not found: $TEMPLATE"
 TEMPLATE="$(cd "$(dirname "$TEMPLATE")" && pwd)/$(basename "$TEMPLATE")"
 OUT="${OUT:-$ROOT/analysis-results/arbiter/$NAME}"; mkdir -p "$OUT"; check_mount "$OUT"
+# A runner that die()s partway leaves root-owned output behind, which the
+# invoking user then cannot delete. Reclaim on any exit, not just success.
+trap 'reclaim_output "$OUT"' EXIT
 
 SRC="$ROOT/analysis-tools/static/arbiter"
 [ -f "$SRC/setup.py" ] || die "arbiter submodule not checked out. Run:
@@ -57,5 +60,4 @@ docker run --rm -v "$BIN:/home/test/bins/target:ro" -v "$TEMPLATE:/home/test/vd.
         export ARBITER_OUT=/out
         python3 vuln_templates/run_arbiter.py -f vd.py -t bins/target -l /out 2>&1 | tail -40
     ' | tee "$OUT/arbiter.txt"
-reclaim_output "$OUT"
 say "Output: $OUT/arbiter.txt"

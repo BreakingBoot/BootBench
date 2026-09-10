@@ -26,6 +26,9 @@ IMG="$(cd "$(dirname "$IMG")" && pwd)/$(basename "$IMG")"
 NAME="$(basename "$IMG")"
 OUT="${OUT:-$ROOT/analysis-results/chipsec/$NAME}"; mkdir -p "$OUT"
 check_mount "$OUT"
+# A runner that die()s partway leaves root-owned output behind, which the
+# invoking user then cannot delete. Reclaim on any exit, not just success.
+trap 'reclaim_output "$OUT"' EXIT
 
 IMAGE=bootbench/chipsec
 if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
@@ -45,5 +48,4 @@ docker run --rm -v "$IMG:/work/image:ro" -v "$OUT:/out" "$IMAGE" bash -eo pipefa
     chipsec_util -n uefi decode ./image 2>&1 | tail -40
     rm -f ./image
 ' | tee "$OUT/decode.txt"
-reclaim_output "$OUT"
 say "Output: $OUT/decode.txt"

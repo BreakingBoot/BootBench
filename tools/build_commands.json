@@ -53,16 +53,16 @@
   {
     "name": "grub",
     "language": "cpp",
-    "build": "./bootstrap && ./configure && make -j$(nproc)",
-    "notes": "bootstrap pulls gnulib; needs network on first run.",
-    "verified": false
+    "build": "{ ./bootstrap || ./autogen.sh; } && ./configure --disable-werror TARGET_CFLAGS='-no-pie -fno-PIE' TARGET_LDFLAGS='-no-pie' && make -j$(nproc)",
+    "notes": "genmoddep.awk uses asorti, a gawk extension, so the image sets gawk as the default awk; under Debian's mawk the build fails late with 'function asorti never defined'. Revisions before ~2016 ship autogen.sh rather than bootstrap, so the recipe tries both -- which matters when checking out an old vulnerable parent. bootstrap pulls gnulib and needs network.",
+    "verified": true
   },
   {
     "name": "shim",
     "language": "cpp",
     "build": "make -j$(nproc)",
-    "notes": "Needs gnu-efi headers.",
-    "verified": false
+    "notes": "Vendors gnu-efi as its own submodule and expects it at gnu-efi/inc, not the system copy. Run `git -C <shim> submodule update --init --recursive` first or the build fails on a missing efi.h.",
+    "verified": true
   },
   {
     "name": "opensbi",
@@ -96,8 +96,8 @@
     "name": "edk2",
     "language": "cpp",
     "build": "make -C BaseTools && . edksetup.sh && build -a X64 -t GCC5 -p MdeModulePkg/MdeModulePkg.dsc",
-    "notes": "Needs submodules initialised inside edk2 itself.",
-    "verified": false
+    "notes": "Builds at HEAD. Historical revisions do not: pre-2020 edk2 predates the BaseTools and Python 3 changes the current tree assumes, so a vulnerable parent from 2018 or 2019 fails before CodeQL can watch it.",
+    "verified": true
   },
   {
     "name": "open-iscsi",
@@ -106,5 +106,13 @@
     "notes": "Needs libisns headers, which Debian does not package. Build them from source first, or configure the iSNS support out.",
     "verified": false,
     "status": "known-broken"
+  },
+  {
+    "name": "mu_basecore",
+    "language": "cpp",
+    "build": "",
+    "notes": "Project Mu's basecore is a library repository consumed by platform repos through stuart (pip-requirements.txt), not a buildable platform: there is no edksetup.sh and no .dsc to point at. BaseTools builds, the firmware does not. Its 29 linked CVEs cannot be scored without a Mu platform repo.",
+    "status": "not-standalone",
+    "verified": false
   }
 ]

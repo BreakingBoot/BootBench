@@ -15,8 +15,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libncurses-dev libudev-dev pkg-config swig \
         libgnutls28-dev libelf-dev libkmod-dev uuid-dev libmount-dev \
         libdw-dev libsystemd-dev efitools libsdl1.2-dev libsdl2-dev \
+        gawk gnu-efi libfreetype-dev unifont fonts-dejavu-core \
+        libfuse-dev liblzma-dev python3-pyelftools \
     && rm -rf /var/lib/apt/lists/* \
-    && ln -sf "$(command -v python3)" /usr/local/bin/python
+    && ln -sf "$(command -v python3)" /usr/local/bin/python \
+    && update-alternatives --set awk /usr/bin/gawk
 
 # Several bootloaders shell out to bare `python`, which Debian and Ubuntu no
 # longer ship: seabios's link-script generator fails with "python: Permission

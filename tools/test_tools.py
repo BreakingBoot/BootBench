@@ -681,7 +681,24 @@ class TestManifests(unittest.TestCase):
             with self.subTest(recipe=recipe["name"]):
                 self.assertIn(recipe["name"], names,
                               f"build recipe for '{recipe['name']}' matches no bootloader")
-                self.assertTrue(recipe.get("build"), "empty build command")
+                if recipe.get("status") == "not-standalone":
+                    # mu_basecore is a Project Mu library repo consumed through
+                    # stuart; it has no standalone build, and saying so is the
+                    # point of the entry.
+                    self.assertTrue(recipe.get("notes"),
+                                    "a recipe with no build must explain why")
+                else:
+                    self.assertTrue(recipe.get("build"), "empty build command")
+
+    def test_verified_recipes_are_marked(self):
+        recipes = json.loads((HERE / "build_commands.json").read_text())
+        verified = [r["name"] for r in recipes if r.get("verified")]
+        self.assertTrue(verified, "no recipe has been verified end to end")
+        for recipe in recipes:
+            with self.subTest(recipe=recipe["name"]):
+                if recipe.get("status") in ("known-broken", "not-standalone"):
+                    self.assertFalse(recipe.get("verified"),
+                                     "a broken recipe cannot be verified")
 
     def test_tool_categories_are_all_rendered(self):
         import generate_tools_table

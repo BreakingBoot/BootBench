@@ -24,6 +24,9 @@ IMG="$(cd "$(dirname "$IMG")" && pwd)/$(basename "$IMG")"
 NAME="$(basename "$IMG")"
 OUT="${OUT:-$ROOT/analysis-results/binwalk/$NAME}"; mkdir -p "$OUT"
 check_mount "$OUT"
+# A runner that die()s partway leaves root-owned output behind, which the
+# invoking user then cannot delete. Reclaim on any exit, not just success.
+trap 'reclaim_output "$OUT"' EXIT
 
 IMAGE=bootbench/binwalk
 if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
@@ -49,5 +52,4 @@ else
     docker run --rm -v "$IMG:/work/image:ro" "$IMAGE" \
         binwalk /work/image | tee "$OUT/scan.txt"
 fi
-reclaim_output "$OUT"
 say "Output: $OUT/scan.txt"

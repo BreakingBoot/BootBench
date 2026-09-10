@@ -21,6 +21,9 @@ IMG="$(cd "$(dirname "$IMG")" && pwd)/$(basename "$IMG")"
 NAME="$(basename "$IMG")"
 OUT="${OUT:-$ROOT/analysis-results/uefi-firmware-parser/$NAME}"; mkdir -p "$OUT"
 check_mount "$OUT"
+# A runner that die()s partway leaves root-owned output behind, which the
+# invoking user then cannot delete. Reclaim on any exit, not just success.
+trap 'reclaim_output "$OUT"' EXIT
 
 IMAGE=bootbench/pytools
 build_image_if_needed "$IMAGE" "$ANALYSIS_DIR/docker/pytools.Dockerfile"
@@ -31,5 +34,4 @@ docker run --rm -v "$IMG:/work/image:ro" -v "$OUT:/out" "$IMAGE" bash -eo pipefa
     pip install --quiet uefi-firmware >/dev/null 2>&1 || pip install uefi-firmware
     uefi-firmware-parser $flags /work/image
 " | tee "$OUT/parse.txt"
-reclaim_output "$OUT"
 say "Output: $OUT/parse.txt"

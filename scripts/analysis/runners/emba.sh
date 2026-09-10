@@ -28,6 +28,9 @@ need_docker
 IMG="$(cd "$(dirname "$IMG")" && pwd)/$(basename "$IMG")"
 FWDIR="$(dirname "$IMG")"; NAME="$(basename "$IMG")"
 OUT="${OUT:-$ROOT/analysis-results/emba/$NAME}"; rm -rf "$OUT"; mkdir -p "$OUT"; check_mount "$OUT"
+# A runner that die()s partway leaves root-owned output behind, which the
+# invoking user then cannot delete. Reclaim on any exit, not just success.
+trap 'reclaim_output "$OUT"' EXIT
 
 SRC="$ROOT/analysis-tools/dynamic/emba"
 [ -f "$SRC/emba" ] || die "emba submodule not checked out. Run:
@@ -68,6 +71,5 @@ docker run --rm --privileged \
     -v "$FWDIR:/firmware:ro" -v "$OUT:/logs" -v "$SRC:/emba" \
     "$IMAGE" -c "./emba -i -l /logs -f /firmware/$NAME -p ./scan-profiles/$PROFILE.emba -y" \
     2>&1 | tail -40 | tee "$OUT/run.txt"
-reclaim_output "$OUT"
 [ -f "$OUT/html-report/index.html" ] && say "HTML report: $OUT/html-report/index.html"
 say "Output: $OUT"

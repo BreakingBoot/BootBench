@@ -25,6 +25,9 @@ IMG="$(cd "$(dirname "$IMG")" && pwd)/$(basename "$IMG")"
 NAME="$(basename "$IMG")"
 OUT="${OUT:-$ROOT/analysis-results/UEFITool/$NAME}"; mkdir -p "$OUT"
 check_mount "$OUT"
+# A runner that die()s partway leaves root-owned output behind, which the
+# invoking user then cannot delete. Reclaim on any exit, not just success.
+trap 'reclaim_output "$OUT"' EXIT
 
 IMAGE=bootbench/uefitool
 UEFITOOL_SRC="$ROOT/analysis-tools/inspection/UEFITool"
@@ -57,7 +60,6 @@ docker run --rm -v "$IMG:/work/image:ro" -v "$OUT:/out" "$IMAGE" bash -eo pipefa
     cp /work/image /out/image && cd /out && UEFIExtract image $mode
     rm -f /out/image
 "
-reclaim_output "$OUT"
 if [ -f "$OUT/image.report.txt" ]; then
     mv "$OUT/image.report.txt" "$OUT/report.txt"
     say "$(wc -l < "$OUT/report.txt") entries -> $OUT/report.txt"
