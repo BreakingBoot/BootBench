@@ -30,5 +30,5 @@ python3 validate_dataset.py --root .. --check classification --check coverage
 
 On the dataset as published, `classification` and `cves` pass and the other four
 report real data problems — 11 findings in total. These are *dataset* issues,
-not tool failures; each is measured in [improvements.md](improvements.md). Fixing them means re-mining, which changes numbers the paper
+not tool failures. Fixing them means re-mining, which changes numbers the paper
 cites; use [`refresh_dataset.py`](refresh_dataset.md) to stage and review that.

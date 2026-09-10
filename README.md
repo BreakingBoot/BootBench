@@ -135,21 +135,13 @@ bypasses, Type 3 the embedded and MCU work.
 every check. It exists because the dataset previously did not: withdrawn CVEs
 were still counted, two CVEs were counted under two types, statistics rows did
 not sum to their own totals, and `previous_commit` pointed at the next *newer*
-commit rather than the parent. Each is measured in
-[`tools/docs/improvements.md`](tools/docs/improvements.md).
+commit rather than the parent.
 
 **To go from a CVE to a vulnerable tree**, use
 `bootloader_vuln_commits/cve-commit-links.json`. It resolves 78 CVEs to their
 fixing commit and to that commit's parent — the revision to check out to
 reproduce the bug. [`LINKS.md`](https://github.com/BreakingBoot/bootloader_vuln_commits/blob/main/LINKS.md)
 explains the coverage and why most CVEs have no linked fix.
-
-## Where this could go next
-
-[`docs/PROPOSALS.md`](docs/PROPOSALS.md) sets out what the dataset cannot
-currently answer and what to change, measured against the data as it stands.
-The largest gap: BootBench records where bootloaders went wrong and nothing
-about what defends them, so the SoK's hardening section has no data behind it.
 
 ## Refreshing the data
 

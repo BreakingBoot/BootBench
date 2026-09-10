@@ -58,7 +58,7 @@ traced back to the rule that put it there.
 Word-bounded, plural-tolerant (`buffer overflows` counts), case-sensitive for
 the `DoS` acronym. The bare keyword `dos` is gone — it matched 267 commits, all
 of them about DOS the operating system. CWE tagging is an explicit phrase table,
-not fuzzy similarity. Details in [improvements.md](improvements.md).
+not fuzzy similarity.
 
 ## Verification
 

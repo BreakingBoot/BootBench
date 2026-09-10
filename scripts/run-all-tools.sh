@@ -9,7 +9,7 @@
 #
 # Exit status is non-zero if a tool fails. Dataset validation findings are
 # reported but do not fail the run -- they are data problems, not tool
-# problems; see tools/docs/improvements.md.
+# problems.
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
@@ -60,7 +60,7 @@ else
     RAN+=(validate_dataset)
     grep -cE '^\s+.?\[?[0-9;]*m?FAIL' "$OUT/validate_dataset.log" >/dev/null 2>&1 || true
     tail -1 "$OUT/validate_dataset.log" | sed 's/\x1b\[[0-9;]*m//g;s/^/    /'
-    echo "    (dataset findings, not tool failures -- see tools/docs/improvements.md)"
+    echo "    (dataset findings, not tool failures)"
 fi
 echo
 

@@ -34,8 +34,7 @@ with: which analysis tools work, and which bootloaders each one applies to.
 commits the old substring matcher caught by accident that are genuinely
 security-relevant but that the current word-bounded rules miss. Keeping them
 recorded is deliberate: widening the keywords to catch them costs about 100
-extra records each, measured in
-[docs/improvements.md](docs/improvements.md).
+extra records each.
 
 Two JSON manifests sit alongside them:
 [`analysis_tools.json`](analysis_tools.json) (24 bootloader analysis tools) and
@@ -82,7 +81,7 @@ published `stats.md` counts. Verify with
 
 Fourteen defects were found in the original tools and data and fixed here, each
 measured against the committed data, alongside performance and path-independence
-fixes: see [docs/improvements.md](docs/improvements.md).
+fixes.
 The largest are a `previous_commit` field that pointed at the *next newer*
 commit rather than the parent, substring keyword matching that made 34% of the
 mined commits false positives, and CWE labels assigned by fuzzy string
