@@ -1,0 +1,230 @@
+{
+  "note": "Commits the pre-2026 substring matcher included by accident -- almost all via the bare 'dos' keyword matching inside words like 'glados' -- that nonetheless carry a real security signal. The current word-bounded rules do not match them, and widening the rules to catch them costs roughly 100 extra records each (see tools/docs/improvements.md). Kept here so the set is not lost.",
+  "count": 28,
+  "commits": [
+    {
+      "repo": "type1/coreboot",
+      "commit": "37f4565b8b9da60c817572b0e9dd161b5815deee",
+      "parent": "ffa40544839318fb444dd9c213fa77da8a4ea38c",
+      "date": "2015-11-14 19:21:14 +0200",
+      "subject": "coreinfo: Rewrite bootlog_module",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type1/coreboot",
+      "commit": "97892bd557cfae6d103a9e685f475461cb35cb41",
+      "parent": "caa5149b1ef4a77e9ce9abf65bbfcd54232ea129",
+      "date": "2015-07-20 16:46:19 -0500",
+      "subject": "skylake: sanitize pcr header for ACPI and assembler",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type1/edk2",
+      "commit": "cbccf995920a28071f5403b847f29ebf8b732fa9",
+      "parent": "5ffcbc46908a2037ae3260d3cfcc103e4a6a48c0",
+      "date": "2020-08-27 00:21:29 +0200",
+      "subject": "OvmfPkg/CpuHotplugSmm: fix CPU hotplug race just after SMI broadcast",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type1/edk2",
+      "commit": "020bb4b46d6f6708bb3358e1c738109b7908f0de",
+      "parent": "cbccf995920a28071f5403b847f29ebf8b732fa9",
+      "date": "2020-08-27 00:21:28 +0200",
+      "subject": "OvmfPkg/CpuHotplugSmm: fix CPU hotplug race just before SMI broadcast",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type1/edk2",
+      "commit": "3a3475331275bca190718557247a37b27b083a2a",
+      "parent": "34c3405cb74c22a7d81b5aee65f0fc2a45c8dfae",
+      "date": "2018-09-07 16:35:09 +0800",
+      "subject": "SecurityPkg: HashLib: Change dos format",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type1/edk2",
+      "commit": "dd577319e83d13a7ab46ffdccb6635281d2ca9e5",
+      "parent": "28892d768be4ad731d754fb13de58368d524fd14",
+      "date": "2018-03-20 16:32:11 +0800",
+      "subject": "SecurityPkg Tpm2CommandLib: Fix TPM2.0 response memory overflow",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type1/edk2",
+      "commit": "dcd70885ca98fb28c164cb90c61a2956be8df1f3",
+      "parent": "466bab06be80e5ed7e51e79fa76d570ae6b641f9",
+      "date": "2017-12-28 09:09:47 +0800",
+      "subject": "SecurityPkg: Convert source file to DOS format",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type1/edk2",
+      "commit": "d92eaabefbe0667bdd15c28c8e1fcd92a12fa97c",
+      "parent": "fbf2338143952da2c63241e51379504a15aa3ea9",
+      "date": "2016-02-05 20:35:30 +0100",
+      "subject": "OvmfPkg: simplify VARIABLE_STORE_HEADER generation",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type1/edk2",
+      "commit": "4cfde6dea6c5040d830411d7cc5e12f627ec6bb5",
+      "parent": "08ae2c0eec0ac1161115f7bd04dfb1a15d9c25eb",
+      "date": "2014-09-03 08:51:17 +0000",
+      "subject": "SecurityPkg: Convert non DOS format files to DOS format",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type1/seabios",
+      "commit": "c98424c5ae973b9bd252696200a0ac8d91465340",
+      "parent": "7093aa58046f8685025b0198708e7768733a017d",
+      "date": "2013-07-21 16:38:18 -0400",
+      "subject": "Default unused UMB areas to be read-only.",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type1/seabios",
+      "commit": "1fcf1448561c07ffa47f05d3c492c78d2bfbbb3b",
+      "parent": "86bbda0cb01f82fdfdecd1ed3c1d6bb2c7ddf77c",
+      "date": "2008-03-11 19:42:41 -0400",
+      "subject": "Reorganize ata code; reduce stack usage.",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type2/depthcharge",
+      "commit": "f4a546028a37885ba4a75dafabf9353cd46f978e",
+      "parent": "d7b987ea868d33d00d1cdf99c64f3c50cd602b54",
+      "date": "2015-10-15 11:11:53 -0700",
+      "subject": "vboot: add 'Broken' screen",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type2/grub",
+      "commit": "d307db1e7587aa448d843eb1e76cca5bc0e6ee69",
+      "parent": "0e5889b98ac202e0aadf04f4115a810304578219",
+      "date": "2021-08-02 17:40:57 +0800",
+      "subject": "emu: Fix executable stack marking",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type2/grub",
+      "commit": "8ada906031d9bd86547db82647f91cdf7db54fbf",
+      "parent": "81e2673fb60a200a33bb064fbffe9e3956f37974",
+      "date": "2018-09-13 16:08:20 +0800",
+      "subject": "msdos: Fix overflow in converting partition start and length into 512B blocks",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type2/grub",
+      "commit": "df6da5a52dc2ec424203c0f8001903435b177fa8",
+      "parent": "4eb8b7565967938aff0a1c742f6dfa5a16a3dbc2",
+      "date": "2013-02-27 10:02:39 +0100",
+      "subject": "* grub-core/partmap/msdos.c (grub_partition_msdos_iterate):",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type2/grub",
+      "commit": "86d08fdb18b0142c1ce1b95db1aae989502956c5",
+      "parent": "794c8c33758792627113ae98ec495b9856960d92",
+      "date": "2012-09-19 02:44:54 +0100",
+      "subject": "* grub-core/partmap/msdos.c (pc_partition_map_embed): Revert",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type2/grub",
+      "commit": "d998657dcf8be2a6d4e93f004519e63b66af22cd",
+      "parent": "028501a0e06877f14e2445f73a8969bced63c10f",
+      "date": "2011-02-12 09:59:04 +0300",
+      "subject": "* grub-core/partmap/msdos.c (pc_partition_map_embed): Fix off by one",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type2/lk2nd",
+      "commit": "16e4d2e4978ee573f4cc08e96b26184f61645d96",
+      "parent": "ed75ae44ba1ec0a38c8b81d747120deeadf338e5",
+      "date": "2015-07-21 21:14:20 -0700",
+      "subject": "app: mmu_test: Replace strncpy with strlcpy",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type2/lk2nd",
+      "commit": "b0d4a68542a5cd9de916ae62597416371f5fc68c",
+      "parent": "2922c4500a2acb05ef84a37c2d35d6f585084051",
+      "date": "2015-07-21 20:14:16 -0700",
+      "subject": "plaform: msm_shared: Replace strncpy with strlcpy",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type2/shim",
+      "commit": "809dc7a18bb475c8efcc2f07bd3e7b8ac6997559",
+      "parent": "ea1d6905ba9aede0a09740a809ad7a1b89a08e98",
+      "date": "2017-09-27 13:15:13 -0400",
+      "subject": "fallback: read_file(): limit how big the file can be and still be valid",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type2/skiboot",
+      "commit": "55cab51c74a8a6c5bb2e298e541ab125c5ade553",
+      "parent": "b465be797e8673a38e6b136b18ed593335cfe11e",
+      "date": "2018-07-31 17:05:27 +1000",
+      "subject": "mem_region: Merge similar allocations when dumping",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type2/systemd",
+      "commit": "bacc2ed0d5bb10de5d37a1df73c061247f005b59",
+      "parent": "9e63e28aa652df483f431ab35a5934d77aab95db",
+      "date": "2024-06-24 17:40:32 +0200",
+      "subject": "pe: tighten validity checks of DOS and PE headers",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type2/systemd",
+      "commit": "e1e8c60af73fa2c61539c9e201a1db623be55b69",
+      "parent": "e1da60e430e881b3d8d40e5b1ab36bda3ed5a054",
+      "date": "2020-10-21 22:40:18 +0200",
+      "subject": "test-env-util: Verify that \\r is disallowed in env var values",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type3/arm-trusted-firmware",
+      "commit": "5d1c104f9aa7e1f52607679db96e5695cac266e7",
+      "parent": "a604623c718bf9dc028cb920db184219c6046454",
+      "date": "2016-07-08 14:37:40 +0100",
+      "subject": "Introduce SEPARATE_CODE_AND_RODATA build flag",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type3/barebox",
+      "commit": "c528475db3efff722323321f07279557d1d5e913",
+      "parent": "39fcc58a8e8ba6f89c01c390ff9c54ea941ea3df",
+      "date": "2024-10-22 10:33:47 +0200",
+      "subject": "partition: dos: use xmalloc for unchecked allocations",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type3/u-boot",
+      "commit": "7aed3d380981565b5bb2810d5d13aad1ff994f1a",
+      "parent": "4a7cf0fd2bf74b707e8a5f82436e2f0431259583",
+      "date": "2019-09-04 20:10:12 +0530",
+      "subject": "disk: part_dos: Allocate at least one block size for mbr",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type3/u-boot",
+      "commit": "c2a3d261f4aa0b97e623469459460e184b3c878e",
+      "parent": "9dde167edb16a0d3c8e0db4c872e82dc41f24234",
+      "date": "2019-02-01 16:40:25 +0000",
+      "subject": "configs: mx6sabresd: Reduce SPL size by disabling DOS, EXT and EFI support",
+      "matched_by_old_matcher": "dos (substring)"
+    },
+    {
+      "repo": "type3/u-boot",
+      "commit": "a693447ceadff49155e260cbbaef4e09c926cab5",
+      "parent": "5f8419597f427aaf9bb501460735d703d10db5ee",
+      "date": "2010-02-24 00:29:44 +0100",
+      "subject": "cmd_mtdparts.c: prevent printbuffer overflows",
+      "matched_by_old_matcher": "dos (substring)"
+    }
+  ]
+}

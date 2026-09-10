@@ -271,6 +271,59 @@ refresh — an intermediate run against un-pinned newer checkouts reported 4,154
 records against 3,476 at the pins — but it contributes nothing to the
 3,656 → 3,514 change.
 
+## What the removed false positives actually were, and what it cost
+
+The 1,151 records the refresh removed were audited before the rules were
+settled on, because a bad keyword match does not automatically mean a worthless
+commit.
+
+**95% are pure substring accidents.** The bare `dos` keyword accounted for
+1,090 of them, matching inside longer words:
+
+| Matched text | Count | What it is |
+|---|---:|---|
+| `glados` / `Glados` | 515 | a Chromebook board name in coreboot |
+| `DOS` | 282 | DOS the operating system |
+| `TODOs` / `todos` | 149 | to-do lists |
+| `dos` | 63 | "dos partition table" |
+| `msdos` | 53 | the MS-DOS filesystem |
+| `LDOs` | 46 | low-dropout voltage regulators |
+| `doShutdown`, `part_dos`, `CONFIG_DOS_PARTITION`, `dossym` | ~73 | identifiers |
+
+None is denial of service. The remainder were `exploit` inside "exploitation
+mode" (39) and `xss` inside identifiers (13).
+
+**The other 5% were real, and were lost.** 59 carry some security signal and 28
+are unambiguous security fixes that the old matcher found by accident:
+
+* edk2 — *OvmfPkg/CpuHotplugSmm: fix CPU hotplug race just before SMI broadcast*
+* edk2 — *SecurityPkg Tpm2CommandLib: Fix TPM2.0 response memory overflow*
+* shim — *fallback: read_file(): limit how big the file can be*
+* grub — an off-by-one in the MS-DOS partition parser
+
+They are enumerated in
+[`tools/dropped_security_commits.json`](../dropped_security_commits.json) so the
+set survives the decision.
+
+**Recovering them by widening the keywords is not worth it.** Three options
+were measured against the full corpus:
+
+| | Records | Recovers (of 28) |
+|---|---:|---:|
+| **A** — current rules | 3,514 | 0 |
+| **B** — add `off-by-one`, `overrun`, `underflow`, `toctou`, `sanitize`, `bounds check`, `out of range` | 4,471 (+957) | 10 |
+| **C** — B plus bare `overflow`, `unchecked`, `untrusted` | 6,044 (+2,530) | 19 |
+
+That is roughly 100 extra records per real fix recovered, and even C misses 9 of
+the 28. Bare `overflow` alone contributes 1,436 and is about evenly split
+between "volume_index_i overflow guards" and "arrows to indicate overflow for
+menu entries".
+
+**Option A was chosen.** Keyword matching cannot recover these efficiently; the
+old matcher's `glados` hits were not buying the 28 deliberately. If the 28 are
+wanted later, add them from the JSON above as a curated supplement with
+provenance rather than widening the net.
+
 # Known coverage gaps in the current dataset
 
 Reported by `validate_dataset.py --check coverage`:

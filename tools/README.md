@@ -30,6 +30,13 @@ with: which analysis tools work, and which bootloaders each one applies to.
 | [`generate_overview.py`](generate_overview.py) | Render [`OVERVIEW.md`](OVERVIEW.md) from the runner manifest | — |
 | [`test_tools.py`](test_tools.py) | Test suite for all of the above | [docs](docs/test_tools.md) |
 
+[`dropped_security_commits.json`](dropped_security_commits.json) holds 28
+commits the old substring matcher caught by accident that are genuinely
+security-relevant but that the current word-bounded rules miss. Keeping them
+recorded is deliberate: widening the keywords to catch them costs about 100
+extra records each, measured in
+[docs/improvements.md](docs/improvements.md).
+
 Two JSON manifests sit alongside them:
 [`analysis_tools.json`](analysis_tools.json) (24 bootloader analysis tools) and
 [`new_bootloaders.json`](new_bootloaders.json) (bootloaders queued for the
