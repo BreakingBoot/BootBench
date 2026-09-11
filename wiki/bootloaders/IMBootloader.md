@@ -18,6 +18,24 @@ CRC-checked firmware update over UART or USB, then application start.
 
 Type 3: reset to application.
 
+## How it boots
+
+See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
+
+1. **startup** -- Vendor startup code and the linker script place the bootloader at the base of flash.
+2. **entry check** -- Decides whether to enter update mode based on a flag or host activity.
+3. **host session** -- Talks to the IMFlasher host tool over USB or UART.
+4. **verification** -- Checks the image signature using Monocypher before accepting it.
+5. **application jump** -- Writes the image to the application region and jumps to it.
+
+### Passing data between stages
+
+The design goal is that one bootloader plus one host tool serve every supported MCU, so the board differences are pushed into the Drivers and Linker directories and the protocol above them stays fixed. Monocypher provides the signature check in a small enough footprint to fit alongside the rest. Update metadata travels in the protocol rather than in a flash header.
+
+### Handoff
+
+Nothing is passed to the application beyond the vector table relocation. Its interest in the corpus is as a small, current example of a signed-update bootloader that is explicitly designed to be reused across MCU families.
+
 ## Security mechanisms
 
 Detected in its build configuration and source:

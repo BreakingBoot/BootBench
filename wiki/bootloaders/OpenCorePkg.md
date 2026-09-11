@@ -18,6 +18,24 @@ Injects ACPI, kext and SMBIOS patches, then boots macOS, Windows or Linux.
 
 Type 2: a UEFI application that prepares and launches an OS.
 
+## How it boots
+
+See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
+
+1. **loaded by firmware** -- OpenCore.efi is loaded from the ESP as a UEFI application, or chainloaded from another loader.
+2. **config.plist parse** -- A single property list drives everything: ACPI patches, kernel extensions, device properties, quirks and the boot picker.
+3. **ACPI and SMBIOS patching** -- Tables are added, dropped or patched before the OS sees them, and SMBIOS is rewritten to match a supported Mac model.
+4. **driver injection** -- UEFI drivers are loaded for filesystems (APFS, HFS+) and missing firmware features.
+5. **kernel or loader start** -- boot.efi is started for macOS, with kext injection and kernel patches applied on the way, or another OS is chainloaded.
+
+### Passing data between stages
+
+OpenCore's job is to make a non-Apple machine present the environment macOS expects, so almost all of its communication is interception: it patches the ACPI tables and SMBIOS the firmware built, injects device properties into the tree, and applies binary patches to the kernel and to kexts as they are loaded. NVRAM is the other channel -- `boot-args`, the boot device path and Apple-specific variables are written there, and OpenCore can emulate NVRAM on firmware that does not persist it properly.
+
+### Handoff
+
+For macOS, control goes to Apple's own `boot.efi`, which OpenCore has already prepared the environment for; boot.efi then starts the kernel. For Windows or Linux it is an ordinary UEFI chainload. Because the patches are applied in memory rather than on disk, the installed OS is unmodified -- which is what makes updates survivable.
+
 ## Attack surfaces seen in its CVEs
 
 | Surface | | CVEs |

@@ -18,6 +18,24 @@ Implements Chrome OS verified boot, selects a kernel partition and boots it.
 
 Type 2: it is the payload that coreboot (Type 1) hands off to, and it prepares an OS.
 
+## How it boots
+
+See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
+
+1. **loaded as coreboot payload** -- coreboot's ramstage loads depthcharge and passes it the coreboot table, including the vboot handoff block.
+2. **vboot verification** -- Verifies the kernel partition signature against keys in the GBB and the TPM's rollback counters.
+3. **recovery or normal mode** -- Chooses between normal boot, developer mode, and recovery from removable media, based on the firmware switches.
+4. **kernel load** -- Loads the signed kernel partition from eMMC, NVMe or USB.
+5. **boot** -- Assembles the command line and starts the kernel.
+
+### Passing data between stages
+
+Depthcharge is built for one platform family, so it takes far more from coreboot than a general payload does: the coreboot table it receives carries GPIO configuration, board identity and the vboot handoff structure recording what verstage already decided. Rollback protection is anchored in TPM NVRAM -- the kernel version in the signed header must be at least the value stored there -- so the state that matters most between boots lives in the TPM rather than in flash. ChromeOS's A/B partitioning and the `successful`/`tries` GPT attribute bits are what the update system and the bootloader use to agree on which slot to trust.
+
+### Handoff
+
+The kernel is entered directly with a command line that names the verified root and its dm-verity hash tree, so integrity checking continues into the running system. There is no Type 2 loader in between and no menu; the disk layout and the signature decide.
+
 ## Security mechanisms
 
 Detected in its build configuration and source:

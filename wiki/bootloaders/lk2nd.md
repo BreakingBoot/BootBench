@@ -18,6 +18,23 @@ Loads from the stock aboot and boots mainline Linux with a proper device tree.
 
 Type 2: explicitly a second stage that prepares an OS.
 
+## How it boots
+
+See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
+
+1. **stock bootloader** -- The device's own LK or ABL loads lk2nd as if it were an Android boot image.
+2. **hardware detection** -- Identifies the board, display panel and battery from the SMEM and device tree information the firmware left.
+3. **device tree fixup** -- Patches or selects a device tree matching what it detected.
+4. **menu and boot** -- Offers Fastboot and a menu, then boots a kernel from a partition, a filesystem or an SD card.
+
+### Passing data between stages
+
+lk2nd is a second-stage bootloader: it is installed where the vendor expects a kernel, so its input is the Android boot image format, and its job is to undo the vendor's assumptions before the real kernel sees them. The important state is what the proprietary firmware left in SMEM -- board ID, panel ID, charger status -- which lk2nd reads and translates into a device tree and command line a mainline kernel can use.
+
+### Handoff
+
+It boots a kernel with the standard ARM protocol, passing the fixed-up device tree it assembled. Because it re-implements Fastboot, it also gives devices with a hostile or crippled vendor bootloader a consistent flashing interface, which is the practical reason postmarketOS uses it.
+
 ## Security mechanisms
 
 Detected in its build configuration and source:

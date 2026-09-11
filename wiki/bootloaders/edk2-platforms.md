@@ -18,6 +18,20 @@ Platform-specific PEI/DXE modules for real silicon, consumed with edk2.
 
 Type 1: the platform half of a UEFI firmware image.
 
+## How it boots
+
+See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
+
+1. **(no independent boot flow)** -- Supplies the platform, silicon and driver packages that a UEFI firmware image is built from; the SEC/PEI/DXE/BDS flow is EDK II's.
+
+### Passing data between stages
+
+The packages here plug into EDK II's existing mechanisms rather than defining new ones: PEIMs that publish HOBs, DXE drivers that install protocols, and PCDs -- build- or runtime-configurable values -- that a platform sets to select behaviour without editing core code.
+
+### Handoff
+
+There is no handoff of its own. A platform in this tree is compiled together with edk2 into one firmware image, and that image performs the UEFI handoff described under [edk2](bootloaders/edk2).
+
 ## Security mechanisms
 
 Detected in its build configuration and source:

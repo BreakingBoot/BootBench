@@ -20,12 +20,32 @@ vulnerabilities, tool status and verified runs. A page cannot drift from the
 data it describes, and regenerating after a refresh updates every page.
 
 **Curated in [`wiki_content.py`](../wiki_content.py):** what a bootloader
-actually does at boot, and why that places it in Type 1, 2 or 3. That judgement
-cannot be generated — it is the part a reader most needs and the part a script
-cannot infer.
+actually does at boot, the stages it runs through, how each stage passes state
+to the next, what it hands over at the end, and why that places it in Type 1, 2
+or 3. That judgement cannot be generated — it is the part a reader most needs
+and the part a script cannot infer.
 
-A test fails if a corpus bootloader has no prose, or if prose exists for a
-bootloader that is no longer in the corpus.
+Each entry is a `Bootloader` dataclass:
+
+| Field | What it holds |
+|---|---|
+| `summary` | One line, used on index pages |
+| `boot_role` | What it does at boot |
+| `type_rationale` | Why it is Type 1, 2 or 3 |
+| `stages` | Ordered `(name, what happens)` pairs |
+| `communication` | How state reaches the next stage |
+| `handoff` | What is passed at the final boundary, and to whom |
+| `case_study` | SoK section, for the six the paper details |
+
+`stages`, `communication` and `handoff` follow the structure the SoK uses for
+its case studies (§ 3). Prose may link to another bootloader by writing the target as
+`bootloader:<name>`; the generator rewrites it for whichever layout it is
+rendering, so prose never hardcodes nested or flat links.
+
+Tests fail if a corpus bootloader has no prose, if prose exists for a bootloader
+no longer in the corpus, if any stage walkthrough is blank, if a `case_study` is
+claimed for a bootloader the paper does not detail, or if any internal link in
+either layout does not resolve.
 
 ## Pages
 
@@ -33,6 +53,7 @@ bootloader that is no longer in the corpus.
 |---|---|
 | `Home` | Index and corpus summary |
 | `Bootloader-Types` | What Type 1/2/3 mean, the test used, and where classification is arguable |
+| `Boot-Stages` | The eight-stage model, the three ways state crosses a boundary, and the three handoff styles |
 | `Attack-Surfaces` | The six surfaces, what reaches each, and the observed distribution |
 | `Security-Mechanisms` | What the corpus defends itself with, and how to read a detection |
 | `Bootloaders` | Index of all 62, grouped by type |
@@ -42,7 +63,9 @@ bootloader that is no longer in the corpus.
 
 ## Adding a bootloader
 
-Add it to `oss-bootloaders` with `scripts/add-bootloaders.sh`, write its three
-curated fields in `wiki_content.py`, and regenerate. The third field is the
-important one: it should answer where the bootloader starts and what it hands
-off to, because that is what the taxonomy turns on.
+Add it to `oss-bootloaders` with `scripts/add-bootloaders.sh`, write its entry
+in `wiki_content.py`, and regenerate. Two fields carry most of the weight:
+`type_rationale`, which should answer where the bootloader starts and what it
+hands off to, because that is what the taxonomy turns on; and `stages` with its
+`communication` and `handoff`, which is what a reader needs in order to follow
+what actually happens at each boundary.

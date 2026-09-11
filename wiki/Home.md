@@ -5,6 +5,7 @@ Reference pages for the bootloader corpus and the analysis tools.
 ## Start here
 
 - **[Bootloader-Types](Bootloader-Types)** — what Type 1, 2 and 3 mean and how a bootloader is placed
+- **[Boot-Stages](Boot-Stages)** — the eight stages of a boot, how state crosses between them, and the three handoff styles
 - **[Attack-Surfaces](Attack-Surfaces)** — the six surfaces and how entries are mapped onto them
 - **[Security-Mechanisms](Security-Mechanisms)** — what the corpus defends itself with
 - **[Bootloaders](Bootloaders)** — a page per bootloader

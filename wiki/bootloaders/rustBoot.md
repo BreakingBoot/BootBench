@@ -18,6 +18,24 @@ Signature verification and A/B updates before jumping to the application.
 
 Type 3: reset to application.
 
+## How it boots
+
+See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
+
+1. **reset** -- The MCU or SoC resets into rustBoot, written entirely in Rust.
+2. **partition parse** -- Reads the boot and update partition headers and their trailers.
+3. **verification** -- Checks the image digest and verifies its ECC signature using RustCrypto.
+4. **swap or boot** -- Swaps partitions if an update is pending and confirmed-valid; otherwise boots the existing image.
+5. **handoff** -- Jumps to the firmware image, or on Cortex-A loads and boots a Linux kernel.
+
+### Passing data between stages
+
+rustBoot uses the same multi-slot, trailer-driven state machine the C secure bootloaders use -- boot and update partitions, a state byte, a confirmation written by the running firmware -- but expresses the flash layout and the image format in Rust's type system so the parsing step cannot run off the end of a buffer. There is no runtime interface: everything is fixed at build time.
+
+### Handoff
+
+For bare-metal targets the handoff is the usual vector-table-and-branch. For Aarch64 Linux it loads the kernel and device tree and enters with the standard protocol, which is why it appears as a Type 3 bootloader spanning both roles on those boards.
+
 ## Security mechanisms
 
 Detected in its build configuration and source:

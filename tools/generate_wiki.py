@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import configparser
 import glob
+import re
 import json
 import os
 import sys
@@ -27,11 +28,99 @@ from typing import Any
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from bootbench_keywords import ATTACK_SURFACES, TYPE_LABELS  # noqa: E402
-from wiki_content import BOOTLOADERS  # noqa: E402
+from wiki_content import BOOTLOADERS, Bootloader  # noqa: E402
 
 TYPES = ("type1", "type2", "type3")
 SURFACE_LABEL = {s[0]: s[2] for s in ATTACK_SURFACES}
 SURFACE_KIND = {s[0]: s[1] for s in ATTACK_SURFACES}
+
+# The eight-stage model of SoK Figure 1. Stages 1-4 are the four Type 1 stages;
+# EDK II's SEC/PEI/DXE/BDS map onto them directly (S 3.1), and stage 4 is named
+# as the bootloader handoff in S 2.1.1. Stages 5-8 are the four Type 2 stages,
+# enumerated in S 3.4 as the phases Windows Boot Manager runs through. A stage
+# says what must happen, not how many components a project uses to do it.
+BOOT_STAGES = (
+    (1, "**Reset and early init.** Execution begins at the reset vector. Temporary "
+        "memory is established, basic CPU state is set up, and the first integrity "
+        "check establishes the root of trust. *EDK II SEC, coreboot bootblock, "
+        "SeaBIOS preinit, U-Boot SoC ROM code.*",
+        "Type 1, Type 3"),
+    (2, "**Permanent memory.** CPU initialisation is completed and DRAM is brought "
+        "up, so later stages have real memory to run in. *EDK II PEI, coreboot "
+        "romstage, U-Boot SPL.*",
+        "Type 1, Type 3"),
+    (3, "**Device enumeration and drivers.** Buses are walked, devices matched to "
+        "drivers, platform tables built, and the firmware's services published. "
+        "*EDK II DXE, coreboot ramstage, SeaBIOS setup.*",
+        "Type 1, Type 3"),
+    (4, "**Bootloader handoff.** A boot device is selected and the OS bootloader is "
+        "loaded and entered. *EDK II BDS, SeaBIOS INT 0x19, coreboot's payload jump.*",
+        "Type 1 only — absent in Type 3, which has nothing to hand off to"),
+    (5, "**Boot libraries.** The OS bootloader's own services: filesystem access, "
+        "memory management, and whatever it needs to read its configuration. *GRUB "
+        "kernel.img, Windows Boot Manager's boot libraries.*",
+        "Type 2, Type 3"),
+    (6, "**Boot configuration.** The description of what may be booted is read: "
+        "entries, kernel arguments, and which extras to load. *grub.cfg, the Windows "
+        "BCD, U-Boot's bootdev and environment.*",
+        "Type 2, Type 3"),
+    (7, "**Modules and boot drivers.** Extra code named by the configuration is "
+        "loaded — filesystem, video, crypto or OS-specific drivers. *GRUB \\*.mod "
+        "modules, Windows boot drivers.*",
+        "Type 2, Type 3"),
+    (8, "**OS handoff.** The kernel and initrd are loaded, the arguments and tables "
+        "assembled, firmware resources released, and control transferred. *GRUB "
+        "core.img, bootmgr.efi, U-Boot's bootflow.*",
+        "Type 2, Type 3"),
+)
+
+# SoK S 2.3 -- the three ways state crosses a stage boundary.
+COMMUNICATION_STYLES = (
+    ("Structured handoff: system tables and interrupts",
+     "Type 1 bootloaders publish an explicit interface. UEFI defines system tables "
+     "exposing Boot Services and Runtime Services, with persistent configuration in "
+     "NVRAM variables such as `BootOrder` and the Secure Boot keys; PEI reaches DXE "
+     "through a HOB list. SeaBIOS, following legacy BIOS convention, uses software "
+     "interrupts and fixed low-memory structures instead — `INT 0x19` to find the next "
+     "stage, the BIOS Data Area for state. coreboot provides no user-facing interface "
+     "at all: it builds a coreboot table and leaves the payload to define how anything "
+     "is configured."),
+    ("Dynamic configuration: external files",
+     "Type 2 bootloaders move the contract into data. GRUB's `grub.cfg` holds menu "
+     "entries, kernel arguments and chainload targets; the Windows BCD holds boot "
+     "paths, recovery modes and drivers, editable at runtime. Because these are files "
+     "rather than compiled-in values, the boot flow can change — a different root "
+     "device, an alternate payload, a recovery entry — without rebuilding anything. "
+     "That flexibility is also why the configuration file is itself an attack surface."),
+    ("Static communication: minimal runtime interfaces",
+     "Type 3 bootloaders fold initialisation and OS launch into one image and leave "
+     "few channels open. MCUboot's only runtime channel is the flash layout — image "
+     "slots and the trailer flags that record a pending, testing or confirmed update. "
+     "U-Boot is the richer case, offering a shell and an environment that can adjust "
+     "the bootflow or kernel arguments, but substantial change still means reflashing."),
+)
+
+# SoK S 2.4 -- the three handoff styles.
+HANDOFF_STYLES = (
+    ("Structured and layered",
+     "Type 1 bootloaders use formal transitions. UEFI's BDS phase walks `BootOrder` to "
+     "find a boot application, loads it with a pointer to the system table, and the "
+     "application later calls `ExitBootServices()` to release firmware-managed "
+     "resources. SeaBIOS chains through sector loaders: `INT 0x19` loads the MBR, whose "
+     "code finds the active partition's volume boot record. coreboot delegates, handing "
+     "its table to a payload that builds the real system tables itself."),
+    ("Configurable OS handoff",
+     "Type 2 bootloaders emphasise flexibility. `bootmgr.efi` passes UEFI tables, BCD "
+     "entries and preloaded drivers to `winload.efi`; GRUB loads a kernel and initrd "
+     "with a command line it assembled, or chainloads another Type 2 bootloader "
+     "entirely. Multi-OS booting and runtime reconfiguration come from this stage."),
+    ("Direct and minimal",
+     "Type 3 bootloaders pass as little as possible. MCUboot verifies an image and "
+     "jumps to it with nothing passed at all, since everything was fixed at build time. "
+     "U-Boot passes more — kernel, arguments and a flattened device tree it may have "
+     "fixed up — but the transfer is still essentially static. Determinism is chosen "
+     "over extensibility."),
+)
 
 
 def slug(name: str) -> str:
@@ -106,11 +195,38 @@ def web_url(url: str) -> str:
     return url.removesuffix(".git")
 
 
+def resolve_links(text: str) -> str:
+    """Rewrite `bootloader:name` targets in curated prose for the current layout."""
+    return re.sub(r"\]\(bootloader:([^)]+)\)",
+                  lambda m: f"]({page_link('bootloaders', m.group(1))})", text)
+
+
+def boot_flow_section(prose: Bootloader) -> list[str]:
+    """The stage walkthrough, following the SoK case-study structure."""
+    if not prose.stages:
+        return []
+    lines = ["## How it boots", ""]
+    if prose.case_study:
+        lines += [f"The SoK paper gives a full case study of this bootloader in "
+                  f"section {prose.case_study}. See [Boot-Stages](Boot-Stages) for the "
+                  f"eight-stage model these phases map onto.", ""]
+    else:
+        lines += ["See [Boot-Stages](Boot-Stages) for the eight-stage model these "
+                  "phases map onto.", ""]
+    for i, (stage, what) in enumerate(prose.stages, 1):
+        lines.append(f"{i}. **{stage}** -- {what}")
+    lines += ["", "### Passing data between stages", "",
+              resolve_links(prose.communication), ""]
+    lines += ["### Handoff", "", resolve_links(prose.handoff), ""]
+    return lines
+
+
 def bootloader_page(name: str, data: dict[str, Any]) -> str:
     meta = data["corpus"][name]
     btype = meta["type"]
-    summary, role, rationale = BOOTLOADERS.get(
-        name, ("", "Not yet described.", "Not yet explained."))
+    prose = BOOTLOADERS.get(name, Bootloader(
+        summary="", boot_role="Not yet described.", type_rationale="Not yet explained."))
+    summary, role, rationale = prose.summary, prose.boot_role, prose.type_rationale
 
     mine = [c for c in data["cves"].values()
             if any(h["bootloader"] == name for h in c.get("bootloaders") or [])]
@@ -144,6 +260,8 @@ def bootloader_page(name: str, data: dict[str, Any]) -> str:
              "## What it does at boot", "", role, "",
              f"## Why it is {btype.replace('type', 'Type ')}", "", rationale, "",
              ]
+
+    lines += boot_flow_section(prose)
 
     if surfaces:
         lines += ["## Attack surfaces seen in its CVEs", "",
@@ -285,6 +403,7 @@ def write_indexes(out: Path, data: dict[str, Any]) -> None:
              "## Start here", "",
              "- **[Bootloader-Types](Bootloader-Types)** — what Type 1, 2 and 3 mean and how "
              "a bootloader is placed",
+             "- **[Boot-Stages](Boot-Stages)** — the eight stages of a boot, how state crosses between them, and the three handoff styles",
              "- **[Attack-Surfaces](Attack-Surfaces)** — the six surfaces and how entries are mapped onto them",
              "- **[Security-Mechanisms](Security-Mechanisms)** — what the corpus defends itself with",
              "- **[Bootloaders](Bootloaders)** — a page per bootloader",
@@ -302,13 +421,14 @@ def write_indexes(out: Path, data: dict[str, Any]) -> None:
     # Bootloaders index
     lines = ["# Bootloaders", "",
              "Every project in the corpus, grouped by type. Each page explains what the "
-             "bootloader does at boot, why it is classified as it is, the attack surfaces "
-             "its CVEs touch, and what it defends itself with.", ""]
+             "bootloader does at boot, the stages it runs through and how each stage "
+             "passes state to the next, why it is classified as it is, the attack "
+             "surfaces its CVEs touch, and what it defends itself with.", ""]
     for btype in TYPES:
         lines += [f"## {TYPE_LABELS[btype]} (`{btype}`)", "",
                   "| Bootloader | What it is |", "|---|---|"]
         for name in sorted(by_type[btype]):
-            summary = BOOTLOADERS.get(name, ("", "", ""))[0]
+            summary = getattr(BOOTLOADERS.get(name), "summary", "")
             lines.append(f"| [{name}]({page_link('bootloaders', name)}) | {summary} |")
         lines.append("")
     (out / "Bootloaders.md").write_text("\n".join(lines), encoding="utf-8")
@@ -321,7 +441,7 @@ def write_indexes(out: Path, data: dict[str, Any]) -> None:
              "| Tool | Applies to | Status |", "|---|---|---|"]
     for tool in sorted(data["tools"], key=lambda t: t["name"].lower()):
         r = runners.get(tool["name"], {})
-        lines.append(f"| [{tool['name']}](tools/{slug(tool['name'])}) | "
+        lines.append(f"| [{tool['name']}]({page_link('tools', tool['name'])}) | "
                      f"{r.get('applies_to', '—')[:90]} | `{r.get('status', '—')}` |")
     lines.append("")
     (out / "Tools.md").write_text("\n".join(lines), encoding="utf-8")
@@ -370,6 +490,42 @@ def write_indexes(out: Path, data: dict[str, Any]) -> None:
               "- **open-iscsi** is boot-path infrastructure rather than a bootloader that "
               "transfers control to a kernel. It is the weakest fit in the corpus.", ""]
     (out / "Bootloader-Types.md").write_text("\n".join(lines), encoding="utf-8")
+
+    # Boot stages
+    documented = {n: BOOTLOADERS[n] for n in sorted(corpus) if n in BOOTLOADERS
+                  and BOOTLOADERS[n].stages}
+    lines = ["# Boot stages", "",
+             "A boot is a sequence of stages, each setting up what the next one needs. The SoK "
+             "divides it into eight, and every bootloader page walks its own phases against "
+             "this model. Not every stage appears everywhere: Type 3 has no stage 4, because "
+             "there is no second bootloader to hand off to, and Type 1 has no stages 5-8, "
+             "because it stays OS-agnostic.", "",
+             "| Stage | | Present in |", "|---|---|---|"]
+    for num, what, present in BOOT_STAGES:
+        lines.append(f"| {num} | {what} | {present} |")
+    lines += ["", "Implementations vary widely inside a stage. coreboot spreads stage 3 across "
+              "several components (romstage, postcar, ramstage); EDK II packs the same work "
+              "into one (DXE). The stage numbers describe *what must happen*, not how a "
+              "project divides it up.", "",
+              "## How state crosses a stage boundary", ""]
+    for title, body in COMMUNICATION_STYLES:
+        lines += [f"### {title}", "", body, ""]
+    lines += ["## How control crosses it", ""]
+    for title, body in HANDOFF_STYLES:
+        lines += [f"### {title}", "", body, ""]
+    lines += ["## Per-bootloader walkthroughs", "",
+              "Every corpus page carries a **How it boots** section with its own phases, the "
+              "mechanism that carries state between them, and what it hands over. Six of the "
+              "paper's seven case studies are in the corpus:", ""]
+    for name, prose in documented.items():
+        if prose.case_study:
+            lines.append(f"- [{name}]({page_link('bootloaders', name)}) — SoK § {prose.case_study}")
+    n_cited = sum(1 for p in documented.values() if p.case_study)
+    lines += ["", "The seventh, Windows Boot Manager, is closed source and so is not in the "
+              "corpus; its structure is described under stages 5-8 above and in SoK § 3.4.", "",
+              f"The remaining {len(documented) - n_cited} pages are written from each "
+              "project's own documentation and source.", ""]
+    (out / "Boot-Stages.md").write_text("\n".join(lines), encoding="utf-8")
 
     # Attack surfaces
     surfaces: Counter = Counter()

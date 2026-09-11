@@ -18,6 +18,23 @@ Stage1A/1B/2 silicon init via FSP, then launches an OS loader or payload.
 
 Type 1: FSP-based silicon init with a payload handoff, the same structure as coreboot.
 
+## How it boots
+
+See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
+
+1. **Stage1A** -- Runs from reset out of flash. Calls the Intel FSP `TempRamInit` entry to get cache-as-RAM, then loads Stage1B.
+2. **Stage1B** -- Calls FSP `FspMemoryInit` to bring up DRAM, verifies and loads Stage2, and migrates state out of temporary memory.
+3. **Stage2** -- Calls FSP `FspSiliconInit`, enumerates PCI, builds ACPI and SMBIOS tables, and prepares the payload environment.
+4. **Payload** -- Loads a payload -- OsLoader, a UEFI payload, or a custom one -- from the boot partition.
+
+### Passing data between stages
+
+Slim Bootloader inherits EDK II's HOB mechanism: FSP returns its results as HOBs, and each stage adds its own before passing the list on. Board configuration is kept out of code in signed Configuration Data blobs (CFGDATA) stored in flash, which a later stage reads rather than recompiling for. A stage transition on this design is a verified load: each stage measures and checks the next against keys in the key store before jumping.
+
+### Handoff
+
+Stage2 hands the payload a HOB list describing memory, the serial port, the framebuffer, the performance log and the boot device. The stock OsLoader payload then locates a kernel and boots it directly; a UEFI payload instead rebuilds full UEFI services on top of what it was given, in the same way a UEFI payload does over coreboot.
+
 ## Attack surfaces seen in its CVEs
 
 | Surface | | CVEs |

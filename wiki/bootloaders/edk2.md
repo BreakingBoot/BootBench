@@ -18,6 +18,23 @@ Runs SEC, PEI, DXE and BDS phases, brings up the platform, publishes Boot Servic
 
 Type 1: it presents the hardware-agnostic UEFI interface that later stages consume, and remains OS-agnostic -- it loads a Type 2 loader, not a kernel.
 
+## How it boots
+
+The SoK paper gives a full case study of this bootloader in section 3.1. See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
+
+1. **SEC (Security)** -- Runs from the reset vector. Sets up temporary memory, establishes the root of trust by verifying what it loads, and finds the PEI core.
+2. **PEI (Pre-EFI Initialisation)** -- Completes CPU init and brings up permanent memory. Work is done by PEIMs, dispatched in dependency order, which record their results as HOBs.
+3. **DXE (Driver Execution Environment)** -- The core of the boot. Dispatches drivers, enumerates devices and binds drivers to them, publishes Boot Services and Runtime Services, and sets up SMM.
+4. **BDS (Boot Device Selection)** -- Walks the BootOrder NVRAM variable, loads the selected boot application, and gives the user a way to interact with the firmware.
+
+### Passing data between stages
+
+Phases communicate through structures rather than calls. PEI passes its findings to DXE as a HOB list -- memory ranges, firmware volumes, platform data -- consumed once at DXE entry. From DXE onward the EFI System Table is the interface: it points at the Boot Services table, the Runtime Services table, the handle database of installed protocols, and a configuration table carrying ACPI, SMBIOS and the DXE Services table. Configuration that has to survive power-off lives in NVRAM variables (BootOrder, Boot####, SecureBoot, PK/KEK/db), reachable through Runtime Services. SMIs provide a channel into SMM that persists after the OS is running.
+
+### Handoff
+
+BDS resolves each BootOrder entry to a device path -- a partition on a GPT disk, a network device, a USB stick -- loads the image found there, and calls it with an image handle and a pointer to the EFI System Table. That image is typically a Type 2 loader such as GRUB, shim or the Windows boot manager. When the loader is ready to start a kernel it calls `ExitBootServices()`, which frees all boot-services memory, stops the firmware's timers and drivers, and leaves only Runtime Services mapped for the OS.
+
 ## Attack surfaces seen in its CVEs
 
 | Surface | | CVEs |

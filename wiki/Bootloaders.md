@@ -1,6 +1,6 @@
 # Bootloaders
 
-Every project in the corpus, grouped by type. Each page explains what the bootloader does at boot, why it is classified as it is, the attack surfaces its CVEs touch, and what it defends itself with.
+Every project in the corpus, grouped by type. Each page explains what the bootloader does at boot, the stages it runs through and how each stage passes state to the next, why it is classified as it is, the attack surfaces its CVEs touch, and what it defends itself with.
 
 ## Firmware bootloader (`type1`)
 

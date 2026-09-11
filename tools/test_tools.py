@@ -898,21 +898,86 @@ class TestWiki(unittest.TestCase):
         pages = {p.stem for p in (self.WIKI / "tools").glob("*.md")}
         self.assertEqual(tools - pages, set(), "tools with no wiki page")
 
+    def generate_wiki(self, out, *extra):
+        import subprocess
+        result = subprocess.run(
+            [sys.executable, str(HERE / "generate_wiki.py"),
+             "--root", str(ROOT), "--output", str(out), *extra],
+            capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def assert_links_resolve(self, root):
+        """Every internal link must name a page that exists in this layout."""
+        import re
+        pages = {p.relative_to(root).with_suffix("").as_posix()
+                 for p in root.rglob("*.md")}
+        broken = [(f.relative_to(root).as_posix(), m.group(1))
+                  for f in sorted(root.rglob("*.md"))
+                  for m in re.finditer(r"\]\(([^)]+)\)", f.read_text())
+                  if not m.group(1).startswith(("http", "#", "mailto"))
+                  and m.group(1).split("#")[0] not in pages]
+        self.assertEqual(broken, [], f"broken links under {root.name}")
+        return pages
+
     def test_flat_mode_produces_one_directory_of_pages(self):
         """A GitHub wiki addresses pages by filename, so --flat must not nest."""
-        import subprocess
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "w"
-            result = subprocess.run(
-                [sys.executable, str(HERE / "generate_wiki.py"),
-                 "--root", str(ROOT), "--output", str(out), "--flat"],
-                capture_output=True, text=True)
-            self.assertEqual(result.returncode, 0, result.stderr)
+            self.generate_wiki(out, "--flat")
             self.assertEqual([p for p in out.rglob("*.md") if p.parent != out], [],
                              "--flat must not create subdirectories")
             index = (out / "Bootloaders.md").read_text()
             self.assertIn("(Bootloaders-u-boot)", index)
             self.assertNotIn("(bootloaders/", index)
+            self.assertNotIn("(tools/", (out / "Tools.md").read_text())
+            self.assert_links_resolve(out)
+
+    def test_nested_mode_links_resolve(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "w"
+            self.generate_wiki(out)
+            pages = self.assert_links_resolve(out)
+            self.assertIn("Boot-Stages", pages)
+
+    def test_prose_never_hardcodes_a_layout(self):
+        """Curated prose is rendered into both layouts, so it must use bootloader:."""
+        from wiki_content import BOOTLOADERS
+        for name, prose in BOOTLOADERS.items():
+            for field in (prose.communication, prose.handoff, prose.boot_role,
+                          prose.type_rationale):
+                with self.subTest(bootloader=name):
+                    self.assertNotIn("](Bootloaders-", field)
+                    self.assertNotIn("](bootloaders/", field)
+
+    def test_every_bootloader_has_a_boot_flow(self):
+        """The stage walkthrough is the point of the page -- none may be blank."""
+        from wiki_content import BOOTLOADERS
+        for name, prose in BOOTLOADERS.items():
+            with self.subTest(bootloader=name):
+                self.assertTrue(prose.stages, "no stages")
+                self.assertTrue(all(s and w for s, w in prose.stages), "empty stage")
+                self.assertTrue(prose.communication, "no communication")
+                self.assertTrue(prose.handoff, "no handoff")
+
+    @unittest.skipUnless((ROOT / "wiki").is_dir(), "wiki not generated")
+    def test_boot_flow_reaches_the_pages(self):
+        for name in ("u-boot", "edk2", "mcuboot", "optiboot"):
+            page = (self.WIKI / "bootloaders" / f"{name}.md").read_text()
+            with self.subTest(bootloader=name):
+                self.assertIn("## How it boots", page)
+                self.assertIn("### Passing data between stages", page)
+                self.assertIn("### Handoff", page)
+        stages = (self.WIKI / "Boot-Stages.md").read_text()
+        self.assertIn("Bootloader handoff", stages)
+        self.assertIn("[Boot-Stages](Boot-Stages)", (self.WIKI / "Home.md").read_text())
+
+    @unittest.skipUnless((ROOT / "wiki").is_dir(), "wiki not generated")
+    def test_case_study_citations_are_paper_sections(self):
+        """Only the bootloaders the SoK details may claim a case study."""
+        from wiki_content import BOOTLOADERS
+        cited = {n: p.case_study for n, p in BOOTLOADERS.items() if p.case_study}
+        self.assertEqual(cited, {"coreboot": "3.3", "edk2": "3.1", "seabios": "3.2",
+                                 "grub": "3.5", "mcuboot": "3.6", "u-boot": "3.7"})
 
     def test_curated_prose_matches_the_corpus(self):
         import configparser

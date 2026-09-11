@@ -18,6 +18,27 @@ SPL performs DRAM and clock init from reset, then full U-Boot loads a kernel, de
 
 Type 3: SPL plus U-Boot together take the board from reset to a running OS with no separate firmware layer -- one project spans both roles.
 
+## How it boots
+
+The SoK paper gives a full case study of this bootloader in section 3.7. See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
+
+1. **SoC ROM code** -- OEM code in mask ROM runs from the reset vector and does the minimum needed to load the next image, often from a fixed offset on eMMC or SPI flash.
+2. **TPL** -- Optional tertiary program loader: very early hardware setup, used where the ROM can only load a very small image. Loads SPL or VPL.
+3. **VPL** -- Optional verification program loader, which selects among multiple verified SPL binaries.
+4. **SPL** -- Secondary program loader. Initialises DRAM and loads full U-Boot into it -- or, in Falcon mode, loads the Linux kernel directly and skips the rest.
+5. **U-Boot proper** -- The full image: driver model, filesystems, network stack, environment and the command shell.
+6. **bootdev** -- Abstracts the device that may hold an OS -- MMC, USB, NVMe, network.
+7. **bootmeth** -- Defines how each bootdev is searched for a valid boot configuration -- extlinux.conf, an EFI application, a script.
+8. **bootflow** -- The concrete sequence produced by a bootmeth on a bootdev. The first valid one found is used by default.
+
+### Passing data between stages
+
+Because the stages are separate images built from one tree, U-Boot passes state forward explicitly: SPL hands U-Boot a `struct spl_image_info`, and where the same information must survive from before DRAM exists it travels in a bloblist -- a relocatable container that also carries ACPI tables, the device tree and SMBIOS data between stages. The persistent interface is the environment: a key-value store in flash (`bootargs`, `bootcmd`, `fdt_addr`) readable and writable from the shell and by scripts, which is how a bootflow is altered without rebuilding. U-Boot can also present itself as UEFI, publishing Boot and Runtime Services so a standard distribution loader runs unmodified.
+
+### Handoff
+
+The OS is started with the architecture's boot protocol, and the important thing passed is the flattened device tree: U-Boot may fix it up first -- inserting the MAC address, memory size, or kernel command line -- so the kernel sees a description matched to the actual board. An extlinux.conf-driven bootflow supplies the kernel, the command line, the device tree directory and the initrd, as in the paper's Listing 2. Changing anything more than the bootflow generally means reflashing.
+
 ## Attack surfaces seen in its CVEs
 
 | Surface | | CVEs |

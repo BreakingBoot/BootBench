@@ -18,6 +18,24 @@ Similar role to OpenCore, with its own patching model.
 
 Type 2: a UEFI application that launches an OS.
 
+## How it boots
+
+See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
+
+1. **CloverEFI or native UEFI** -- On legacy BIOS machines CloverEFI provides a UEFI emulation layer first; on UEFI machines CLOVERX64.efi is loaded directly.
+2. **config.plist parse** -- Configuration for patches, SMBIOS, devices and the GUI is read from a property list.
+3. **table patching** -- ACPI is patched (DSDT fixes, SSDT injection) and SMBIOS is rewritten.
+4. **GUI** -- A themed boot picker scans volumes and lists the operating systems it recognises.
+5. **start** -- boot.efi is launched for macOS, or another loader is chainloaded.
+
+### Passing data between stages
+
+Clover predates OpenCore and takes a broader approach: as well as patching tables and injecting drivers, it can supply the UEFI environment itself on machines that have none, which is why the tree carries a large slice of EDK II. Configuration and the same interception channels -- ACPI, SMBIOS, NVRAM, device properties -- are the mechanism, with more automatic fixups applied by default than OpenCore's explicitly-listed quirks.
+
+### Handoff
+
+As with OpenCore, macOS is reached through Apple's `boot.efi` and other systems through a UEFI chainload. The wider surface is the trade: more is patched on the machine's behalf, and more of the firmware environment is Clover's own code rather than the platform's.
+
 ## Most common weaknesses
 
 | CWE | CVEs |

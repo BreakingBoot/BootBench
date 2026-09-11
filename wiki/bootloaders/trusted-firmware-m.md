@@ -18,6 +18,24 @@ Secure boot (often MCUboot-based BL2) plus the secure processing environment the
 
 Type 3: reset to application on a microcontroller.
 
+## How it boots
+
+See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
+
+1. **BL1** -- Optional immutable ROM stage on platforms that need one; verifies and loads BL2.
+2. **BL2 (MCUboot)** -- TF-M uses MCUboot as its second-stage loader to verify and, if needed, swap the secure and non-secure images.
+3. **SPE initialisation** -- The Secure Processing Environment sets up the SAU/IDAU and MPU so secure memory and peripherals are unreachable from the non-secure side.
+4. **secure partitions** -- The partition manager starts the PSA RoT services -- Crypto, Internal Trusted Storage, Protected Storage, Initial Attestation.
+5. **NSPE jump** -- Control is transferred to the non-secure application through a non-secure function call.
+
+### Passing data between stages
+
+The boundary here is spatial rather than temporal: after the jump, both sides are running, and the interface between them is the Armv8-M security extension. The non-secure application calls secure services through veneer functions in the Non-Secure Callable region, which the PSA Firmware Framework routes to the right partition. Measurements taken by BL2 are passed up in a shared data region so the attestation service can report what was actually loaded.
+
+### Handoff
+
+The transfer to the non-secure world sets the non-secure stack pointer and vector table from the NSPE image header and branches with `BLXNS`. Secure state is not torn down -- it stays resident for the life of the device, which is the whole point of the design.
+
 ## Most common weaknesses
 
 | CWE | CVEs |

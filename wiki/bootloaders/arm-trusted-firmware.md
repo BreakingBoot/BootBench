@@ -18,6 +18,24 @@ BL1/BL2/BL31 bring the SoC up from reset, set up EL3 runtime services, then ente
 
 Type 3 in this corpus: it spans reset to OS handoff. Arguably Type 1 in a staged setup where BL33 is U-Boot.
 
+## How it boots
+
+See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
+
+1. **BL1** -- Runs from ROM at reset in EL3. Sets up the exception vectors and minimal platform state, then loads and authenticates BL2.
+2. **BL2** -- Trusted boot firmware. Initialises DRAM, then loads and authenticates every image that follows: BL31, BL32 and BL33.
+3. **BL31** -- The EL3 runtime firmware. Installs the SMC handler, PSCI implementation and interrupt routing, and stays resident for the life of the system.
+4. **BL32** -- Optional secure-world payload -- OP-TEE, TF-M or another trusted OS -- running in S-EL1.
+5. **BL33** -- The non-secure bootloader: U-Boot, EDK II or a kernel, entered in EL2 or EL1.
+
+### Passing data between stages
+
+Images are described to each other by `entry_point_info` and `image_info` structures that BL2 fills in and passes through BL31's initialisation -- that is how BL31 knows where BL32 and BL33 should start and in which exception level. Authentication is driven by a chain of trust expressed as certificates in the FIP (Firmware Image Package), so each stage verifies the next against keys rooted in the ROTPK held in OTP. After boot, the interface is the SMC calling convention: PSCI calls for CPU power management, and SMCs into the trusted OS.
+
+### Handoff
+
+BL31 does not hand control away and disappear. It `eret`s into BL33 at the exception level configured for it, and remains at EL3 to service SMCs -- so the normal-world bootloader and later the OS keep calling back into it for CPU_ON, system reset and secure services. This is why TF-A behaves as both a boot stage and a runtime component.
+
 ## Most common weaknesses
 
 | CWE | CVEs |

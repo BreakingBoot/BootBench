@@ -18,6 +18,24 @@ Reads grub.cfg, offers a menu and a scripting shell, loads a kernel and initrd f
 
 Type 2: it starts from an already-initialised machine, is driven entirely by on-disk configuration, and its whole purpose is preparing an OS.
 
+## How it boots
+
+The SoK paper gives a full case study of this bootloader in section 3.5. See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
+
+1. **boot.img** -- 512 bytes in the MBR. Its only job is to read the first sector of core.img, whose location was written into it at install time.
+2. **core.img** -- The working bootloader: kernel.img plus the handful of modules needed to reach /boot -- a disk driver, a partition map parser, a filesystem driver.
+3. **kernel.img** -- GRUB's core services: memory management, the device and filesystem abstraction, environment variables, the rescue shell.
+4. **module load** -- Modules (*.mod) are loaded on demand from /boot/grub for filesystems, compression, video, cryptography and boot protocols.
+5. **grub.cfg** -- The menu and its entries are read and executed as a script, which selects a kernel and its arguments.
+
+### Passing data between stages
+
+GRUB's stage boundaries exist because of a size limit, not a privilege boundary: each stage is the smallest thing that can find the next one. Once kernel.img is running, configuration moves into text -- `grub.cfg`, plus the environment block at `/boot/grub/grubenv` for values that must survive a reboot, such as the saved default entry and `recordfail`. Modules communicate through the command table they register into, which is why a menu entry can `insmod` a filesystem driver and then use it in the next line. On a UEFI machine the first two stages collapse: the firmware loads `grubx64.efi`, a single image with the modules already built in.
+
+### Handoff
+
+A menu entry ends in a boot protocol command. `linux` loads a kernel and `initrd` its initial ramdisk, then GRUB assembles the boot parameters -- `root=UUID=...`, console settings, everything on the kernel command line -- calls `ExitBootServices()` if it is running under UEFI, and enters the kernel. `multiboot` does the same for a Multiboot2 kernel, passing a structured information table. `chainloader` instead loads another bootloader, which is how GRUB reaches the Windows boot manager.
+
 ## Attack surfaces seen in its CVEs
 
 | Surface | | CVEs |

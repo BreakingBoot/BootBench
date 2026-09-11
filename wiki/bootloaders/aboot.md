@@ -18,6 +18,23 @@ Loads and verifies an Android boot image.
 
 Type 2: an OS-loading stage.
 
+## How it boots
+
+See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
+
+1. **SRM console** -- Alpha's SRM firmware initialises the machine and reads the bootstrap blocks from the boot device.
+2. **bootstrap loader** -- The bootblock loads aboot itself from the reserved area at the start of the disk.
+3. **filesystem access** -- aboot reads ext2, ISO 9660 or UFS directly to find the kernel.
+4. **kernel load** -- Loads the kernel, resolves arguments from /etc/aboot.conf, and starts it.
+
+### Passing data between stages
+
+aboot sits on SRM's callback interface: the firmware stays available for console and disk access, so aboot does not need its own drivers for the boot path. Its own configuration is `/etc/aboot.conf`, read from the target filesystem, where numbered entries map a short selection made at the SRM prompt onto a full kernel path and command line. This is the Alpha equivalent of the arrangement the paper describes for BIOS-era loaders -- firmware services remain callable across the boundary.
+
+### Handoff
+
+The kernel is entered with its command line and, where used, an initial ramdisk. It is a historical loader, included in the corpus as an example of a non-x86, non-ARM boot path built on a firmware callback interface rather than on tables.
+
 ## Attack surfaces seen in its CVEs
 
 | Surface | | CVEs |

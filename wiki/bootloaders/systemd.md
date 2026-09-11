@@ -18,6 +18,23 @@ Enumerates boot entries from the EFI System Partition and launches the chosen ke
 
 Type 2: a UEFI application that selects and starts an OS.
 
+## How it boots
+
+See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
+
+1. **systemd-boot** -- A UEFI boot manager loaded by the firmware. It reads loader entries from the ESP and presents a menu.
+2. **loader entries** -- Plain text files under /loader/entries name a kernel, an initrd and a command line, or a single unified kernel image.
+3. **stub (UKI)** -- systemd-stub is linked into a unified kernel image so the kernel, initrd, command line and signature ship as one signed PE binary.
+4. **kernel start** -- The chosen kernel is loaded and entered through the EFI stub.
+
+### Passing data between stages
+
+systemd-boot deliberately does nothing the firmware already does: it has no filesystem drivers of its own and reads only the FAT ESP the firmware can already see. State passes as UEFI variables in the vendor GUID `4a67b082-0a4c-41cf-b6c7-440b29bb8c4f` -- `LoaderEntryDefault`, `LoaderEntryOneShot` for a single alternate boot, `LoaderTimeInitUSec` for the timing the OS later reports -- so `bootctl` in userspace and the boot manager agree without a private configuration format. A unified kernel image goes further and removes the gap entirely: because the command line is inside the signed PE image, it cannot be edited between verification and use.
+
+### Handoff
+
+The kernel is started through the EFI stub with the boot parameters the entry specified, and `ExitBootServices()` is called by the stub. systemd-stub additionally passes the initrd and any addons through the LINUX_INITRD_MEDIA device path protocol, and measures what it loaded into the TPM so the sequence can be attested afterwards.
+
 ## Attack surfaces seen in its CVEs
 
 | Surface | | CVEs |

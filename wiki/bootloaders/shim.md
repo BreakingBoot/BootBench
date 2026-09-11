@@ -18,6 +18,24 @@ Verifies and loads the next stage (usually GRUB) against its own key database an
 
 Type 2: it runs on top of UEFI firmware and exists solely to get an OS loader trusted and running.
 
+## How it boots
+
+See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
+
+1. **loaded by firmware** -- The firmware's BDS phase loads shimx64.efi, which is signed by a key already in the platform's db.
+2. **certificate and policy setup** -- shim installs its own verification protocol and reads MokList, MokListX and the built-in vendor certificate.
+3. **MokManager** -- If enrolment is pending, MokManager.efi runs first so the user can approve a key or hash at the console.
+4. **second-stage load** -- Verifies and loads the real bootloader -- usually grubx64.efi -- from the same directory.
+5. **fallback** -- If no boot variable points anywhere valid, fallback.efi rebuilds the Boot#### entries from BOOTX64.CSV.
+
+### Passing data between stages
+
+shim exists to move the trust decision out of the firmware's key database and into one the distribution controls. It passes its verification service forward by installing the Shim Lock protocol into the UEFI handle database, so the loader it starts -- and the Linux kernel after that -- can ask shim to verify an image against the vendor certificate or the Machine Owner Key list instead of against the firmware's db. Those MOK lists live in UEFI variables, written only through MokManager at the console, which is what keeps a running OS from silently enrolling its own key.
+
+### Handoff
+
+shim loads the next binary with the ordinary UEFI image services and calls it with the same system table it was given, so from the second-stage loader's point of view nothing has changed except that a verification protocol is now available. Control continues to GRUB, which starts the kernel; the kernel's lockdown mode then consults shim's variables to decide whether Secure Boot is in force.
+
 ## Attack surfaces seen in its CVEs
 
 | Surface | | CVEs |

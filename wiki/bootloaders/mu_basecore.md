@@ -18,6 +18,23 @@ Supplies the core UEFI packages that Mu platform repositories build against; shi
 
 Type 1: a UEFI implementation. Note it is a library repository, not a standalone buildable platform.
 
+## How it boots
+
+See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
+
+1. **SEC** -- As in EDK II: reset-vector code, temporary memory, root of trust.
+2. **PEI** -- Permanent memory bring-up through PEIMs, results recorded as HOBs.
+3. **DXE** -- Driver dispatch, device enumeration, Boot and Runtime Services.
+4. **BDS** -- Boot device selection from NVRAM variables.
+
+### Passing data between stages
+
+Project Mu is a fork of EDK II, so the communication mechanisms are EDK II's: HOB list from PEI to DXE, the EFI System Table and protocol database from DXE onward, and NVRAM variables for persistent configuration. What Mu adds is policy and structure around them -- a policy service for cross-module settings, and package boundaries maintained so platforms consume Mu as a versioned dependency instead of forking the tree.
+
+### Handoff
+
+Identical to EDK II: BDS loads a boot application from the EFI system partition with a pointer to the system table, and `ExitBootServices()` marks the transition to the OS. In practice mu_basecore is not built alone -- a platform repository supplies the silicon and board packages that complete the image.
+
 ## Security mechanisms
 
 Detected in its build configuration and source:
