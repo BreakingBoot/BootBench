@@ -955,7 +955,11 @@ class TestWiki(unittest.TestCase):
         for name, prose in BOOTLOADERS.items():
             with self.subTest(bootloader=name):
                 self.assertTrue(prose.stages, "no stages")
-                self.assertTrue(all(s and w for s, w in prose.stages), "empty stage")
+                for stage in prose.stages:
+                    self.assertTrue(stage.name, "stage with no name")
+                    self.assertTrue(stage.what, "stage with no description")
+                    self.assertTrue(stage.carries, "stage passes nothing on")
+                self.assertTrue(prose.target, "no handoff target for the figure")
                 self.assertTrue(prose.communication, "no communication")
                 self.assertTrue(prose.handoff, "no handoff")
 
@@ -978,6 +982,36 @@ class TestWiki(unittest.TestCase):
         cited = {n: p.case_study for n, p in BOOTLOADERS.items() if p.case_study}
         self.assertEqual(cited, {"coreboot": "3.3", "edk2": "3.1", "seabios": "3.2",
                                  "grub": "3.5", "mcuboot": "3.6", "u-boot": "3.7"})
+
+    @unittest.skipUnless((ROOT / "wiki").is_dir(), "wiki not generated")
+    def test_every_bootloader_page_has_a_figure(self):
+        """Structural check. scripts/check-diagrams.sh renders them for real."""
+        import re
+        from wiki_content import BOOTLOADERS
+        for name, prose in BOOTLOADERS.items():
+            page = (self.WIKI / "bootloaders" / f"{name}.md").read_text()
+            blocks = re.findall(r"```mermaid\n(.*?)```", page, re.S)
+            with self.subTest(bootloader=name):
+                self.assertEqual(len(blocks), 1, "expected exactly one figure")
+                body = blocks[0]
+                declared = set(re.findall(r"^\s*(\w+)[\[(]", body, re.M))
+                used = set()
+                for a, b in re.findall(r"^\s*(\w+)\s*--.*?->\s*(\w+)\s*$", body, re.M):
+                    used |= {a, b}
+                self.assertEqual(used - declared, set(), "edge to an undeclared node")
+                # one arrow per stage, plus the entry arrow into the first
+                self.assertEqual(body.count("-->"), len(prose.stages) + 1)
+                self.assertIn(f'"{prose.target}"', body, "target node missing")
+
+    @unittest.skipUnless((ROOT / "wiki").is_dir(), "wiki not generated")
+    def test_figure_labels_cannot_break_mermaid(self):
+        """A quote or pipe inside a quoted label ends it early."""
+        import re
+        for f in sorted(self.WIKI.rglob("*.md")):
+            for block in re.findall(r"```mermaid\n(.*?)```", f.read_text(), re.S):
+                for label in re.findall(r'"([^"]*)"', block):
+                    with self.subTest(page=f.name, label=label[:40]):
+                        self.assertNotIn("|", label)
 
     def test_curated_prose_matches_the_corpus(self):
         import configparser

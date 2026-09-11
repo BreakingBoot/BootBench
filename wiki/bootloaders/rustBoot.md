@@ -22,6 +22,26 @@ Type 3: reset to application.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Hardware<br/>power-on / reset"]):::edge
+    S0["<b>reset</b>"]:::stage
+    S1["<b>partition parse</b>"]:::stage
+    S2["<b>verification</b>"]:::stage
+    S3["<b>swap or boot</b>"]:::stage
+    S4["<b>handoff</b>"]:::stage
+    TARGET(["Firmware or Linux kernel"]):::edge
+    ENTRY --> S0
+    S0 -->|"reset handler entered"| S1
+    S1 -->|"partition headers + trailers"| S2
+    S2 -->|"ECC signature verified"| S3
+    S3 -->|"valid image in the boot partition"| S4
+    S4 -->|"branch, or kernel + FDT"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **reset** -- The MCU or SoC resets into rustBoot, written entirely in Rust.
 2. **partition parse** -- Reads the boot and update partition headers and their trailers.
 3. **verification** -- Checks the image digest and verifies its ECC signature using RustCrypto.

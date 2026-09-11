@@ -22,6 +22,24 @@ Type 2: boots from an initialised platform into an OS kernel.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
+    S0["<b>stage1</b>"]:::stage
+    S1["<b>stage2</b>"]:::stage
+    S2["<b>common</b>"]:::stage
+    S3["<b>protocol handler</b>"]:::stage
+    TARGET(["Kernel<br/>(Limine · Multiboot · Linux)"]):::edge
+    ENTRY --> S0
+    S0 -->|"stage2 loaded from disk"| S1
+    S1 -->|"decompressed bootloader"| S2
+    S2 -->|"config parsed, kernel loaded"| S3
+    S3 -->|"filled request/response structs, paging on"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **stage1** -- On BIOS, a 512-byte MBR/VBR stage that loads stage2. On UEFI, the firmware loads BOOTX64.EFI directly and this stage does not exist.
 2. **stage2** -- Decompresses and enters the main bootloader image.
 3. **common** -- The bootloader proper: filesystem drivers, the config parser, the menu and the terminal.

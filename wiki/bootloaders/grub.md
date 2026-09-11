@@ -22,6 +22,26 @@ Type 2: it starts from an already-initialised machine, is driven entirely by on-
 
 The SoK paper gives a full case study of this bootloader in section 3.5. See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
+    S0["<b>boot.img</b>"]:::stage
+    S1["<b>core.img</b>"]:::stage
+    S2["<b>kernel.img</b>"]:::stage
+    S3["<b>module load</b>"]:::stage
+    S4["<b>grub.cfg</b>"]:::stage
+    TARGET(["Operating system<br/>(Linux · chainloaded loader)"]):::edge
+    ENTRY --> S0
+    S0 -->|"sector address of core.img"| S1
+    S1 -->|"decompressed into memory"| S2
+    S2 -->|"device + filesystem abstraction"| S3
+    S3 -->|"commands registered by modules"| S4
+    S4 -->|"kernel + initrd + command line"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **boot.img** -- 512 bytes in the MBR. Its only job is to read the first sector of core.img, whose location was written into it at install time.
 2. **core.img** -- The working bootloader: kernel.img plus the handful of modules needed to reach /boot -- a disk driver, a partition map parser, a filesystem driver.
 3. **kernel.img** -- GRUB's core services: memory management, the device and filesystem abstraction, environment variables, the rescue shell.

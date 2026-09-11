@@ -2,6 +2,31 @@
 
 BootBench classifies every bootloader by **where it starts** and **what it hands off to**. That is the whole test, and it is why two projects that look similar can land in different types.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true}}}%%
+flowchart TB
+    subgraph MONO["Monolithic boot"]
+        direction TB
+        B_OS["Operating system"]:::os
+        B_T3["<b>Type 3</b><br/>Monolithic bootloader<br/><i>U-Boot, MCUboot, barebox</i>"]:::t3
+        B_HW["Hardware"]:::hw
+        B_HW --> B_T3 --> B_OS
+    end
+    subgraph SPLIT["Staged boot"]
+        direction TB
+        A_OS["Operating system<br/>or hypervisor"]:::os
+        A_T2["<b>Type 2</b><br/>OS bootloader<br/><i>GRUB, shim, systemd-boot</i>"]:::t2
+        A_T1["<b>Type 1</b><br/>Firmware bootloader<br/><i>EDK II, coreboot, SeaBIOS</i>"]:::t1
+        A_HW["Hardware"]:::hw
+        A_HW --> A_T1 --> A_T2 --> A_OS
+    end
+    classDef hw fill:#ececec,stroke:#666;
+    classDef t1 fill:#eef3fb,stroke:#4a6fa5;
+    classDef t2 fill:#f3f0fb,stroke:#7a5aa5;
+    classDef t3 fill:#eefbf3,stroke:#4a8f6a;
+    classDef os fill:#fdf3e7,stroke:#b07a3a;
+```
+
 ## Firmware bootloader (`type1`)
 
 Boots from hardware and presents a hardware-agnostic interface to whatever runs next. It may load another bootloader or a standalone application, but it does not itself prepare an operating system.

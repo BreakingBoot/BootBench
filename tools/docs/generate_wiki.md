@@ -32,13 +32,17 @@ Each entry is a `Bootloader` dataclass:
 | `summary` | One line, used on index pages |
 | `boot_role` | What it does at boot |
 | `type_rationale` | Why it is Type 1, 2 or 3 |
-| `stages` | Ordered `(name, what happens)` pairs |
+| `stages` | Ordered `Stage` records: `name`, `what` it does, and what it `carries` to the next stage |
+| `target` | What the last stage hands control to |
 | `communication` | How state reaches the next stage |
 | `handoff` | What is passed at the final boundary, and to whom |
 | `case_study` | SoK section, for the six the paper details |
 
 `stages`, `communication` and `handoff` follow the structure the SoK uses for
-its case studies (§ 3). Prose may link to another bootloader by writing the target as
+its case studies (§ 3). Each stage's `carries` field labels the arrow leaving
+it in the generated figure, so it should name the artifact that crosses the
+boundary — a HOB list, a device tree, a filled-in struct — rather than repeating
+what the stage did. Prose may link to another bootloader by writing the target as
 `bootloader:<name>`; the generator rewrites it for whichever layout it is
 rendering, so prose never hardcodes nested or flat links.
 
@@ -47,13 +51,26 @@ no longer in the corpus, if any stage walkthrough is blank, if a `case_study` is
 claimed for a bootloader the paper does not detail, or if any internal link in
 either layout does not resolve.
 
+## Figures
+
+Every bootloader page carries a Mermaid flowchart of its boot: stages as nodes,
+what crosses each boundary as the arrow label, and an entry node naming where
+control comes from (hardware reset for Type 1 and 3, firmware for Type 2).
+`Boot-Stages` and `Bootloader-Types` carry overview figures.
+
+GitHub renders Mermaid itself, so a syntax error becomes a broken page rather
+than a build failure. [`scripts/check-diagrams.sh`](../../scripts/check-diagrams.sh)
+renders all 65 with the real renderer; the test suite additionally checks each
+figure structurally — one per page, no edge to an undeclared node, one arrow per
+stage, and no character that would end a quoted label early.
+
 ## Pages
 
 | Page | Contents |
 |---|---|
 | `Home` | Index and corpus summary |
 | `Bootloader-Types` | What Type 1/2/3 mean, the test used, and where classification is arguable |
-| `Boot-Stages` | The eight-stage model, the three ways state crosses a boundary, and the three handoff styles |
+| `Boot-Stages` | The eight-stage model with figures, the three ways state crosses a boundary, and the three handoff styles |
 | `Attack-Surfaces` | The six surfaces, what reaches each, and the observed distribution |
 | `Security-Mechanisms` | What the corpus defends itself with, and how to read a detection |
 | `Bootloaders` | Index of all 62, grouped by type |
@@ -68,4 +85,5 @@ in `wiki_content.py`, and regenerate. Two fields carry most of the weight:
 `type_rationale`, which should answer where the bootloader starts and what it
 hands off to, because that is what the taxonomy turns on; and `stages` with its
 `communication` and `handoff`, which is what a reader needs in order to follow
-what actually happens at each boundary.
+what actually happens at each boundary. Give every stage a `carries` and the
+bootloader a `target`, or the figure cannot be drawn and a test will say so.

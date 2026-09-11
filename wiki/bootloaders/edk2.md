@@ -22,6 +22,24 @@ Type 1: it presents the hardware-agnostic UEFI interface that later stages consu
 
 The SoK paper gives a full case study of this bootloader in section 3.1. See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Hardware<br/>power-on / reset"]):::edge
+    S0["<b>SEC (Security)</b>"]:::stage
+    S1["<b>PEI (Pre-EFI Initialisation)</b>"]:::stage
+    S2["<b>DXE (Driver Execution Environment)</b>"]:::stage
+    S3["<b>BDS (Boot Device Selection)</b>"]:::stage
+    TARGET(["Type 2 bootloader<br/>(GRUB · shim · bootmgfw.efi)"]):::edge
+    ENTRY --> S0
+    S0 -->|"temporary memory + PEI core"| S1
+    S1 -->|"HOB list (memory map, FVs)"| S2
+    S2 -->|"EFI System Table + protocol database"| S3
+    S3 -->|"image handle + system table pointer"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **SEC (Security)** -- Runs from the reset vector. Sets up temporary memory, establishes the root of trust by verifying what it loads, and finds the PEI core.
 2. **PEI (Pre-EFI Initialisation)** -- Completes CPU init and brings up permanent memory. Work is done by PEIMs, dispatched in dependency order, which record their results as HOBs.
 3. **DXE (Driver Execution Environment)** -- The core of the boot. Dispatches drivers, enumerates devices and binds drivers to them, publishes Boot Services and Runtime Services, and sets up SMM.

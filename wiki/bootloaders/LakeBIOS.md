@@ -22,10 +22,28 @@ Type 1: firmware-level bring-up from reset.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Hardware<br/>power-on / reset"]):::edge
+    S0["<b>reset entry</b>"]:::stage
+    S1["<b>chipset initialisation</b>"]:::stage
+    S2["<b>device setup</b>"]:::stage
+    S3["<b>frontend</b>"]:::stage
+    TARGET(["Type 2 bootloader"]):::edge
+    ENTRY --> S0
+    S0 -->|"C environment ready"| S1
+    S1 -->|"chipset up"| S2
+    S2 -->|"PCI devices configured"| S3
+    S3 -->|"legacy interrupt interface"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **reset entry** -- Executes from the reset vector in flash and sets up an environment for C code.
 2. **chipset initialisation** -- Brings up the emulated northbridge/southbridge -- QEMU I440FX-PIIX and Q35-ICH9 are the supported targets.
 3. **device setup** -- Enumerates and configures PCI devices, bridges, disk controllers and displays through a hardware abstraction layer.
-4. **frontend** -- A legacy BIOS frontend presents the interface the next stage expects; UEFI-style services are a work in progress.
+4. **frontend** -- A legacy BIOS frontend presents the interface the next stage expects; UEFI- style services are a work in progress.
 
 ### Passing data between stages
 

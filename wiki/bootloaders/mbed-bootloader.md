@@ -22,6 +22,26 @@ Type 3: reset to application.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Hardware<br/>power-on / reset"]):::edge
+    S0["<b>reset into bootloader</b>"]:::stage
+    S1["<b>update candidate check</b>"]:::stage
+    S2["<b>verification</b>"]:::stage
+    S3["<b>copy</b>"]:::stage
+    S4["<b>application start</b>"]:::stage
+    TARGET(["Application"]):::edge
+    ENTRY --> S0
+    S0 -->|"reset handler entered"| S1
+    S1 -->|"candidate image + metadata header"| S2
+    S2 -->|"hash and signature verified"| S3
+    S3 -->|"candidate copied into the active slot"| S4
+    S4 -->|"branch to the active application"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **reset into bootloader** -- Runs first from the start of flash.
 2. **update candidate check** -- Looks for a firmware candidate in internal or external storage, placed there by Pelion Device Management Client.
 3. **verification** -- Checks the candidate's hash and signature against the manifest the update client validated.

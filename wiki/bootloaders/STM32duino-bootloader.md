@@ -22,6 +22,26 @@ Type 3: reset to application.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Hardware<br/>power-on / reset"]):::edge
+    S0["<b>reset into bootloader</b>"]:::stage
+    S1["<b>button/flag check</b>"]:::stage
+    S2["<b>USB DFU enumeration</b>"]:::stage
+    S3["<b>download</b>"]:::stage
+    S4["<b>application jump</b>"]:::stage
+    TARGET(["Sketch<br/>(application)"]):::edge
+    ENTRY --> S0
+    S0 -->|"flash base entered"| S1
+    S1 -->|"BOOT jumper or backup-register magic"| S2
+    S2 -->|"DFU endpoint enumerated"| S3
+    S3 -->|"image at the agreed offset"| S4
+    S4 -->|"VTOR relocated, branch"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **reset into bootloader** -- Occupies the first 8 or 16 KB of STM32F1 flash.
 2. **button/flag check** -- Checks the BOOT jumper, a button, or a magic value left in a backup register by the application.
 3. **USB DFU enumeration** -- Enumerates as a USB DFU device using the bundled ST USB library.

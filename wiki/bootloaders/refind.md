@@ -22,6 +22,24 @@ Type 2: a UEFI boot manager whose job is choosing and launching an OS.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
+    S0["<b>loaded by firmware</b>"]:::stage
+    S1["<b>configuration and driver load</b>"]:::stage
+    S2["<b>scan</b>"]:::stage
+    S3["<b>launch</b>"]:::stage
+    TARGET(["Loader or kernel<br/>(EFI stub · bootmgfw.efi)"]):::edge
+    ENTRY --> S0
+    S0 -->|"image handle + system table"| S1
+    S1 -->|"filesystem drivers installed"| S2
+    S2 -->|"discovered loaders and kernels"| S3
+    S3 -->|"image handle + system table"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **loaded by firmware** -- refind_x64.efi is loaded from the ESP as a UEFI application, often in place of the distribution's own loader.
 2. **configuration and driver load** -- Reads refind.conf, then loads filesystem drivers from drivers_x64/ so it can read partitions the firmware cannot.
 3. **scan** -- Scans volumes for loaders, kernels and OS signatures, and builds a menu automatically from what it finds.

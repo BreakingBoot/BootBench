@@ -5,3 +5,6 @@ analysis-results/
 # Python
 __pycache__/
 *.pyc
+
+# transient render workspace for scripts/check-diagrams.sh
+.mermaid-check.*/

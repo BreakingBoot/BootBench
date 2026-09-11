@@ -28,7 +28,7 @@ from typing import Any
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from bootbench_keywords import ATTACK_SURFACES, TYPE_LABELS  # noqa: E402
-from wiki_content import BOOTLOADERS, Bootloader  # noqa: E402
+from wiki_content import BOOTLOADERS, Bootloader, Stage  # noqa: E402
 
 TYPES = ("type1", "type2", "type3")
 SURFACE_LABEL = {s[0]: s[2] for s in ATTACK_SURFACES}
@@ -195,13 +195,115 @@ def web_url(url: str) -> str:
     return url.removesuffix(".git")
 
 
+# The whole-boot figure: the eight stages, and which types cover which of them.
+STAGE_MODEL_FIGURE = """```mermaid
+%%{init: {"flowchart": {"htmlLabels": true}}}%%
+flowchart LR
+    HW(["Hardware<br/>power-on / reset"]):::edge --> S1
+    subgraph T1["Type 1 &mdash; firmware bootloader"]
+        direction LR
+        S1["<b>1</b><br/>Reset and<br/>early init"]:::fw --> S2["<b>2</b><br/>Permanent<br/>memory"]:::fw
+        S2 --> S3["<b>3</b><br/>Devices<br/>and drivers"]:::fw
+        S3 --> S4["<b>4</b><br/>Bootloader<br/>handoff"]:::fw
+    end
+    S4 --> S5
+    subgraph T2["Type 2 &mdash; OS bootloader"]
+        direction LR
+        S5["<b>5</b><br/>Boot<br/>libraries"]:::os --> S6["<b>6</b><br/>Boot<br/>configuration"]:::os
+        S6 --> S7["<b>7</b><br/>Modules and<br/>boot drivers"]:::os
+        S7 --> S8["<b>8</b><br/>OS<br/>handoff"]:::os
+    end
+    S8 --> OS(["Operating system<br/>or hypervisor"]):::edge
+    classDef fw fill:#eef3fb,stroke:#4a6fa5;
+    classDef os fill:#f3f0fb,stroke:#7a5aa5;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```"""
+
+MONOLITHIC_FIGURE = """```mermaid
+%%{init: {"flowchart": {"htmlLabels": true}}}%%
+flowchart LR
+    HW(["Hardware<br/>power-on / reset"]):::edge --> M1
+    subgraph T3["Type 3 &mdash; monolithic bootloader"]
+        direction LR
+        M1["<b>1</b><br/>Reset and<br/>early init"]:::mono --> M2["<b>2</b><br/>Permanent<br/>memory"]:::mono
+        M2 --> M3["<b>3</b><br/>Devices<br/>and drivers"]:::mono
+        M3 -. "no stage 4:<br/>nothing to hand off to" .-> M5["<b>5-7</b><br/>Libraries, config<br/>and drivers"]:::mono
+        M5 --> M8["<b>8</b><br/>OS<br/>handoff"]:::mono
+    end
+    M8 --> OS(["Operating system"]):::edge
+    classDef mono fill:#eefbf3,stroke:#4a8f6a;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```"""
+
+TYPES_FIGURE = """```mermaid
+%%{init: {"flowchart": {"htmlLabels": true}}}%%
+flowchart TB
+    subgraph MONO["Monolithic boot"]
+        direction TB
+        B_OS["Operating system"]:::os
+        B_T3["<b>Type 3</b><br/>Monolithic bootloader<br/><i>U-Boot, MCUboot, barebox</i>"]:::t3
+        B_HW["Hardware"]:::hw
+        B_HW --> B_T3 --> B_OS
+    end
+    subgraph SPLIT["Staged boot"]
+        direction TB
+        A_OS["Operating system<br/>or hypervisor"]:::os
+        A_T2["<b>Type 2</b><br/>OS bootloader<br/><i>GRUB, shim, systemd-boot</i>"]:::t2
+        A_T1["<b>Type 1</b><br/>Firmware bootloader<br/><i>EDK II, coreboot, SeaBIOS</i>"]:::t1
+        A_HW["Hardware"]:::hw
+        A_HW --> A_T1 --> A_T2 --> A_OS
+    end
+    classDef hw fill:#ececec,stroke:#666;
+    classDef t1 fill:#eef3fb,stroke:#4a6fa5;
+    classDef t2 fill:#f3f0fb,stroke:#7a5aa5;
+    classDef t3 fill:#eefbf3,stroke:#4a8f6a;
+    classDef os fill:#fdf3e7,stroke:#b07a3a;
+```"""
+
+
+MERMAID_THEME = """%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%"""
+
+
+def mm(text: str) -> str:
+    """Make text safe inside a quoted Mermaid label."""
+    return text.replace('"', "'").replace("|", "/")
+
+
+# Where a bootloader's control comes from, which is what its type turns on.
+ENTRY_LABEL = {
+    "type1": "Hardware<br/>power-on / reset",
+    "type2": "Firmware<br/>(a Type 1 bootloader)",
+    "type3": "Hardware<br/>power-on / reset",
+}
+
+
+def flow_diagram(prose: Bootloader, btype: str) -> list[str]:
+    """A figure of the boot flow: stages as nodes, what crosses as edge labels."""
+    if not prose.stages:
+        return []
+    entry = ENTRY_LABEL.get(btype, "Entry")
+    lines = ["```mermaid", MERMAID_THEME, "flowchart TD",
+             f'    ENTRY(["{mm(entry)}"]):::edge']
+    for i, stage in enumerate(prose.stages):
+        lines.append(f'    S{i}["<b>{mm(stage.name)}</b>"]:::stage')
+    lines.append(f'    TARGET(["{mm(prose.target)}"]):::edge')
+    lines.append("    ENTRY --> S0")
+    for i, stage in enumerate(prose.stages):
+        nxt = f"S{i + 1}" if i + 1 < len(prose.stages) else "TARGET"
+        lines.append(f'    S{i} -->|"{mm(stage.carries)}"| {nxt}')
+    lines += ["    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;",
+              "    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;",
+              "```"]
+    return lines
+
+
 def resolve_links(text: str) -> str:
     """Rewrite `bootloader:name` targets in curated prose for the current layout."""
     return re.sub(r"\]\(bootloader:([^)]+)\)",
                   lambda m: f"]({page_link('bootloaders', m.group(1))})", text)
 
 
-def boot_flow_section(prose: Bootloader) -> list[str]:
+def boot_flow_section(prose: Bootloader, btype: str) -> list[str]:
     """The stage walkthrough, following the SoK case-study structure."""
     if not prose.stages:
         return []
@@ -213,8 +315,9 @@ def boot_flow_section(prose: Bootloader) -> list[str]:
     else:
         lines += ["See [Boot-Stages](Boot-Stages) for the eight-stage model these "
                   "phases map onto.", ""]
-    for i, (stage, what) in enumerate(prose.stages, 1):
-        lines.append(f"{i}. **{stage}** -- {what}")
+    lines += flow_diagram(prose, btype) + [""]
+    for i, stage in enumerate(prose.stages, 1):
+        lines.append(f"{i}. **{stage.name}** -- {stage.what}")
     lines += ["", "### Passing data between stages", "",
               resolve_links(prose.communication), ""]
     lines += ["### Handoff", "", resolve_links(prose.handoff), ""]
@@ -261,7 +364,7 @@ def bootloader_page(name: str, data: dict[str, Any]) -> str:
              f"## Why it is {btype.replace('type', 'Type ')}", "", rationale, "",
              ]
 
-    lines += boot_flow_section(prose)
+    lines += boot_flow_section(prose, btype)
 
     if surfaces:
         lines += ["## Attack surfaces seen in its CVEs", "",
@@ -450,7 +553,7 @@ def write_indexes(out: Path, data: dict[str, Any]) -> None:
     lines = ["# Bootloader types", "",
              "BootBench classifies every bootloader by **where it starts** and **what it "
              "hands off to**. That is the whole test, and it is why two projects that look "
-             "similar can land in different types.", ""]
+             "similar can land in different types.", "", TYPES_FIGURE, ""]
     detail = {
         "type1": ("Boots from hardware and presents a hardware-agnostic interface to whatever "
                   "runs next. It may load another bootloader or a standalone application, but "
@@ -500,6 +603,10 @@ def write_indexes(out: Path, data: dict[str, Any]) -> None:
              "this model. Not every stage appears everywhere: Type 3 has no stage 4, because "
              "there is no second bootloader to hand off to, and Type 1 has no stages 5-8, "
              "because it stays OS-agnostic.", "",
+             STAGE_MODEL_FIGURE, "",
+             "A Type 3 bootloader spans the same work in one image, with no stage 4 "
+             "because there is no second bootloader to hand off to:", "",
+             MONOLITHIC_FIGURE, "",
              "| Stage | | Present in |", "|---|---|---|"]
     for num, what, present in BOOT_STAGES:
         lines.append(f"| {num} | {what} | {present} |")

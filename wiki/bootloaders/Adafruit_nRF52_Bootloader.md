@@ -22,6 +22,26 @@ Type 3: reset to application.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Hardware<br/>power-on / reset"]):::edge
+    S0["<b>reset into bootloader</b>"]:::stage
+    S1["<b>DFU trigger check</b>"]:::stage
+    S2["<b>interface presentation</b>"]:::stage
+    S3["<b>image write</b>"]:::stage
+    S4["<b>application start</b>"]:::stage
+    TARGET(["Application"]):::edge
+    ENTRY --> S0
+    S0 -->|"MBR forwards to the bootloader"| S1
+    S1 -->|"GPREGRET / double-tap flag"| S2
+    S2 -->|"UF2 mass storage, CDC or BLE"| S3
+    S3 -->|"image in the application region"| S4
+    S4 -->|"MBR sets the vector table, branch"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **reset into bootloader** -- The nRF52 starts in the bootloader region; the MBR at the bottom of flash handles vector forwarding.
 2. **DFU trigger check** -- Enters update mode on a double-tap reset, a GPIO condition, or a request left by the application in a retained register.
 3. **interface presentation** -- Presents itself as a USB mass-storage device for UF2 drag-and-drop, a CDC serial port for nrfutil DFU, or over BLE.

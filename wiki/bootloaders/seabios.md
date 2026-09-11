@@ -22,6 +22,26 @@ Type 1: it exposes the legacy firmware interface rather than preparing an OS, an
 
 The SoK paper gives a full case study of this bootloader in section 3.2. See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Hardware<br/>power-on / reset"]):::edge
+    S0["<b>preinit</b>"]:::stage
+    S1["<b>init</b>"]:::stage
+    S2["<b>setup</b>"]:::stage
+    S3["<b>prepboot</b>"]:::stage
+    S4["<b>boot</b>"]:::stage
+    TARGET(["Type 2 bootloader<br/>(via MBR / VBR)"]):::edge
+    ENTRY --> S0
+    S0 -->|"RAM usable"| S1
+    S1 -->|"IVT + BIOS Data Area at 0x40"| S2
+    S2 -->|"option ROMs hooked into IVT"| S3
+    S3 -->|"bootable device list"| S4
+    S4 -->|"INT 0x19: sector at 0x7C00, DL = drive"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **preinit** -- Runs in 16-bit real mode. Basic CPU and chipset setup, enough to get RAM usable.
 2. **init** -- Builds the firmware's data structures -- interrupt vector table, BIOS Data Area, PCI configuration, ACPI and SMBIOS tables.
 3. **setup** -- Loads option ROMs from PCI devices and runs them, so peripherals that need their own driver code can install it.

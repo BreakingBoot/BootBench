@@ -22,6 +22,32 @@ Type 3: SPL plus U-Boot together take the board from reset to a running OS with 
 
 The SoK paper gives a full case study of this bootloader in section 3.7. See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Hardware<br/>power-on / reset"]):::edge
+    S0["<b>SoC ROM code</b>"]:::stage
+    S1["<b>TPL</b>"]:::stage
+    S2["<b>VPL</b>"]:::stage
+    S3["<b>SPL</b>"]:::stage
+    S4["<b>U-Boot proper</b>"]:::stage
+    S5["<b>bootdev</b>"]:::stage
+    S6["<b>bootmeth</b>"]:::stage
+    S7["<b>bootflow</b>"]:::stage
+    TARGET(["Operating system<br/>(Linux · EFI application)"]):::edge
+    ENTRY --> S0
+    S0 -->|"next image from a fixed flash offset"| S1
+    S1 -->|"early hardware up"| S2
+    S2 -->|"chosen SPL binary"| S3
+    S3 -->|"DRAM up, spl_image_info + bloblist"| S4
+    S4 -->|"drivers, env, shell ready"| S5
+    S5 -->|"candidate boot devices"| S6
+    S6 -->|"located boot configuration"| S7
+    S7 -->|"kernel + initrd + fixed-up FDT"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **SoC ROM code** -- OEM code in mask ROM runs from the reset vector and does the minimum needed to load the next image, often from a fixed offset on eMMC or SPI flash.
 2. **TPL** -- Optional tertiary program loader: very early hardware setup, used where the ROM can only load a very small image. Loads SPL or VPL.
 3. **VPL** -- Optional verification program loader, which selects among multiple verified SPL binaries.

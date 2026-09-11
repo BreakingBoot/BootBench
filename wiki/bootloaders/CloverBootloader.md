@@ -22,6 +22,26 @@ Type 2: a UEFI application that launches an OS.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
+    S0["<b>CloverEFI or native UEFI</b>"]:::stage
+    S1["<b>config.plist parse</b>"]:::stage
+    S2["<b>table patching</b>"]:::stage
+    S3["<b>GUI</b>"]:::stage
+    S4["<b>start</b>"]:::stage
+    TARGET(["macOS<br/>(via boot.efi)"]):::edge
+    ENTRY --> S0
+    S0 -->|"UEFI environment (real or emulated)"| S1
+    S1 -->|"config.plist settings"| S2
+    S2 -->|"patched DSDT/SSDT + SMBIOS"| S3
+    S3 -->|"user selection"| S4
+    S4 -->|"prepared UEFI environment"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **CloverEFI or native UEFI** -- On legacy BIOS machines CloverEFI provides a UEFI emulation layer first; on UEFI machines CLOVERX64.efi is loaded directly.
 2. **config.plist parse** -- Configuration for patches, SMBIOS, devices and the GUI is read from a property list.
 3. **table patching** -- ACPI is patched (DSDT fixes, SSDT injection) and SMBIOS is rewritten.

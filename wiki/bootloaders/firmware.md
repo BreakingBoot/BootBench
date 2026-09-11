@@ -22,6 +22,26 @@ Type 3: device firmware that owns the MCU from reset.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Hardware<br/>power-on / reset"]):::edge
+    S0["<b>SoC ROM / second-stage loader</b>"]:::stage
+    S1["<b>partition selection</b>"]:::stage
+    S2["<b>verification</b>"]:::stage
+    S3["<b>application start</b>"]:::stage
+    S4["<b>OTA update</b>"]:::stage
+    TARGET(["Meshtastic application"]):::edge
+    ENTRY --> S0
+    S0 -->|"second-stage bootloader from flash"| S1
+    S1 -->|"partition table + otadata slot pointer"| S2
+    S2 -->|"signature checked, flash decrypted"| S3
+    S3 -->|"radio, display and mesh stack up"| S4
+    S4 -->|"new image staged in the inactive slot"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **SoC ROM / second-stage loader** -- On ESP32 the mask ROM loads the second-stage bootloader from flash; on nRF52 an existing bootloader (Adafruit's or Nordic's) occupies that role.
 2. **partition selection** -- The bootloader reads the partition table and the OTA data partition to decide which application slot to run.
 3. **verification** -- Where secure boot and flash encryption are enabled, the application image's signature is checked and its flash is decrypted.

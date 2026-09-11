@@ -22,6 +22,26 @@ Type 2: it sits between firmware and the OS, measuring and launching it.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
+    S0["<b>loaded by GRUB</b>"]:::stage
+    S1["<b>pre-launch checks</b>"]:::stage
+    S2["<b>GETSEC[SENTER]</b>"]:::stage
+    S3["<b>policy evaluation</b>"]:::stage
+    S4["<b>kernel start</b>"]:::stage
+    TARGET(["Kernel or VMM<br/>(measured)"]):::edge
+    ENTRY --> S0
+    S0 -->|"Multiboot modules + tboot"| S1
+    S1 -->|"TXT capability confirmed"| S2
+    S2 -->|"dynamic PCRs 17-22 extended"| S3
+    S3 -->|"policy satisfied"| S4
+    S4 -->|"txt_info + TXT heap, DMA protected"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **loaded by GRUB** -- tboot is loaded as a Multiboot module ahead of the kernel or hypervisor it will measure.
 2. **pre-launch checks** -- Verifies TXT capability, the chipset, and that the SINIT ACM matches the platform.
 3. **GETSEC[SENTER]** -- Executes the measured launch: the CPU and chipset reset the dynamic PCRs, the ACM is verified by microcode, and it measures the MLE.

@@ -22,6 +22,24 @@ Type 2: OS selection and launch.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
+    S0["<b>platform stage</b>"]:::stage
+    S1["<b>menu configuration</b>"]:::stage
+    S2["<b>kernel selection</b>"]:::stage
+    S3["<b>protocol handoff</b>"]:::stage
+    TARGET(["Kernel<br/>(Multiboot2 or native)"]):::edge
+    ENTRY --> S0
+    S0 -->|"Easyboot image loaded"| S1
+    S1 -->|"parsed menu entries"| S2
+    S2 -->|"kernel image in memory"| S3
+    S3 -->|"Multiboot2 information tag list"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **platform stage** -- A BIOS, UEFI, coreboot or Raspberry Pi first stage loads the Easyboot image.
 2. **menu configuration** -- Reads a simple plain-text menu file from the boot partition.
 3. **kernel selection** -- Presents entries and loads the chosen kernel, in ELF, PE or a.out form.

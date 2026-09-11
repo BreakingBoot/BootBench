@@ -22,6 +22,26 @@ Type 3: MCU-class reset-to-application boot.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Hardware<br/>power-on / reset"]):::edge
+    S0["<b>stage1</b>"]:::stage
+    S1["<b>wolfBoot start</b>"]:::stage
+    S2["<b>image verification</b>"]:::stage
+    S3["<b>update or rollback</b>"]:::stage
+    S4["<b>application jump</b>"]:::stage
+    TARGET(["Application<br/>(firmware or Linux)"]):::edge
+    ENTRY --> S0
+    S0 -->|"wolfBoot in RAM"| S1
+    S1 -->|"flash + clock access"| S2
+    S2 -->|"signature verified by wolfCrypt"| S3
+    S3 -->|"confirmed image in the boot partition"| S4
+    S4 -->|"vector table set, branch (PCRs extended)"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **stage1** -- On platforms that need it, a minimal first stage loads wolfBoot itself from flash into RAM.
 2. **wolfBoot start** -- Minimal HAL initialisation -- clock, flash access -- and nothing more.
 3. **image verification** -- Parses the image header, checks the SHA digest and verifies the signature with wolfCrypt, against a public key compiled into the bootloader.

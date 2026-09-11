@@ -22,6 +22,24 @@ Type 1: the canonical hardware-agnostic firmware interface.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Hardware<br/>power-on / reset"]):::edge
+    S0["<b>reset and Forth bring-up</b>"]:::stage
+    S1["<b>device tree construction</b>"]:::stage
+    S2["<b>user interface</b>"]:::stage
+    S3["<b>boot</b>"]:::stage
+    TARGET(["Client program<br/>(OS loader)"]):::edge
+    ENTRY --> S0
+    S0 -->|"Forth kernel running"| S1
+    S1 -->|"device tree + FCode drivers"| S2
+    S2 -->|"NVRAM boot variables"| S3
+    S3 -->|"client interface entry point"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **reset and Forth bring-up** -- Processor-specific reset code initialises memory and starts the Forth kernel.
 2. **device tree construction** -- Probing creates the device tree; FCode drivers in expansion ROMs are interpreted and add their own nodes.
 3. **user interface** -- The `ok` prompt is available, allowing the tree to be inspected and boot variables changed.

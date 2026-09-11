@@ -22,6 +22,18 @@ Type 1: the platform half of a UEFI firmware image.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Hardware<br/>power-on / reset"]):::edge
+    S0["<b>(no independent boot flow)</b>"]:::stage
+    TARGET(["Firmware image<br/>(built with edk2)"]):::edge
+    ENTRY --> S0
+    S0 -->|"PEIMs, DXE drivers and PCDs, linked at build time"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **(no independent boot flow)** -- Supplies the platform, silicon and driver packages that a UEFI firmware image is built from; the SEC/PEI/DXE/BDS flow is EDK II's.
 
 ### Passing data between stages

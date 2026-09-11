@@ -22,6 +22,26 @@ Type 2: implements a protocol for handing off to an OS kernel.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
+    S0["<b>platform loader</b>"]:::stage
+    S1["<b>environment parse</b>"]:::stage
+    S2["<b>initrd load</b>"]:::stage
+    S3["<b>mapping</b>"]:::stage
+    S4["<b>kernel entry</b>"]:::stage
+    TARGET(["Kernel<br/>(ELF or PE)"]):::edge
+    ENTRY --> S0
+    S0 -->|"BOOTBOOT image loaded"| S1
+    S1 -->|"environment string from CONFIG"| S2
+    S2 -->|"initrd + kernel located"| S3
+    S3 -->|"long mode, higher-half map, framebuffer"| S4
+    S4 -->|"BOOTBOOT struct at a fixed address"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **platform loader** -- A per-platform first stage -- BIOS, UEFI application, coreboot payload or Raspberry Pi start.elf -- loads the BOOTBOOT image.
 2. **environment parse** -- Reads BOOTBOOT/CONFIG, a plain text key-value file on the boot partition.
 3. **initrd load** -- Locates the initial ramdisk and finds the kernel inside it (ELF or PE, at a fixed path).

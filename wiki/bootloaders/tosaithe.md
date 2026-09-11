@@ -22,6 +22,24 @@ Type 2: a UEFI application that loads a kernel.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
+    S0["<b>loaded by firmware</b>"]:::stage
+    S1["<b>configuration</b>"]:::stage
+    S2["<b>image load</b>"]:::stage
+    S3["<b>handoff</b>"]:::stage
+    TARGET(["Kernel<br/>(TSBP · Linux · chainload)"]):::edge
+    ENTRY --> S0
+    S0 -->|"image handle + system table"| S1
+    S1 -->|"menu entries"| S2
+    S2 -->|"kernel in memory"| S3
+    S3 -->|"TSBP struct, paging on"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **loaded by firmware** -- A UEFI application started from the ESP.
 2. **configuration** -- Reads its menu configuration and presents entries.
 3. **image load** -- Loads a Linux kernel, chainloads another EFI program, or loads a TSBP kernel.

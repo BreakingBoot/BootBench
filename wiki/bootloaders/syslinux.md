@@ -22,6 +22,26 @@ Type 2: configuration-driven OS loading from an initialised machine.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
+    S0["<b>first sector</b>"]:::stage
+    S1["<b>core (ldlinux.sys)</b>"]:::stage
+    S2["<b>configuration</b>"]:::stage
+    S3["<b>com32 modules</b>"]:::stage
+    S4["<b>boot</b>"]:::stage
+    TARGET(["Kernel or chainloaded loader"]):::edge
+    ENTRY --> S0
+    S0 -->|"location of ldlinux.sys"| S1
+    S1 -->|"file access + module loader"| S2
+    S2 -->|"LABEL entries and APPEND lines"| S3
+    S3 -->|"menu selection via COM32 syscalls"| S4
+    S4 -->|"kernel + initrd + cmdline"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **first sector** -- SYSLINUX, EXTLINUX and ISOLINUX each install a small loader in the volume boot record or boot image; PXELINUX is fetched over TFTP instead.
 2. **core (ldlinux.sys)** -- The core module is loaded next and provides file access, memory management and the module loader.
 3. **configuration** -- syslinux.cfg (or a PXE-specific path derived from the MAC or IP) is read and its LABEL entries become menu items.

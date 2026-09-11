@@ -22,6 +22,24 @@ Type 2: the OS-facing half of a LinuxBoot image; the firmware beneath it is Type
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
+    S0["<b>initramfs start</b>"]:::stage
+    S1["<b>init and shell</b>"]:::stage
+    S2["<b>boot policy</b>"]:::stage
+    S3["<b>kexec</b>"]:::stage
+    TARGET(["Target OS kernel"]):::edge
+    ENTRY --> S0
+    S0 -->|"PID 1 in initramfs"| S1
+    S1 -->|"/proc, /sys, /dev ready"| S2
+    S2 -->|"discovered boot targets"| S3
+    S3 -->|"kexec: kernel + initrd + cmdline"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **initramfs start** -- The Linux kernel starts u-root's Go userland as PID 1 from an initramfs.
 2. **init and shell** -- Sets up /proc, /sys and /dev, then runs the u-root shell or a specified uinit.
 3. **boot policy** -- Commands such as `boot`, `fbnetboot` or `localboot` find boot targets on disk or over the network.

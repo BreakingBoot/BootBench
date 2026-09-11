@@ -22,6 +22,30 @@ Type 1: it starts from hardware with nothing initialised and deliberately does n
 
 The SoK paper gives a full case study of this bootloader in section 3.3. See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Hardware<br/>power-on / reset"]):::edge
+    S0["<b>bootblock</b>"]:::stage
+    S1["<b>verstage</b>"]:::stage
+    S2["<b>romstage</b>"]:::stage
+    S3["<b>postcar</b>"]:::stage
+    S4["<b>ramstage</b>"]:::stage
+    S5["<b>SMM / BL31</b>"]:::stage
+    S6["<b>payload</b>"]:::stage
+    TARGET(["Payload<br/>(SeaBIOS · GRUB · Depthcharge · UEFI)"]):::edge
+    ENTRY --> S0
+    S0 -->|"cache-as-RAM + next stage"| S1
+    S1 -->|"verified flash region"| S2
+    S2 -->|"DRAM up, CBMEM reserved"| S3
+    S3 -->|"ramstage in real DRAM"| S4
+    S4 -->|"coreboot table + device tree"| S5
+    S5 -->|"SMRAM locked, EL3 resident"| S6
+    S6 -->|"coreboot table pointer"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **bootblock** -- First code after the reset vector. Sets up temporary memory -- cache-as-RAM on x86 -- and loads the next stage from flash.
 2. **verstage** -- Optional. Verifies the updatable portion of flash before it is used, establishing the root of trust.
 3. **romstage** -- Initialises the memory controller and brings up DRAM, then early chipset setup.

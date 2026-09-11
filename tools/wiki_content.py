@@ -16,7 +16,21 @@ bootloaders the paper covers in full.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class Stage:
+    """One phase of a boot, and what it hands to the phase after it.
+
+    `carries` labels the arrow leaving this stage in the generated figure, so
+    it should name the artifact that crosses the boundary -- a HOB list, a
+    device tree, a filled-in struct -- not repeat what the stage did.
+    """
+
+    name: str
+    what: str
+    carries: str
 
 
 @dataclass(frozen=True)
@@ -27,7 +41,8 @@ class Bootloader:
     boot_role      what it does at boot, in a sentence or two
     type_rationale why it is Type 1, 2 or 3 -- answer where it starts and what
                    it hands off to
-    stages         ordered (name, what happens) pairs
+    stages         ordered Stage records, each naming what it passes on
+    target         what the last stage hands control to, for the figure
     communication  how state reaches the next stage, and how it is configured
     handoff        what is passed at the final boundary, and to whom
     case_study     SoK section number, for the bootloaders the paper details
@@ -36,14 +51,14 @@ class Bootloader:
     summary: str
     boot_role: str
     type_rationale: str
-    stages: tuple[tuple[str, str], ...] = ()
+    stages: tuple[Stage, ...] = ()
+    target: str = ""
     communication: str = ""
     handoff: str = ""
     case_study: str = ""
 
 
 BOOTLOADERS: dict[str, Bootloader] = {
-
     # ---- Type 1: firmware bootloaders -------------------------------------
     'coreboot': Bootloader(
         summary='Open-source replacement for proprietary x86 firmware.',
@@ -54,27 +69,36 @@ BOOTLOADERS: dict[str, Bootloader] = {
                        'deliberately does not load an OS itself -- the payload split is the '
                        'defining Type 1 handoff.',
         case_study='3.3',
+        target='Payload<br/>(SeaBIOS · GRUB · Depthcharge · UEFI)',
         stages=(
-            ('bootblock',
-             'First code after the reset vector. Sets up temporary memory -- cache-as-RAM on '
-             'x86 -- and loads the next stage from flash.'),
-            ('verstage',
-             'Optional. Verifies the updatable portion of flash before it is used, establishing '
-             'the root of trust.'),
-            ('romstage',
-             'Initialises the memory controller and brings up DRAM, then early chipset setup.'),
-            ('postcar',
-             'x86 only. Tears down cache-as-RAM now that real DRAM exists, and loads ramstage '
-             'into it.'),
-            ('ramstage',
-             'The bulk of initialisation: multiprocessor bring-up, PCI enumeration, device '
-             'drivers, and construction of the coreboot table.'),
-            ('SMM / BL31',
-             'Installs the trusted-firmware component -- System Management Mode on x86, or ARM '
-             'Trusted Firmware BL31 on ARM -- into memory the OS cannot reach.'),
-            ('payload',
-             'Loads and jumps to the payload, which may be a Type 1 bootloader (a UEFI stub) or '
-             'a Type 2 one (SeaBIOS, GRUB, Depthcharge).'),
+            Stage('bootblock',
+                  'First code after the reset vector. Sets up temporary memory -- cache-as-RAM '
+                  'on x86 -- and loads the next stage from flash.',
+                  'cache-as-RAM + next stage'),
+            Stage('verstage',
+                  'Optional. Verifies the updatable portion of flash before it is used, '
+                  'establishing the root of trust.',
+                  'verified flash region'),
+            Stage('romstage',
+                  'Initialises the memory controller and brings up DRAM, then early chipset '
+                  'setup.',
+                  'DRAM up, CBMEM reserved'),
+            Stage('postcar',
+                  'x86 only. Tears down cache-as-RAM now that real DRAM exists, and loads '
+                  'ramstage into it.',
+                  'ramstage in real DRAM'),
+            Stage('ramstage',
+                  'The bulk of initialisation: multiprocessor bring-up, PCI enumeration, device '
+                  'drivers, and construction of the coreboot table.',
+                  'coreboot table + device tree'),
+            Stage('SMM / BL31',
+                  'Installs the trusted-firmware component -- System Management Mode on x86, or '
+                  'ARM Trusted Firmware BL31 on ARM -- into memory the OS cannot reach.',
+                  'SMRAM locked, EL3 resident'),
+            Stage('payload',
+                  'Loads and jumps to the payload, which may be a Type 1 bootloader (a UEFI '
+                  'stub) or a Type 2 one (SeaBIOS, GRUB, Depthcharge).',
+                  'coreboot table pointer'),
         ),
         communication='coreboot exposes no interface of its own. State reaches later stages '
                       'through CBMEM, a region carved out of the top of DRAM in romstage and '
@@ -101,19 +125,25 @@ BOOTLOADERS: dict[str, Bootloader] = {
                        'stages consume, and remains OS-agnostic -- it loads a Type 2 loader, '
                        'not a kernel.',
         case_study='3.1',
+        target='Type 2 bootloader<br/>(GRUB · shim · bootmgfw.efi)',
         stages=(
-            ('SEC (Security)',
-             'Runs from the reset vector. Sets up temporary memory, establishes the root of '
-             'trust by verifying what it loads, and finds the PEI core.'),
-            ('PEI (Pre-EFI Initialisation)',
-             'Completes CPU init and brings up permanent memory. Work is done by PEIMs, '
-             'dispatched in dependency order, which record their results as HOBs.'),
-            ('DXE (Driver Execution Environment)',
-             'The core of the boot. Dispatches drivers, enumerates devices and binds drivers to '
-             'them, publishes Boot Services and Runtime Services, and sets up SMM.'),
-            ('BDS (Boot Device Selection)',
-             'Walks the BootOrder NVRAM variable, loads the selected boot application, and '
-             'gives the user a way to interact with the firmware.'),
+            Stage('SEC (Security)',
+                  'Runs from the reset vector. Sets up temporary memory, establishes the root '
+                  'of trust by verifying what it loads, and finds the PEI core.',
+                  'temporary memory + PEI core'),
+            Stage('PEI (Pre-EFI Initialisation)',
+                  'Completes CPU init and brings up permanent memory. Work is done by PEIMs, '
+                  'dispatched in dependency order, which record their results as HOBs.',
+                  'HOB list (memory map, FVs)'),
+            Stage('DXE (Driver Execution Environment)',
+                  'The core of the boot. Dispatches drivers, enumerates devices and binds '
+                  'drivers to them, publishes Boot Services and Runtime Services, and sets up '
+                  'SMM.',
+                  'EFI System Table + protocol database'),
+            Stage('BDS (Boot Device Selection)',
+                  'Walks the BootOrder NVRAM variable, loads the selected boot application, and '
+                  'gives the user a way to interact with the firmware.',
+                  'image handle + system table pointer'),
         ),
         communication='Phases communicate through structures rather than calls. PEI passes its '
                       'findings to DXE as a HOB list -- memory ranges, firmware volumes, '
@@ -140,20 +170,28 @@ BOOTLOADERS: dict[str, Bootloader] = {
         type_rationale='Type 1: it exposes the legacy firmware interface rather than preparing '
                        'an OS, and chainloads a Type 2 loader from the MBR.',
         case_study='3.2',
+        target='Type 2 bootloader<br/>(via MBR / VBR)',
         stages=(
-            ('preinit',
-             'Runs in 16-bit real mode. Basic CPU and chipset setup, enough to get RAM usable.'),
-            ('init',
-             "Builds the firmware's data structures -- interrupt vector table, BIOS Data Area, "
-             'PCI configuration, ACPI and SMBIOS tables.'),
-            ('setup',
-             'Loads option ROMs from PCI devices and runs them, so peripherals that need their '
-             'own driver code can install it.'),
-            ('prepboot',
-             'Finishes hardware initialisation and enumerates bootable devices: floppy, hard '
-             'disk, CD-ROM, USB, network.'),
-            ('boot',
-             'Selects a boot device and invokes INT 0x19 to load and enter its boot sector.'),
+            Stage('preinit',
+                  'Runs in 16-bit real mode. Basic CPU and chipset setup, enough to get RAM '
+                  'usable.',
+                  'RAM usable'),
+            Stage('init',
+                  "Builds the firmware's data structures -- interrupt vector table, BIOS Data "
+                  'Area, PCI configuration, ACPI and SMBIOS tables.',
+                  'IVT + BIOS Data Area at 0x40'),
+            Stage('setup',
+                  'Loads option ROMs from PCI devices and runs them, so peripherals that need '
+                  'their own driver code can install it.',
+                  'option ROMs hooked into IVT'),
+            Stage('prepboot',
+                  'Finishes hardware initialisation and enumerates bootable devices: floppy, '
+                  'hard disk, CD-ROM, USB, network.',
+                  'bootable device list'),
+            Stage('boot',
+                  'Selects a boot device and invokes INT 0x19 to load and enter its boot '
+                  'sector.',
+                  'INT 0x19: sector at 0x7C00, DL = drive'),
         ),
         communication='SeaBIOS communicates through fixed memory locations and software '
                       'interrupts rather than tables passed by pointer. The interrupt vector '
@@ -176,19 +214,24 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Stage1A/1B/2 silicon init via FSP, then launches an OS loader or payload.',
         type_rationale='Type 1: FSP-based silicon init with a payload handoff, the same '
                        'structure as coreboot.',
+        target='Payload<br/>(OsLoader · UEFI payload)',
         stages=(
-            ('Stage1A',
-             'Runs from reset out of flash. Calls the Intel FSP `TempRamInit` entry to get '
-             'cache-as-RAM, then loads Stage1B.'),
-            ('Stage1B',
-             'Calls FSP `FspMemoryInit` to bring up DRAM, verifies and loads Stage2, and '
-             'migrates state out of temporary memory.'),
-            ('Stage2',
-             'Calls FSP `FspSiliconInit`, enumerates PCI, builds ACPI and SMBIOS tables, and '
-             'prepares the payload environment.'),
-            ('Payload',
-             'Loads a payload -- OsLoader, a UEFI payload, or a custom one -- from the boot '
-             'partition.'),
+            Stage('Stage1A',
+                  'Runs from reset out of flash. Calls the Intel FSP `TempRamInit` entry to get '
+                  'cache-as-RAM, then loads Stage1B.',
+                  'cache-as-RAM via FSP TempRamInit'),
+            Stage('Stage1B',
+                  'Calls FSP `FspMemoryInit` to bring up DRAM, verifies and loads Stage2, and '
+                  'migrates state out of temporary memory.',
+                  'DRAM up, HOBs migrated'),
+            Stage('Stage2',
+                  'Calls FSP `FspSiliconInit`, enumerates PCI, builds ACPI and SMBIOS tables, '
+                  'and prepares the payload environment.',
+                  'ACPI + SMBIOS tables, CFGDATA'),
+            Stage('Payload',
+                  'Loads a payload -- OsLoader, a UEFI payload, or a custom one -- from the '
+                  'boot partition.',
+                  'HOB list pointer'),
         ),
         communication="Slim Bootloader inherits EDK II's HOB mechanism: FSP returns its results "
                       'as HOBs, and each stage adds its own before passing the list on. Board '
@@ -208,18 +251,24 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Provides a Forth interpreter and device tree, then boots a client program.',
         type_rationale='Type 1: it is the firmware interface itself, exposing device '
                        'abstractions rather than preparing a specific OS.',
+        target='Client program<br/>(OS loader)',
         stages=(
-            ('entry and kernel bring-up',
-             'Architecture-specific entry code sets up a stack and starts the Forth virtual '
-             'machine.'),
-            ('dictionary load',
-             'The compiled Forth dictionary is unpacked, giving the interpreter its vocabulary.'),
-            ('device probing',
-             'Drivers probe buses and instantiate packages, building the IEEE 1275 device tree '
-             'under /packages.'),
-            ('client interface',
-             'The Open Firmware client interface is published and a boot device is selected, '
-             'then the client program is loaded and entered.'),
+            Stage('entry and kernel bring-up',
+                  'Architecture-specific entry code sets up a stack and starts the Forth '
+                  'virtual machine.',
+                  'Forth stack + VM running'),
+            Stage('dictionary load',
+                  'The compiled Forth dictionary is unpacked, giving the interpreter its '
+                  'vocabulary.',
+                  'interpreter vocabulary'),
+            Stage('device probing',
+                  'Drivers probe buses and instantiate packages, building the IEEE 1275 device '
+                  'tree under /packages.',
+                  'IEEE 1275 device tree'),
+            Stage('client interface',
+                  'The Open Firmware client interface is published and a boot device is '
+                  'selected, then the client program is loaded and entered.',
+                  'client interface entry point'),
         ),
         communication='Everything is the device tree. Each node carries properties -- `reg`, '
                       '`compatible`, `device_type` -- and methods callable through the '
@@ -240,18 +289,24 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Forth-based firmware providing device discovery, a device tree and a client '
                   'interface for the OS loader.',
         type_rationale='Type 1: the canonical hardware-agnostic firmware interface.',
+        target='Client program<br/>(OS loader)',
         stages=(
-            ('reset and Forth bring-up',
-             'Processor-specific reset code initialises memory and starts the Forth kernel.'),
-            ('device tree construction',
-             'Probing creates the device tree; FCode drivers in expansion ROMs are interpreted '
-             'and add their own nodes.'),
-            ('user interface',
-             'The `ok` prompt is available, allowing the tree to be inspected and boot '
-             'variables changed.'),
-            ('boot',
-             '`boot` loads the client program named by `boot-device` and transfers to it '
-             'through the client interface.'),
+            Stage('reset and Forth bring-up',
+                  'Processor-specific reset code initialises memory and starts the Forth '
+                  'kernel.',
+                  'Forth kernel running'),
+            Stage('device tree construction',
+                  'Probing creates the device tree; FCode drivers in expansion ROMs are '
+                  'interpreted and add their own nodes.',
+                  'device tree + FCode drivers'),
+            Stage('user interface',
+                  'The `ok` prompt is available, allowing the tree to be inspected and boot '
+                  'variables changed.',
+                  'NVRAM boot variables'),
+            Stage('boot',
+                  '`boot` loads the client program named by `boot-device` and transfers to it '
+                  'through the client interface.',
+                  'client interface entry point'),
         ),
         communication='This is the implementation the IEEE 1275 standard was written from, and '
                       "the mechanisms are the standard's: a device tree of nodes with "
@@ -272,22 +327,28 @@ BOOTLOADERS: dict[str, Bootloader] = {
                   'then loads skiboot.',
         type_rationale='Type 1: bare-hardware bring-up that hands off to a separate OS-facing '
                        'stage.',
+        target='Payload<br/>(skiboot · PHYP)',
         stages=(
-            ('SBE',
-             "The Self-Boot Engine, running on the processor's on-chip controller, initialises "
-             'the first core and loads the Hostboot base image.'),
-            ('HBBL (bootloader)',
-             'A small loader that verifies the base image and unpacks it into L3 cache '
-             'configured as memory, because DRAM does not exist yet.'),
-            ('HBB (base image)',
-             'Sets up the kernel, tasks and the targeting model that describes every piece of '
-             'hardware in the system.'),
-            ('isteps',
-             'A long sequence of numbered initialisation steps -- clocks, buses, memory '
-             'training, PCIe -- each one a discrete, restartable unit.'),
-            ('payload load',
-             'Builds the hardware description and loads the payload (skiboot or PHYP) into '
-             'DRAM.'),
+            Stage('SBE',
+                  "The Self-Boot Engine, running on the processor's on-chip controller, "
+                  'initialises the first core and loads the Hostboot base image.',
+                  'first core up, HBBL loaded'),
+            Stage('HBBL (bootloader)',
+                  'A small loader that verifies the base image and unpacks it into L3 cache '
+                  'configured as memory, because DRAM does not exist yet.',
+                  'verified base image in L3 cache'),
+            Stage('HBB (base image)',
+                  'Sets up the kernel, tasks and the targeting model that describes every piece '
+                  'of hardware in the system.',
+                  'targeting model + istep engine'),
+            Stage('isteps',
+                  'A long sequence of numbered initialisation steps -- clocks, buses, memory '
+                  'training, PCIe -- each one a discrete, restartable unit.',
+                  'trained DRAM, attributes in PNOR'),
+            Stage('payload load',
+                  'Builds the hardware description and loads the payload (skiboot or PHYP) into '
+                  'DRAM.',
+                  'HDAT + device tree in memory'),
         ),
         communication="Hostboot's stages share a targeting model: an attribute database of "
                       'hardware targets, persisted to PNOR, which every istep reads and '
@@ -307,10 +368,12 @@ BOOTLOADERS: dict[str, Bootloader] = {
                   'machines.',
         type_rationale='Type 1: a distribution of Type 1 firmware; the payload it bundles is '
                        'Type 2.',
+        target='Operating system',
         stages=(
-            ('(build system)',
-             "lbmk assembles the boot firmware; at runtime the flow is coreboot's -- bootblock, "
-             'romstage, ramstage -- followed by the payload lbmk configured.'),
+            Stage('(build system)',
+                  "lbmk assembles the boot firmware; at runtime the flow is coreboot's -- "
+                  'bootblock, romstage, ramstage -- followed by the payload lbmk configured.',
+                  'coreboot image + payload, flashed'),
         ),
         communication="Libreboot's contribution is at build time rather than boot time: it "
                       'fetches coreboot, patches it, supplies the board configuration, and '
@@ -327,18 +390,24 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary="System76's open firmware distribution.",
         boot_role='coreboot plus EDK-II payload and System76 EC firmware for their laptops.',
         type_rationale='Type 1: vendor packaging of Type 1 firmware.',
+        target='Operating system',
         stages=(
-            ('coreboot bootblock/romstage/ramstage',
-             'Silicon and memory initialisation, using Intel FSP binaries for the parts that '
-             'are not open.'),
-            ('EC firmware',
-             'Separately built firmware for the embedded controller, handling power sequencing, '
-             'keyboard and thermals alongside the main boot.'),
-            ('EDK II payload',
-             "A UEFI payload runs as coreboot's payload, publishing UEFI services for the OS."),
-            ('boot application',
-             "The UEFI payload's BDS phase loads the distribution's bootloader from the EFI "
-             'system partition.'),
+            Stage('coreboot bootblock/romstage/ramstage',
+                  'Silicon and memory initialisation, using Intel FSP binaries for the parts '
+                  'that are not open.',
+                  'coreboot table'),
+            Stage('EC firmware',
+                  'Separately built firmware for the embedded controller, handling power '
+                  'sequencing, keyboard and thermals alongside the main boot.',
+                  'power sequencing over eSPI'),
+            Stage('EDK II payload',
+                  "A UEFI payload runs as coreboot's payload, publishing UEFI services for the "
+                  'OS.',
+                  'UEFI services rebuilt from BlParseLib'),
+            Stage('boot application',
+                  "The UEFI payload's BDS phase loads the distribution's bootloader from the "
+                  'EFI system partition.',
+                  'system table pointer'),
         ),
         communication='Two mechanisms meet here. coreboot hands the payload a coreboot table '
                       'describing memory and the framebuffer; the EDK II payload reads that '
@@ -355,18 +424,24 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='Minimal experimental x86 BIOS implementation.',
         boot_role='Brings up a QEMU-class machine and provides a minimal BIOS interface.',
         type_rationale='Type 1: firmware-level bring-up from reset.',
+        target='Type 2 bootloader',
         stages=(
-            ('reset entry',
-             'Executes from the reset vector in flash and sets up an environment for C code.'),
-            ('chipset initialisation',
-             'Brings up the emulated northbridge/southbridge -- QEMU I440FX-PIIX and Q35-ICH9 '
-             'are the supported targets.'),
-            ('device setup',
-             'Enumerates and configures PCI devices, bridges, disk controllers and displays '
-             'through a hardware abstraction layer.'),
-            ('frontend',
-             'A legacy BIOS frontend presents the interface the next stage expects; UEFI-style '
-             'services are a work in progress.'),
+            Stage('reset entry',
+                  'Executes from the reset vector in flash and sets up an environment for C '
+                  'code.',
+                  'C environment ready'),
+            Stage('chipset initialisation',
+                  'Brings up the emulated northbridge/southbridge -- QEMU I440FX-PIIX and '
+                  'Q35-ICH9 are the supported targets.',
+                  'chipset up'),
+            Stage('device setup',
+                  'Enumerates and configures PCI devices, bridges, disk controllers and '
+                  'displays through a hardware abstraction layer.',
+                  'PCI devices configured'),
+            Stage('frontend',
+                  'A legacy BIOS frontend presents the interface the next stage expects; UEFI- '
+                  'style services are a work in progress.',
+                  'legacy interrupt interface'),
         ),
         communication='LakeBIOS is a small, deliberately modular reimplementation, and its '
                       'internal boundary is the HAL rather than a table format. Where it '
@@ -383,17 +458,22 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Performs silicon init and hands to a payload, targeting RISC-V and ARM as '
                   'well as x86.',
         type_rationale='Type 1: same role and payload handoff as coreboot, different language.',
+        target='LinuxBoot payload<br/>(kernel + u-root)',
         stages=(
-            ('bt0',
-             'First-stage ROM code in Rust: minimal clock and pin setup, enough to load the '
-             'next stage.'),
-            ('bt1 / main',
-             'Memory controller initialisation and the remaining platform bring-up.'),
-            ('mainboard',
-             'Board-specific setup, then preparation of the payload environment.'),
-            ('payload',
-             'Loads a LinuxBoot payload -- a Linux kernel with a u-root initramfs -- and jumps '
-             'to it.'),
+            Stage('bt0',
+                  'First-stage ROM code in Rust: minimal clock and pin setup, enough to load '
+                  'the next stage.',
+                  'clocks set, next stage loaded'),
+            Stage('bt1 / main',
+                  'Memory controller initialisation and the remaining platform bring-up.',
+                  'DRAM up'),
+            Stage('mainboard',
+                  'Board-specific setup, then preparation of the payload environment.',
+                  'board setup complete'),
+            Stage('payload',
+                  'Loads a LinuxBoot payload -- a Linux kernel with a u-root initramfs -- and '
+                  'jumps to it.',
+                  'device tree pointer'),
         ),
         communication='oreboot is coreboot with the C removed, and it deliberately dropped '
                       "coreboot's table-passing machinery along with it. Where coreboot builds "
@@ -412,15 +492,20 @@ BOOTLOADERS: dict[str, Bootloader] = {
                   'ships on Surface devices and Hyper-V.',
         type_rationale='Type 1: a UEFI implementation. Note it is a library repository, not a '
                        'standalone buildable platform.',
+        target='Type 2 bootloader',
         stages=(
-            ('SEC',
-             'As in EDK II: reset-vector code, temporary memory, root of trust.'),
-            ('PEI',
-             'Permanent memory bring-up through PEIMs, results recorded as HOBs.'),
-            ('DXE',
-             'Driver dispatch, device enumeration, Boot and Runtime Services.'),
-            ('BDS',
-             'Boot device selection from NVRAM variables.'),
+            Stage('SEC',
+                  'As in EDK II: reset-vector code, temporary memory, root of trust.',
+                  'temporary memory + PEI core'),
+            Stage('PEI',
+                  'Permanent memory bring-up through PEIMs, results recorded as HOBs.',
+                  'HOB list'),
+            Stage('DXE',
+                  'Driver dispatch, device enumeration, Boot and Runtime Services.',
+                  'EFI System Table + policy service'),
+            Stage('BDS',
+                  'Boot device selection from NVRAM variables.',
+                  'image handle + system table pointer'),
         ),
         communication='Project Mu is a fork of EDK II, so the communication mechanisms are EDK '
                       "II's: HOB list from PEI to DXE, the EFI System Table and protocol "
@@ -439,10 +524,12 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='Board support built on EDK-II.',
         boot_role='Platform-specific PEI/DXE modules for real silicon, consumed with edk2.',
         type_rationale='Type 1: the platform half of a UEFI firmware image.',
+        target='Firmware image<br/>(built with edk2)',
         stages=(
-            ('(no independent boot flow)',
-             'Supplies the platform, silicon and driver packages that a UEFI firmware image is '
-             "built from; the SEC/PEI/DXE/BDS flow is EDK II's."),
+            Stage('(no independent boot flow)',
+                  'Supplies the platform, silicon and driver packages that a UEFI firmware '
+                  "image is built from; the SEC/PEI/DXE/BDS flow is EDK II's.",
+                  'PEIMs, DXE drivers and PCDs, linked at build time'),
         ),
         communication="The packages here plug into EDK II's existing mechanisms rather than "
                       'defining new ones: PEIMs that publish HOBs, DXE drivers that install '
@@ -458,22 +545,28 @@ BOOTLOADERS: dict[str, Bootloader] = {
                   'S-mode at the next stage.',
         type_rationale='Type 1: it is the privileged firmware layer presenting a stable '
                        "interface to whatever boots next -- the RISC-V analogue of UEFI's role.",
+        target='S-mode payload<br/>(U-Boot · Linux)',
         stages=(
-            ('_start',
-             'The first hart enters the firmware; others are held in a wait loop. Sets up the '
-             'stack and the per-hart scratch space.'),
-            ('cold boot path',
-             'The boot hart relocates the firmware if needed, initialises the console and '
-             'platform, and parses the device tree.'),
-            ('warm boot path',
-             'Each remaining hart initialises its own trap handling, timers and interrupt '
-             'controller.'),
-            ('sbi_init',
-             'Registers ecall extensions (timer, IPI, HSM, reset) and defines the domains that '
-             'partition memory and devices.'),
-            ('next stage',
-             "Configures PMP for the next stage's domain and drops from M-mode to S-mode at the "
-             "payload's entry point."),
+            Stage('_start',
+                  'The first hart enters the firmware; others are held in a wait loop. Sets up '
+                  'the stack and the per-hart scratch space.',
+                  'per-hart scratch space'),
+            Stage('cold boot path',
+                  'The boot hart relocates the firmware if needed, initialises the console and '
+                  'platform, and parses the device tree.',
+                  'console + parsed device tree'),
+            Stage('warm boot path',
+                  'Each remaining hart initialises its own trap handling, timers and interrupt '
+                  'controller.',
+                  'traps and timers per hart'),
+            Stage('sbi_init',
+                  'Registers ecall extensions (timer, IPI, HSM, reset) and defines the domains '
+                  'that partition memory and devices.',
+                  'SBI extensions + domains, PMP set'),
+            Stage('next stage',
+                  "Configures PMP for the next stage's domain and drops from M-mode to S-mode "
+                  "at the payload's entry point.",
+                  'mret: a0 = hartid, a1 = FDT'),
         ),
         communication='OpenSBI passes forward a device tree, which it may edit first -- '
                       'reserving its own memory so the next stage does not use it, and adding '
@@ -499,22 +592,28 @@ BOOTLOADERS: dict[str, Bootloader] = {
                        'entirely by on-disk configuration, and its whole purpose is preparing '
                        'an OS.',
         case_study='3.5',
+        target='Operating system<br/>(Linux · chainloaded loader)',
         stages=(
-            ('boot.img',
-             '512 bytes in the MBR. Its only job is to read the first sector of core.img, whose '
-             'location was written into it at install time.'),
-            ('core.img',
-             'The working bootloader: kernel.img plus the handful of modules needed to reach '
-             '/boot -- a disk driver, a partition map parser, a filesystem driver.'),
-            ('kernel.img',
-             "GRUB's core services: memory management, the device and filesystem abstraction, "
-             'environment variables, the rescue shell.'),
-            ('module load',
-             'Modules (*.mod) are loaded on demand from /boot/grub for filesystems, '
-             'compression, video, cryptography and boot protocols.'),
-            ('grub.cfg',
-             'The menu and its entries are read and executed as a script, which selects a '
-             'kernel and its arguments.'),
+            Stage('boot.img',
+                  '512 bytes in the MBR. Its only job is to read the first sector of core.img, '
+                  'whose location was written into it at install time.',
+                  'sector address of core.img'),
+            Stage('core.img',
+                  'The working bootloader: kernel.img plus the handful of modules needed to '
+                  'reach /boot -- a disk driver, a partition map parser, a filesystem driver.',
+                  'decompressed into memory'),
+            Stage('kernel.img',
+                  "GRUB's core services: memory management, the device and filesystem "
+                  'abstraction, environment variables, the rescue shell.',
+                  'device + filesystem abstraction'),
+            Stage('module load',
+                  'Modules (*.mod) are loaded on demand from /boot/grub for filesystems, '
+                  'compression, video, cryptography and boot protocols.',
+                  'commands registered by modules'),
+            Stage('grub.cfg',
+                  'The menu and its entries are read and executed as a script, which selects a '
+                  'kernel and its arguments.',
+                  'kernel + initrd + command line'),
         ),
         communication="GRUB's stage boundaries exist because of a size limit, not a privilege "
                       'boundary: each stage is the smallest thing that can find the next one. '
@@ -540,22 +639,28 @@ BOOTLOADERS: dict[str, Bootloader] = {
                   'database and SBAT revocation levels.',
         type_rationale='Type 2: it runs on top of UEFI firmware and exists solely to get an OS '
                        'loader trusted and running.',
+        target='Second-stage loader<br/>(grubx64.efi)',
         stages=(
-            ('loaded by firmware',
-             "The firmware's BDS phase loads shimx64.efi, which is signed by a key already in "
-             "the platform's db."),
-            ('certificate and policy setup',
-             'shim installs its own verification protocol and reads MokList, MokListX and the '
-             'built-in vendor certificate.'),
-            ('MokManager',
-             'If enrolment is pending, MokManager.efi runs first so the user can approve a key '
-             'or hash at the console.'),
-            ('second-stage load',
-             'Verifies and loads the real bootloader -- usually grubx64.efi -- from the same '
-             'directory.'),
-            ('fallback',
-             'If no boot variable points anywhere valid, fallback.efi rebuilds the Boot#### '
-             'entries from BOOTX64.CSV.'),
+            Stage('loaded by firmware',
+                  "The firmware's BDS phase loads shimx64.efi, which is signed by a key already "
+                  "in the platform's db.",
+                  'image handle + system table'),
+            Stage('certificate and policy setup',
+                  'shim installs its own verification protocol and reads MokList, MokListX and '
+                  'the built-in vendor certificate.',
+                  'vendor cert + MokList loaded'),
+            Stage('MokManager',
+                  'If enrolment is pending, MokManager.efi runs first so the user can approve a '
+                  'key or hash at the console.',
+                  'newly enrolled keys'),
+            Stage('second-stage load',
+                  'Verifies and loads the real bootloader -- usually grubx64.efi -- from the '
+                  'same directory.',
+                  'Shim Lock protocol installed'),
+            Stage('fallback',
+                  'If no boot variable points anywhere valid, fallback.efi rebuilds the '
+                  'Boot#### entries from BOOTX64.CSV.',
+                  'rebuilt Boot#### entries'),
         ),
         communication="shim exists to move the trust decision out of the firmware's key "
                       'database and into one the distribution controls. It passes its '
@@ -578,18 +683,23 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Enumerates boot entries from the EFI System Partition and launches the '
                   'chosen kernel, with no scripting language.',
         type_rationale='Type 2: a UEFI application that selects and starts an OS.',
+        target='Linux kernel',
         stages=(
-            ('systemd-boot',
-             'A UEFI boot manager loaded by the firmware. It reads loader entries from the ESP '
-             'and presents a menu.'),
-            ('loader entries',
-             'Plain text files under /loader/entries name a kernel, an initrd and a command '
-             'line, or a single unified kernel image.'),
-            ('stub (UKI)',
-             'systemd-stub is linked into a unified kernel image so the kernel, initrd, command '
-             'line and signature ship as one signed PE binary.'),
-            ('kernel start',
-             'The chosen kernel is loaded and entered through the EFI stub.'),
+            Stage('systemd-boot',
+                  'A UEFI boot manager loaded by the firmware. It reads loader entries from the '
+                  'ESP and presents a menu.',
+                  'menu selection'),
+            Stage('loader entries',
+                  'Plain text files under /loader/entries name a kernel, an initrd and a '
+                  'command line, or a single unified kernel image.',
+                  'kernel path, initrd, cmdline'),
+            Stage('stub (UKI)',
+                  'systemd-stub is linked into a unified kernel image so the kernel, initrd, '
+                  'command line and signature ship as one signed PE binary.',
+                  'signed PE with cmdline inside'),
+            Stage('kernel start',
+                  'The chosen kernel is loaded and entered through the EFI stub.',
+                  'boot params + TPM measurements'),
         ),
         communication='systemd-boot deliberately does nothing the firmware already does: it has '
                       'no filesystem drivers of its own and reads only the FAT ESP the firmware '
@@ -612,18 +722,23 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Supports its own protocol plus Linux, Multiboot and chainloading, from BIOS '
                   'or UEFI.',
         type_rationale='Type 2: boots from an initialised platform into an OS kernel.',
+        target='Kernel<br/>(Limine · Multiboot · Linux)',
         stages=(
-            ('stage1',
-             'On BIOS, a 512-byte MBR/VBR stage that loads stage2. On UEFI, the firmware loads '
-             'BOOTX64.EFI directly and this stage does not exist.'),
-            ('stage2',
-             'Decompresses and enters the main bootloader image.'),
-            ('common',
-             'The bootloader proper: filesystem drivers, the config parser, the menu and the '
-             'terminal.'),
-            ('protocol handler',
-             'Loads the kernel according to the protocol it asks for -- Limine, Multiboot1/2, '
-             'Linux or chainload.'),
+            Stage('stage1',
+                  'On BIOS, a 512-byte MBR/VBR stage that loads stage2. On UEFI, the firmware '
+                  'loads BOOTX64.EFI directly and this stage does not exist.',
+                  'stage2 loaded from disk'),
+            Stage('stage2',
+                  'Decompresses and enters the main bootloader image.',
+                  'decompressed bootloader'),
+            Stage('common',
+                  'The bootloader proper: filesystem drivers, the config parser, the menu and '
+                  'the terminal.',
+                  'config parsed, kernel loaded'),
+            Stage('protocol handler',
+                  'Loads the kernel according to the protocol it asks for -- Limine, '
+                  'Multiboot1/2, Linux or chainload.',
+                  'filled request/response structs, paging on'),
         ),
         communication='Configuration is a single `limine.conf` on the boot partition. What '
                       'distinguishes Limine is the shape of the handoff rather than the '
@@ -643,18 +758,23 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='Graphical UEFI boot manager.',
         boot_role='Scans partitions for boot loaders and kernels and presents a menu.',
         type_rationale='Type 2: a UEFI boot manager whose job is choosing and launching an OS.',
+        target='Loader or kernel<br/>(EFI stub · bootmgfw.efi)',
         stages=(
-            ('loaded by firmware',
-             'refind_x64.efi is loaded from the ESP as a UEFI application, often in place of '
-             "the distribution's own loader."),
-            ('configuration and driver load',
-             'Reads refind.conf, then loads filesystem drivers from drivers_x64/ so it can read '
-             'partitions the firmware cannot.'),
-            ('scan',
-             'Scans volumes for loaders, kernels and OS signatures, and builds a menu '
-             'automatically from what it finds.'),
-            ('launch',
-             'Starts the selected image, or a kernel directly if it has an EFI stub.'),
+            Stage('loaded by firmware',
+                  'refind_x64.efi is loaded from the ESP as a UEFI application, often in place '
+                  "of the distribution's own loader.",
+                  'image handle + system table'),
+            Stage('configuration and driver load',
+                  'Reads refind.conf, then loads filesystem drivers from drivers_x64/ so it can '
+                  'read partitions the firmware cannot.',
+                  'filesystem drivers installed'),
+            Stage('scan',
+                  'Scans volumes for loaders, kernels and OS signatures, and builds a menu '
+                  'automatically from what it finds.',
+                  'discovered loaders and kernels'),
+            Stage('launch',
+                  'Starts the selected image, or a kernel directly if it has an EFI stub.',
+                  'image handle + system table'),
         ),
         communication='rEFInd is a boot *manager*: the intelligence is in discovery rather than '
                       'in loading. Its optional UEFI filesystem drivers extend what the '
@@ -675,20 +795,27 @@ BOOTLOADERS: dict[str, Bootloader] = {
                   'Infiniband and booting them.',
         type_rationale='Type 2: it runs as an option ROM or UEFI application on an initialised '
                        'machine and loads an OS over the network.',
+        target='Kernel or chainloaded loader',
         stages=(
-            ('ROM or image entry',
-             'Runs as a PCI option ROM, a UEFI driver, or an image chainloaded by another '
-             'bootloader.'),
-            ('driver and stack bring-up',
-             'Initialises the network card, then its own TCP/IP stack, DHCP client and TLS.'),
-            ('script execution',
-             'Runs an embedded or downloaded iPXE script, which decides what to boot.'),
-            ('image load',
-             'Fetches the target over HTTP, HTTPS, iSCSI, FCoE, AoE or NFS and loads it into '
-             'memory.'),
-            ('boot',
-             'Starts the loaded image, or exposes a remote volume as a local disk and boots '
-             'from that instead.'),
+            Stage('ROM or image entry',
+                  'Runs as a PCI option ROM, a UEFI driver, or an image chainloaded by another '
+                  'bootloader.',
+                  'NIC reachable'),
+            Stage('driver and stack bring-up',
+                  'Initialises the network card, then its own TCP/IP stack, DHCP client and '
+                  'TLS.',
+                  'DHCP lease + settings tree'),
+            Stage('script execution',
+                  'Runs an embedded or downloaded iPXE script, which decides what to boot.',
+                  'chosen URL and boot method'),
+            Stage('image load',
+                  'Fetches the target over HTTP, HTTPS, iSCSI, FCoE, AoE or NFS and loads it '
+                  'into memory.',
+                  'image in memory'),
+            Stage('boot',
+                  'Starts the loaded image, or exposes a remote volume as a local disk and '
+                  'boots from that instead.',
+                  'kernel + cmdline, or hooked INT 13h'),
         ),
         communication="iPXE replaces PXE's TFTP-only path with a full network stack, and its "
                       'state is the DHCP option space plus its own settings tree: values such '
@@ -710,20 +837,26 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Implements Chrome OS verified boot, selects a kernel partition and boots it.',
         type_rationale='Type 2: it is the payload that coreboot (Type 1) hands off to, and it '
                        'prepares an OS.',
+        target='Linux kernel<br/>(ChromeOS)',
         stages=(
-            ('loaded as coreboot payload',
-             "coreboot's ramstage loads depthcharge and passes it the coreboot table, including "
-             'the vboot handoff block.'),
-            ('vboot verification',
-             "Verifies the kernel partition signature against keys in the GBB and the TPM's "
-             'rollback counters.'),
-            ('recovery or normal mode',
-             'Chooses between normal boot, developer mode, and recovery from removable media, '
-             'based on the firmware switches.'),
-            ('kernel load',
-             'Loads the signed kernel partition from eMMC, NVMe or USB.'),
-            ('boot',
-             'Assembles the command line and starts the kernel.'),
+            Stage('loaded as coreboot payload',
+                  "coreboot's ramstage loads depthcharge and passes it the coreboot table, "
+                  'including the vboot handoff block.',
+                  'coreboot table + vboot handoff'),
+            Stage('vboot verification',
+                  'Verifies the kernel partition signature against keys in the GBB and the '
+                  "TPM's rollback counters.",
+                  'verified kernel partition, TPM counters'),
+            Stage('recovery or normal mode',
+                  'Chooses between normal boot, developer mode, and recovery from removable '
+                  'media, based on the firmware switches.',
+                  'selected boot mode'),
+            Stage('kernel load',
+                  'Loads the signed kernel partition from eMMC, NVMe or USB.',
+                  'kernel image in memory'),
+            Stage('boot',
+                  'Assembles the command line and starts the kernel.',
+                  'cmdline with dm-verity root'),
         ),
         communication='Depthcharge is built for one platform family, so it takes far more from '
                       'coreboot than a general payload does: the coreboot table it receives '
@@ -747,17 +880,23 @@ BOOTLOADERS: dict[str, Bootloader] = {
         type_rationale="Type 2 in this corpus: it runs after the SoC's primary bootloader has "
                        'brought the platform up, and loads an OS. Arguably Type 3 on platforms '
                        'where it is the only stage.',
+        target='Android kernel',
         stages=(
-            ('reset and platform early init',
-             'Architecture entry code sets up the MMU, caches and stack, then calls platform '
-             'early init.'),
-            ('kernel init',
-             'Brings up the threading kernel, timers and heap -- LK is a small preemptive '
-             'kernel, not just a loader.'),
-            ('target init',
-             'Board-specific initialisation: display, storage, USB.'),
-            ('app start',
-             'Starts the built-in application, which on a phone is the aboot bootloader app.'),
+            Stage('reset and platform early init',
+                  'Architecture entry code sets up the MMU, caches and stack, then calls '
+                  'platform early init.',
+                  'MMU, caches, stack'),
+            Stage('kernel init',
+                  'Brings up the threading kernel, timers and heap -- LK is a small preemptive '
+                  'kernel, not just a loader.',
+                  'threads, timers, heap'),
+            Stage('target init',
+                  'Board-specific initialisation: display, storage, USB.',
+                  'storage, USB, display'),
+            Stage('app start',
+                  'Starts the built-in application, which on a phone is the aboot bootloader '
+                  'app.',
+                  'boot image + cmdline, ARM protocol'),
         ),
         communication='LK is a kernel first and a bootloader second, so its stages are module '
                       'init levels rather than separate binaries: drivers register init hooks '
@@ -778,17 +917,22 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Loads from the stock aboot and boots mainline Linux with a proper device '
                   'tree.',
         type_rationale='Type 2: explicitly a second stage that prepares an OS.',
+        target='Mainline kernel',
         stages=(
-            ('stock bootloader',
-             "The device's own LK or ABL loads lk2nd as if it were an Android boot image."),
-            ('hardware detection',
-             'Identifies the board, display panel and battery from the SMEM and device tree '
-             'information the firmware left.'),
-            ('device tree fixup',
-             'Patches or selects a device tree matching what it detected.'),
-            ('menu and boot',
-             'Offers Fastboot and a menu, then boots a kernel from a partition, a filesystem or '
-             'an SD card.'),
+            Stage('stock bootloader',
+                  "The device's own LK or ABL loads lk2nd as if it were an Android boot image.",
+                  'loaded as an Android boot image'),
+            Stage('hardware detection',
+                  'Identifies the board, display panel and battery from the SMEM and device '
+                  'tree information the firmware left.',
+                  'board, panel and battery IDs from SMEM'),
+            Stage('device tree fixup',
+                  'Patches or selects a device tree matching what it detected.',
+                  'patched device tree'),
+            Stage('menu and boot',
+                  'Offers Fastboot and a menu, then boots a kernel from a partition, a '
+                  'filesystem or an SD card.',
+                  'kernel + fixed-up DTB'),
         ),
         communication='lk2nd is a second-stage bootloader: it is installed where the vendor '
                       'expects a kernel, so its input is the Android boot image format, and its '
@@ -807,20 +951,26 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Loaded by hostboot, provides OPAL runtime services and boots a Linux kernel '
                   'via petitboot.',
         type_rationale="Type 2: it starts from hostboot's initialised state and prepares an OS.",
+        target='Payload<br/>(Linux running Petitboot)',
         stages=(
-            ('entry from Hostboot',
-             'Hostboot loads skiboot into memory and enters it with a pointer to the HDAT '
-             'hardware description.'),
-            ('HDAT parse',
-             'Converts HDAT into a flattened device tree describing processors, memory, PCIe '
-             'and service interfaces.'),
-            ('hardware init',
-             'Initialises PCIe, the interrupt controller, NVRAM and the console.'),
-            ('OPAL publication',
-             'Registers the OPAL runtime call interface the OS will use.'),
-            ('payload boot',
-             'Loads the payload from PNOR -- normally a Linux kernel running Petitboot -- and '
-             'enters it.'),
+            Stage('entry from Hostboot',
+                  'Hostboot loads skiboot into memory and enters it with a pointer to the HDAT '
+                  'hardware description.',
+                  'HDAT pointer'),
+            Stage('HDAT parse',
+                  'Converts HDAT into a flattened device tree describing processors, memory, '
+                  'PCIe and service interfaces.',
+                  'flattened device tree'),
+            Stage('hardware init',
+                  'Initialises PCIe, the interrupt controller, NVRAM and the console.',
+                  'PCIe, interrupts, NVRAM up'),
+            Stage('OPAL publication',
+                  'Registers the OPAL runtime call interface the OS will use.',
+                  'OPAL call interface registered'),
+            Stage('payload boot',
+                  'Loads the payload from PNOR -- normally a Linux kernel running Petitboot -- '
+                  'and enters it.',
+                  'r3 = device tree, /ibm,opal node'),
         ),
         communication="skiboot's input is HDAT and its output is a device tree, and that "
                       'translation is most of what it does: everything the OS learns about the '
@@ -840,20 +990,27 @@ BOOTLOADERS: dict[str, Bootloader] = {
                   'target kernel.',
         type_rationale='Type 2: it runs on an initialised platform and its only job is '
                        'launching an OS.',
+        target='Target OS kernel',
         stages=(
-            ('Linux userspace start',
-             'Petitboot runs on a small Linux already booted by the platform firmware, so the '
-             'kernel and drivers are in place before it starts.'),
-            ('device discovery',
-             'udev events drive discovery: disks are mounted, network interfaces configured by '
-             'DHCP.'),
-            ('configuration parsing',
-             'Existing bootloader configurations found on those devices -- grub.cfg, '
-             'syslinux.cfg, PXE config -- are parsed into boot options.'),
-            ('user interface',
-             'An ncurses UI lists what was found, with a timeout for automatic boot.'),
-            ('kexec',
-             'The chosen kernel and initrd are loaded and kexec replaces the running kernel.'),
+            Stage('Linux userspace start',
+                  'Petitboot runs on a small Linux already booted by the platform firmware, so '
+                  'the kernel and drivers are in place before it starts.',
+                  'running kernel + drivers'),
+            Stage('device discovery',
+                  'udev events drive discovery: disks are mounted, network interfaces '
+                  'configured by DHCP.',
+                  'mounted disks, DHCP leases'),
+            Stage('configuration parsing',
+                  'Existing bootloader configurations found on those devices -- grub.cfg, '
+                  'syslinux.cfg, PXE config -- are parsed into boot options.',
+                  'parsed boot options'),
+            Stage('user interface',
+                  'An ncurses UI lists what was found, with a timeout for automatic boot.',
+                  'user selection (or timeout)'),
+            Stage('kexec',
+                  'The chosen kernel and initrd are loaded and kexec replaces the running '
+                  'kernel.',
+                  'kexec: kernel + initrd + cmdline'),
         ),
         communication='Petitboot inverts the usual arrangement: because a full Linux is already '
                       'running, it does not need its own drivers, filesystem code or network '
@@ -873,19 +1030,24 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Loads a kernel image into memory and transfers control without firmware re- '
                   'init.',
         type_rationale='Type 2: an OS-loading stage that assumes a fully initialised machine.',
+        target='New kernel',
         stages=(
-            ('kexec -l',
-             "Loads a kernel, initrd and command line into the running kernel's memory through "
-             'the kexec_load syscall.'),
-            ('segment placement',
-             'The kernel decides where the segments live, avoiding memory in use, and records '
-             'them for the reboot path.'),
-            ('purgatory',
-             'A small position-independent stub is placed between the two kernels; it verifies '
-             'segment checksums after the old kernel has stopped.'),
-            ('kexec -e',
-             'Devices are shut down, the CPU is put in a known state, and control jumps to '
-             'purgatory and then the new kernel.'),
+            Stage('kexec -l',
+                  "Loads a kernel, initrd and command line into the running kernel's memory "
+                  'through the kexec_load syscall.',
+                  'segments loaded via kexec_load'),
+            Stage('segment placement',
+                  'The kernel decides where the segments live, avoiding memory in use, and '
+                  'records them for the reboot path.',
+                  'placement map recorded'),
+            Stage('purgatory',
+                  'A small position-independent stub is placed between the two kernels; it '
+                  'verifies segment checksums after the old kernel has stopped.',
+                  'purgatory stub + checksums'),
+            Stage('kexec -e',
+                  'Devices are shut down, the CPU is put in a known state, and control jumps to '
+                  'purgatory and then the new kernel.',
+                  'boot_params or device tree'),
         ),
         communication='The whole point is to skip firmware, so nothing is re-discovered: the '
                       'new kernel is given its boot parameters and device tree or boot_params '
@@ -907,16 +1069,22 @@ BOOTLOADERS: dict[str, Bootloader] = {
                   'the target kernel.',
         type_rationale='Type 2: the OS-facing half of a LinuxBoot image; the firmware beneath '
                        'it is Type 1.',
+        target='Target OS kernel',
         stages=(
-            ('initramfs start',
-             "The Linux kernel starts u-root's Go userland as PID 1 from an initramfs."),
-            ('init and shell',
-             'Sets up /proc, /sys and /dev, then runs the u-root shell or a specified uinit.'),
-            ('boot policy',
-             'Commands such as `boot`, `fbnetboot` or `localboot` find boot targets on disk or '
-             'over the network.'),
-            ('kexec',
-             "The selected kernel and initrd are loaded and kexec'd."),
+            Stage('initramfs start',
+                  "The Linux kernel starts u-root's Go userland as PID 1 from an initramfs.",
+                  'PID 1 in initramfs'),
+            Stage('init and shell',
+                  'Sets up /proc, /sys and /dev, then runs the u-root shell or a specified '
+                  'uinit.',
+                  '/proc, /sys, /dev ready'),
+            Stage('boot policy',
+                  'Commands such as `boot`, `fbnetboot` or `localboot` find boot targets on '
+                  'disk or over the network.',
+                  'discovered boot targets'),
+            Stage('kexec',
+                  "The selected kernel and initrd are loaded and kexec'd.",
+                  'kexec: kernel + initrd + cmdline'),
         ),
         communication='u-root is a userland, so its interfaces are files and syscalls rather '
                       'than tables: it reads existing configurations (GRUB, syslinux, BLS '
@@ -934,17 +1102,24 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='Replaces UEFI DXE with a Linux kernel and userspace.',
         boot_role='Keeps vendor PEI for silicon init, then runs Linux as the boot environment.',
         type_rationale='Type 2: it is the OS-loading stage layered on vendor Type 1 firmware.',
+        target='Target OS kernel',
         stages=(
-            ('vendor firmware PEI',
-             "The platform's existing UEFI firmware runs SEC and PEI to bring up memory."),
-            ('DXE replacement',
-             'Most of the DXE volume is removed and replaced with a Linux kernel and initramfs.'),
-            ('Linux start',
-             'The kernel boots with the drivers the platform needs.'),
-            ('u-root policy',
-             'The u-root userland runs as init and decides what to boot.'),
-            ('kexec',
-             "The target OS kernel is loaded and kexec'd."),
+            Stage('vendor firmware PEI',
+                  "The platform's existing UEFI firmware runs SEC and PEI to bring up memory.",
+                  'DRAM up (vendor PEI)'),
+            Stage('DXE replacement',
+                  'Most of the DXE volume is removed and replaced with a Linux kernel and '
+                  'initramfs.',
+                  'kernel + initramfs spliced into flash'),
+            Stage('Linux start',
+                  'The kernel boots with the drivers the platform needs.',
+                  'drivers loaded'),
+            Stage('u-root policy',
+                  'The u-root userland runs as init and decides what to boot.',
+                  'boot policy decision'),
+            Stage('kexec',
+                  "The target OS kernel is loaded and kexec'd.",
+                  'kexec: kernel + initrd'),
         ),
         communication="LinuxBoot is a firmware surgery project: it keeps the vendor's SEC and "
                       'PEI phases, because memory initialisation is board-specific and often '
@@ -963,21 +1138,27 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Boots Linux from FAT, ISO9660, network or ext filesystems, driven by a '
                   'config file.',
         type_rationale='Type 2: configuration-driven OS loading from an initialised machine.',
+        target='Kernel or chainloaded loader',
         stages=(
-            ('first sector',
-             'SYSLINUX, EXTLINUX and ISOLINUX each install a small loader in the volume boot '
-             'record or boot image; PXELINUX is fetched over TFTP instead.'),
-            ('core (ldlinux.sys)',
-             'The core module is loaded next and provides file access, memory management and '
-             'the module loader.'),
-            ('configuration',
-             'syslinux.cfg (or a PXE-specific path derived from the MAC or IP) is read and its '
-             'LABEL entries become menu items.'),
-            ('com32 modules',
-             'Modules such as menu.c32, vesamenu.c32 and chain.c32 extend the loader with '
-             'menus, chainloading and hardware probing.'),
-            ('boot',
-             'The selected kernel is loaded, or another bootloader is chainloaded.'),
+            Stage('first sector',
+                  'SYSLINUX, EXTLINUX and ISOLINUX each install a small loader in the volume '
+                  'boot record or boot image; PXELINUX is fetched over TFTP instead.',
+                  'location of ldlinux.sys'),
+            Stage('core (ldlinux.sys)',
+                  'The core module is loaded next and provides file access, memory management '
+                  'and the module loader.',
+                  'file access + module loader'),
+            Stage('configuration',
+                  'syslinux.cfg (or a PXE-specific path derived from the MAC or IP) is read and '
+                  'its LABEL entries become menu items.',
+                  'LABEL entries and APPEND lines'),
+            Stage('com32 modules',
+                  'Modules such as menu.c32, vesamenu.c32 and chain.c32 extend the loader with '
+                  'menus, chainloading and hardware probing.',
+                  'menu selection via COM32 syscalls'),
+            Stage('boot',
+                  'The selected kernel is loaded, or another bootloader is chainloaded.',
+                  'kernel + initrd + cmdline'),
         ),
         communication='Each SYSLINUX variant differs only in how it reads files -- FAT, ext, '
                       'ISO 9660, or TFTP -- and presents the same interface above that, which '
@@ -998,19 +1179,25 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='Multi-architecture boot protocol and reference loaders.',
         boot_role='Provides a uniform machine state to the kernel across BIOS, UEFI and RPi.',
         type_rationale='Type 2: implements a protocol for handing off to an OS kernel.',
+        target='Kernel<br/>(ELF or PE)',
         stages=(
-            ('platform loader',
-             'A per-platform first stage -- BIOS, UEFI application, coreboot payload or '
-             'Raspberry Pi start.elf -- loads the BOOTBOOT image.'),
-            ('environment parse',
-             'Reads BOOTBOOT/CONFIG, a plain text key-value file on the boot partition.'),
-            ('initrd load',
-             'Locates the initial ramdisk and finds the kernel inside it (ELF or PE, at a fixed '
-             'path).'),
-            ('mapping',
-             'Sets up long mode, identity and higher-half mappings, and the framebuffer.'),
-            ('kernel entry',
-             'Enters the kernel on all cores with a defined environment.'),
+            Stage('platform loader',
+                  'A per-platform first stage -- BIOS, UEFI application, coreboot payload or '
+                  'Raspberry Pi start.elf -- loads the BOOTBOOT image.',
+                  'BOOTBOOT image loaded'),
+            Stage('environment parse',
+                  'Reads BOOTBOOT/CONFIG, a plain text key-value file on the boot partition.',
+                  'environment string from CONFIG'),
+            Stage('initrd load',
+                  'Locates the initial ramdisk and finds the kernel inside it (ELF or PE, at a '
+                  'fixed path).',
+                  'initrd + kernel located'),
+            Stage('mapping',
+                  'Sets up long mode, identity and higher-half mappings, and the framebuffer.',
+                  'long mode, higher-half map, framebuffer'),
+            Stage('kernel entry',
+                  'Enters the kernel on all cores with a defined environment.',
+                  'BOOTBOOT struct at a fixed address'),
         ),
         communication='BOOTBOOT is a protocol first and an implementation second: its contract '
                       'is a single `BOOTBOOT` structure at a fixed virtual address, describing '
@@ -1028,22 +1215,28 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='OpenCore, a UEFI bootloader for running macOS on unsupported hardware.',
         boot_role='Injects ACPI, kext and SMBIOS patches, then boots macOS, Windows or Linux.',
         type_rationale='Type 2: a UEFI application that prepares and launches an OS.',
+        target='macOS<br/>(via boot.efi)',
         stages=(
-            ('loaded by firmware',
-             'OpenCore.efi is loaded from the ESP as a UEFI application, or chainloaded from '
-             'another loader.'),
-            ('config.plist parse',
-             'A single property list drives everything: ACPI patches, kernel extensions, device '
-             'properties, quirks and the boot picker.'),
-            ('ACPI and SMBIOS patching',
-             'Tables are added, dropped or patched before the OS sees them, and SMBIOS is '
-             'rewritten to match a supported Mac model.'),
-            ('driver injection',
-             'UEFI drivers are loaded for filesystems (APFS, HFS+) and missing firmware '
-             'features.'),
-            ('kernel or loader start',
-             'boot.efi is started for macOS, with kext injection and kernel patches applied on '
-             'the way, or another OS is chainloaded.'),
+            Stage('loaded by firmware',
+                  'OpenCore.efi is loaded from the ESP as a UEFI application, or chainloaded '
+                  'from another loader.',
+                  'image handle + system table'),
+            Stage('config.plist parse',
+                  'A single property list drives everything: ACPI patches, kernel extensions, '
+                  'device properties, quirks and the boot picker.',
+                  'quirks, patches and device properties'),
+            Stage('ACPI and SMBIOS patching',
+                  'Tables are added, dropped or patched before the OS sees them, and SMBIOS is '
+                  'rewritten to match a supported Mac model.',
+                  'patched ACPI + faked SMBIOS'),
+            Stage('driver injection',
+                  'UEFI drivers are loaded for filesystems (APFS, HFS+) and missing firmware '
+                  'features.',
+                  'injected drivers and kexts'),
+            Stage('kernel or loader start',
+                  'boot.efi is started for macOS, with kext injection and kernel patches '
+                  'applied on the way, or another OS is chainloaded.',
+                  'prepared UEFI environment'),
         ),
         communication="OpenCore's job is to make a non-Apple machine present the environment "
                       'macOS expects, so almost all of its communication is interception: it '
@@ -1063,19 +1256,26 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='Clover, an earlier macOS-focused UEFI bootloader.',
         boot_role='Similar role to OpenCore, with its own patching model.',
         type_rationale='Type 2: a UEFI application that launches an OS.',
+        target='macOS<br/>(via boot.efi)',
         stages=(
-            ('CloverEFI or native UEFI',
-             'On legacy BIOS machines CloverEFI provides a UEFI emulation layer first; on UEFI '
-             'machines CLOVERX64.efi is loaded directly.'),
-            ('config.plist parse',
-             'Configuration for patches, SMBIOS, devices and the GUI is read from a property '
-             'list.'),
-            ('table patching',
-             'ACPI is patched (DSDT fixes, SSDT injection) and SMBIOS is rewritten.'),
-            ('GUI',
-             'A themed boot picker scans volumes and lists the operating systems it recognises.'),
-            ('start',
-             'boot.efi is launched for macOS, or another loader is chainloaded.'),
+            Stage('CloverEFI or native UEFI',
+                  'On legacy BIOS machines CloverEFI provides a UEFI emulation layer first; on '
+                  'UEFI machines CLOVERX64.efi is loaded directly.',
+                  'UEFI environment (real or emulated)'),
+            Stage('config.plist parse',
+                  'Configuration for patches, SMBIOS, devices and the GUI is read from a '
+                  'property list.',
+                  'config.plist settings'),
+            Stage('table patching',
+                  'ACPI is patched (DSDT fixes, SSDT injection) and SMBIOS is rewritten.',
+                  'patched DSDT/SSDT + SMBIOS'),
+            Stage('GUI',
+                  'A themed boot picker scans volumes and lists the operating systems it '
+                  'recognises.',
+                  'user selection'),
+            Stage('start',
+                  'boot.efi is launched for macOS, or another loader is chainloaded.',
+                  'prepared UEFI environment'),
         ),
         communication='Clover predates OpenCore and takes a broader approach: as well as '
                       'patching tables and injecting drivers, it can supply the UEFI '
@@ -1093,17 +1293,22 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='Legacy Darwin/x86 boot loader.',
         boot_role='BIOS-era loader for booting macOS on generic hardware.',
         type_rationale='Type 2: it loads an OS from an initialised BIOS machine.',
+        target='XNU kernel',
         stages=(
-            ('boot0',
-             'MBR code that finds the active partition and loads boot1.'),
-            ('boot1',
-             'Partition boot sector code that locates the boot file in the filesystem.'),
-            ('boot2',
-             'The bootloader proper: reads configuration, patches tables, presents a device '
-             'picker.'),
-            ('kernel load',
-             'Loads the XNU kernel and mkext/kext caches, applies patches, and enters the '
-             'kernel.'),
+            Stage('boot0',
+                  'MBR code that finds the active partition and loads boot1.',
+                  'active partition located'),
+            Stage('boot1',
+                  'Partition boot sector code that locates the boot file in the filesystem.',
+                  'boot file found in filesystem'),
+            Stage('boot2',
+                  'The bootloader proper: reads configuration, patches tables, presents a '
+                  'device picker.',
+                  'org.chameleon.Boot.plist applied'),
+            Stage('kernel load',
+                  'Loads the XNU kernel and mkext/kext caches, applies patches, and enters the '
+                  'kernel.',
+                  'boot-args + constructed device tree'),
         ),
         communication="Chameleon descends from Apple's open-source boot-132 and works entirely "
                       'in the legacy BIOS world, so its stage boundaries are the classic '
@@ -1124,21 +1329,28 @@ BOOTLOADERS: dict[str, Bootloader] = {
                   'TPM.',
         type_rationale='Type 2: it sits between firmware and the OS, measuring and launching '
                        'it.',
+        target='Kernel or VMM<br/>(measured)',
         stages=(
-            ('loaded by GRUB',
-             'tboot is loaded as a Multiboot module ahead of the kernel or hypervisor it will '
-             'measure.'),
-            ('pre-launch checks',
-             'Verifies TXT capability, the chipset, and that the SINIT ACM matches the '
-             'platform.'),
-            ('GETSEC[SENTER]',
-             'Executes the measured launch: the CPU and chipset reset the dynamic PCRs, the ACM '
-             'is verified by microcode, and it measures the MLE.'),
-            ('policy evaluation',
-             'The launch control policy and verified launch policy are checked against '
-             'measurements of the kernel and its modules.'),
-            ('kernel start',
-             'If policy is satisfied, the kernel or VMM is started in the measured environment.'),
+            Stage('loaded by GRUB',
+                  'tboot is loaded as a Multiboot module ahead of the kernel or hypervisor it '
+                  'will measure.',
+                  'Multiboot modules + tboot'),
+            Stage('pre-launch checks',
+                  'Verifies TXT capability, the chipset, and that the SINIT ACM matches the '
+                  'platform.',
+                  'TXT capability confirmed'),
+            Stage('GETSEC[SENTER]',
+                  'Executes the measured launch: the CPU and chipset reset the dynamic PCRs, '
+                  'the ACM is verified by microcode, and it measures the MLE.',
+                  'dynamic PCRs 17-22 extended'),
+            Stage('policy evaluation',
+                  'The launch control policy and verified launch policy are checked against '
+                  'measurements of the kernel and its modules.',
+                  'policy satisfied'),
+            Stage('kernel start',
+                  'If policy is satisfied, the kernel or VMM is started in the measured '
+                  'environment.',
+                  'txt_info + TXT heap, DMA protected'),
         ),
         communication="tboot's communication is with the TPM rather than with the next stage. "
                       'The dynamic PCRs (17-22) are reset by the SENTER instruction and '
@@ -1157,16 +1369,22 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='Android bootloader (the historical Alpha aboot in this corpus).',
         boot_role='Loads and verifies an Android boot image.',
         type_rationale='Type 2: an OS-loading stage.',
+        target='Linux kernel<br/>(Alpha)',
         stages=(
-            ('SRM console',
-             "Alpha's SRM firmware initialises the machine and reads the bootstrap blocks from "
-             'the boot device.'),
-            ('bootstrap loader',
-             'The bootblock loads aboot itself from the reserved area at the start of the disk.'),
-            ('filesystem access',
-             'aboot reads ext2, ISO 9660 or UFS directly to find the kernel.'),
-            ('kernel load',
-             'Loads the kernel, resolves arguments from /etc/aboot.conf, and starts it.'),
+            Stage('SRM console',
+                  "Alpha's SRM firmware initialises the machine and reads the bootstrap blocks "
+                  'from the boot device.',
+                  'SRM callback interface'),
+            Stage('bootstrap loader',
+                  'The bootblock loads aboot itself from the reserved area at the start of the '
+                  'disk.',
+                  'aboot loaded from bootblocks'),
+            Stage('filesystem access',
+                  'aboot reads ext2, ISO 9660 or UFS directly to find the kernel.',
+                  'kernel located in filesystem'),
+            Stage('kernel load',
+                  'Loads the kernel, resolves arguments from /etc/aboot.conf, and starts it.',
+                  'kernel + cmdline from aboot.conf'),
         ),
         communication="aboot sits on SRM's callback interface: the firmware stays available for "
                       'console and disk access, so aboot does not need its own drivers for the '
@@ -1184,20 +1402,26 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='Open-source Windows boot loader replacement.',
         boot_role='Loads the Windows kernel from a filesystem GRUB can reach.',
         type_rationale='Type 2: it prepares and launches an OS.',
+        target='Windows kernel<br/>(ntoskrnl.exe)',
         stages=(
-            ('loaded by firmware',
-             'quibble.efi is loaded from the ESP in place of bootmgfw.efi.'),
-            ('registry read',
-             'Reads the SYSTEM hive to find the boot-start drivers and the services the kernel '
-             'needs.'),
-            ('filesystem drivers',
-             'Loads its own drivers -- Btrfs, ext, NTFS -- so Windows can be booted from '
-             'filesystems the official loader does not support.'),
-            ('image loading',
-             'Loads the kernel, HAL and boot drivers, relocating and linking them as the loader '
-             'is required to.'),
-            ('kernel start',
-             'Builds the loader block and enters the kernel.'),
+            Stage('loaded by firmware',
+                  'quibble.efi is loaded from the ESP in place of bootmgfw.efi.',
+                  'image handle + system table'),
+            Stage('registry read',
+                  'Reads the SYSTEM hive to find the boot-start drivers and the services the '
+                  'kernel needs.',
+                  'boot-start driver list'),
+            Stage('filesystem drivers',
+                  'Loads its own drivers -- Btrfs, ext, NTFS -- so Windows can be booted from '
+                  'filesystems the official loader does not support.',
+                  'readable non-NTFS volumes'),
+            Stage('image loading',
+                  'Loads the kernel, HAL and boot drivers, relocating and linking them as the '
+                  'loader is required to.',
+                  'relocated kernel, HAL and drivers'),
+            Stage('kernel start',
+                  'Builds the loader block and enters the kernel.',
+                  'LOADER_PARAMETER_BLOCK'),
         ),
         communication='Quibble is a reimplementation of `bootmgfw.efi` and `winload.efi`, so '
                       'the interface it must reproduce is the LOADER_PARAMETER_BLOCK: a large '
@@ -1216,15 +1440,20 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='Multi-kernel boot manager built on the BOOTBOOT protocol.',
         boot_role='Presents a menu and boots kernels in several formats.',
         type_rationale='Type 2: OS selection and launch.',
+        target='Kernel<br/>(Multiboot2 or native)',
         stages=(
-            ('platform stage',
-             'A BIOS, UEFI, coreboot or Raspberry Pi first stage loads the Easyboot image.'),
-            ('menu configuration',
-             'Reads a simple plain-text menu file from the boot partition.'),
-            ('kernel selection',
-             'Presents entries and loads the chosen kernel, in ELF, PE or a.out form.'),
-            ('protocol handoff',
-             "Boots it with Multiboot2 or the kernel's own expected protocol."),
+            Stage('platform stage',
+                  'A BIOS, UEFI, coreboot or Raspberry Pi first stage loads the Easyboot image.',
+                  'Easyboot image loaded'),
+            Stage('menu configuration',
+                  'Reads a simple plain-text menu file from the boot partition.',
+                  'parsed menu entries'),
+            Stage('kernel selection',
+                  'Presents entries and loads the chosen kernel, in ELF, PE or a.out form.',
+                  'kernel image in memory'),
+            Stage('protocol handoff',
+                  "Boots it with Multiboot2 or the kernel's own expected protocol.",
+                  'Multiboot2 information tag list'),
         ),
         communication='Easyboot is a boot manager built around the idea that the configuration '
                       'should be readable and the loader should not need plugins: filesystem '
@@ -1243,15 +1472,21 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='Minimal UEFI boot menu and Stivale2 loader.',
         boot_role='Boots hobby-OS kernels from UEFI.',
         type_rationale='Type 2: a UEFI application that loads a kernel.',
+        target='Kernel<br/>(TSBP · Linux · chainload)',
         stages=(
-            ('loaded by firmware',
-             'A UEFI application started from the ESP.'),
-            ('configuration',
-             'Reads its menu configuration and presents entries.'),
-            ('image load',
-             'Loads a Linux kernel, chainloads another EFI program, or loads a TSBP kernel.'),
-            ('handoff',
-             'Enters the kernel according to the protocol it uses.'),
+            Stage('loaded by firmware',
+                  'A UEFI application started from the ESP.',
+                  'image handle + system table'),
+            Stage('configuration',
+                  'Reads its menu configuration and presents entries.',
+                  'menu entries'),
+            Stage('image load',
+                  'Loads a Linux kernel, chainloads another EFI program, or loads a TSBP '
+                  'kernel.',
+                  'kernel in memory'),
+            Stage('handoff',
+                  'Enters the kernel according to the protocol it uses.',
+                  'TSBP struct, paging on'),
         ),
         communication='Tosaithe is small and UEFI-only by design, and exists mainly as the '
                       'reference implementation of the Tosaithe Boot Protocol. Under TSBP the '
@@ -1268,17 +1503,23 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='A minimal MBR loader demonstrating the real-mode to protected-mode '
                   'transition.',
         type_rationale='Type 2: it starts after BIOS and loads a kernel.',
+        target='Kernel<br/>(C, 32-bit)',
         stages=(
-            ('boot sector',
-             '512 bytes loaded by BIOS to 0x7C00, ending in the 0xAA55 signature.'),
-            ('disk read',
-             'Uses INT 0x13 to read the rest of the loader and the kernel off the disk.'),
-            ('GDT and A20',
-             'Sets up a flat global descriptor table and enables the A20 line.'),
-            ('protected mode',
-             'Sets the PE bit in CR0 and far-jumps to flush the pipeline into 32-bit code.'),
-            ('kernel entry',
-             'Calls into the C kernel it loaded.'),
+            Stage('boot sector',
+                  '512 bytes loaded by BIOS to 0x7C00, ending in the 0xAA55 signature.',
+                  '512 bytes at 0x7C00'),
+            Stage('disk read',
+                  'Uses INT 0x13 to read the rest of the loader and the kernel off the disk.',
+                  'loader + kernel in memory'),
+            Stage('GDT and A20',
+                  'Sets up a flat global descriptor table and enables the A20 line.',
+                  'flat GDT, A20 enabled'),
+            Stage('protected mode',
+                  'Sets the PE bit in CR0 and far-jumps to flush the pipeline into 32-bit code.',
+                  '32-bit protected mode'),
+            Stage('kernel entry',
+                  'Calls into the C kernel it loaded.',
+                  'direct call at a fixed address'),
         ),
         communication='This is a teaching implementation, so the mechanisms are the bare ones: '
                       'BIOS interrupts for disk and screen while still in real mode, and fixed '
@@ -1294,20 +1535,27 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='rust-osdev/bootloader, a Rust x86_64 kernel loader.',
         boot_role='Loads a Rust kernel from BIOS or UEFI and sets up paging before handoff.',
         type_rationale='Type 2: it starts from an initialised platform and prepares a kernel.',
+        target='Rust kernel',
         stages=(
-            ('BIOS or UEFI first stage',
-             'On BIOS a 512-byte stage loads stage 2 and stage 3, which switch to protected '
-             'then long mode; on UEFI the firmware loads the bootloader directly.'),
-            ('common stage',
-             'Shared Rust code takes over: it reads the kernel ELF from the disk image.'),
-            ('paging setup',
-             'Builds page tables, maps the kernel, and optionally maps all physical memory at a '
-             'configurable offset.'),
-            ('boot info assembly',
-             'Fills in a BootInfo struct with the memory map, framebuffer, physical memory '
-             'offset and ACPI pointer.'),
-            ('kernel entry',
-             'Jumps to the kernel entry point with a reference to BootInfo.'),
+            Stage('BIOS or UEFI first stage',
+                  'On BIOS a 512-byte stage loads stage 2 and stage 3, which switch to '
+                  'protected then long mode; on UEFI the firmware loads the bootloader '
+                  'directly.',
+                  'long mode, stage 3 loaded'),
+            Stage('common stage',
+                  'Shared Rust code takes over: it reads the kernel ELF from the disk image.',
+                  'kernel ELF parsed'),
+            Stage('paging setup',
+                  'Builds page tables, maps the kernel, and optionally maps all physical memory '
+                  'at a configurable offset.',
+                  'page tables + physical memory map'),
+            Stage('boot info assembly',
+                  'Fills in a BootInfo struct with the memory map, framebuffer, physical memory '
+                  'offset and ACPI pointer.',
+                  'BootInfo populated'),
+            Stage('kernel entry',
+                  'Jumps to the kernel entry point with a reference to BootInfo.',
+                  "&'static mut BootInfo"),
         ),
         communication='The interesting property is that the handoff is typed. The bootloader '
                       'and the kernel are both Rust crates that share the `bootloader_api` '
@@ -1324,18 +1572,23 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='Minimal research hypervisor loadable from UEFI.',
         boot_role='Installs a thin hypervisor before the OS boots.',
         type_rationale='Type 2: a UEFI-loaded stage that runs before and hands off to an OS.',
+        target='Firmware<br/>(now running as guest)',
         stages=(
-            ('UEFI driver load',
-             'MiniVisor is loaded as a UEFI driver, typically from the UEFI shell, before any '
-             'OS starts.'),
-            ('VMX setup',
-             'Enables VMX operation, allocates VMCS and EPT structures for each processor.'),
-            ('virtualisation of the running context',
-             'The currently executing environment -- the firmware -- becomes the guest, with '
-             'the hypervisor beneath it.'),
-            ('boot continues',
-             'The firmware and then the OS continue running as a guest, observed by the '
-             'hypervisor.'),
+            Stage('UEFI driver load',
+                  'MiniVisor is loaded as a UEFI driver, typically from the UEFI shell, before '
+                  'any OS starts.',
+                  'image handle + system table'),
+            Stage('VMX setup',
+                  'Enables VMX operation, allocates VMCS and EPT structures for each processor.',
+                  'VMCS + EPT per processor'),
+            Stage('virtualisation of the running context',
+                  'The currently executing environment -- the firmware -- becomes the guest, '
+                  'with the hypervisor beneath it.',
+                  'VM-exit interface'),
+            Stage('boot continues',
+                  'The firmware and then the OS continue running as a guest, observed by the '
+                  'hypervisor.',
+                  'control returned, boot continues'),
         ),
         communication='This is not a bootloader in the sense of loading anything; it is in the '
                       'corpus because it occupies the boot path. Its communication with what '
@@ -1354,18 +1607,23 @@ BOOTLOADERS: dict[str, Bootloader] = {
         type_rationale='Type 2 by association: it is boot-path infrastructure for network boot '
                        'rather than a bootloader that transfers control to a kernel. The '
                        'weakest fit in the corpus.',
+        target='Root filesystem<br/>(remote volume)',
         stages=(
-            ('firmware or iBFT stage',
-             "A network card's option ROM or the firmware establishes the initial iSCSI session "
-             'and records the parameters in the iSCSI Boot Firmware Table.'),
-            ('initramfs start',
-             'Linux boots far enough to run an initramfs containing iscsistart.'),
-            ('session re-establishment',
-             'The iBFT parameters are read from /sys/firmware/ibft and the session is re- '
-             'created by the in-kernel initiator.'),
-            ('root mount',
-             'The remote volume appears as a SCSI disk and the root filesystem is mounted from '
-             'it.'),
+            Stage('firmware or iBFT stage',
+                  "A network card's option ROM or the firmware establishes the initial iSCSI "
+                  'session and records the parameters in the iSCSI Boot Firmware Table.',
+                  'iBFT in ACPI: target, LUN, CHAP'),
+            Stage('initramfs start',
+                  'Linux boots far enough to run an initramfs containing iscsistart.',
+                  'iscsistart in initramfs'),
+            Stage('session re-establishment',
+                  'The iBFT parameters are read from /sys/firmware/ibft and the session is re- '
+                  'created by the in-kernel initiator.',
+                  'kernel-owned session'),
+            Stage('root mount',
+                  'The remote volume appears as a SCSI disk and the root filesystem is mounted '
+                  'from it.',
+                  'SCSI disk ready to mount'),
         ),
         communication='open-iscsi is boot-path infrastructure rather than a bootloader, and the '
                       'handoff it participates in is a state transfer: the firmware-owned '
@@ -1388,30 +1646,39 @@ BOOTLOADERS: dict[str, Bootloader] = {
         type_rationale='Type 3: SPL plus U-Boot together take the board from reset to a running '
                        'OS with no separate firmware layer -- one project spans both roles.',
         case_study='3.7',
+        target='Operating system<br/>(Linux · EFI application)',
         stages=(
-            ('SoC ROM code',
-             'OEM code in mask ROM runs from the reset vector and does the minimum needed to '
-             'load the next image, often from a fixed offset on eMMC or SPI flash.'),
-            ('TPL',
-             'Optional tertiary program loader: very early hardware setup, used where the ROM '
-             'can only load a very small image. Loads SPL or VPL.'),
-            ('VPL',
-             'Optional verification program loader, which selects among multiple verified SPL '
-             'binaries.'),
-            ('SPL',
-             'Secondary program loader. Initialises DRAM and loads full U-Boot into it -- or, '
-             'in Falcon mode, loads the Linux kernel directly and skips the rest.'),
-            ('U-Boot proper',
-             'The full image: driver model, filesystems, network stack, environment and the '
-             'command shell.'),
-            ('bootdev',
-             'Abstracts the device that may hold an OS -- MMC, USB, NVMe, network.'),
-            ('bootmeth',
-             'Defines how each bootdev is searched for a valid boot configuration -- '
-             'extlinux.conf, an EFI application, a script.'),
-            ('bootflow',
-             'The concrete sequence produced by a bootmeth on a bootdev. The first valid one '
-             'found is used by default.'),
+            Stage('SoC ROM code',
+                  'OEM code in mask ROM runs from the reset vector and does the minimum needed '
+                  'to load the next image, often from a fixed offset on eMMC or SPI flash.',
+                  'next image from a fixed flash offset'),
+            Stage('TPL',
+                  'Optional tertiary program loader: very early hardware setup, used where the '
+                  'ROM can only load a very small image. Loads SPL or VPL.',
+                  'early hardware up'),
+            Stage('VPL',
+                  'Optional verification program loader, which selects among multiple verified '
+                  'SPL binaries.',
+                  'chosen SPL binary'),
+            Stage('SPL',
+                  'Secondary program loader. Initialises DRAM and loads full U-Boot into it -- '
+                  'or, in Falcon mode, loads the Linux kernel directly and skips the rest.',
+                  'DRAM up, spl_image_info + bloblist'),
+            Stage('U-Boot proper',
+                  'The full image: driver model, filesystems, network stack, environment and '
+                  'the command shell.',
+                  'drivers, env, shell ready'),
+            Stage('bootdev',
+                  'Abstracts the device that may hold an OS -- MMC, USB, NVMe, network.',
+                  'candidate boot devices'),
+            Stage('bootmeth',
+                  'Defines how each bootdev is searched for a valid boot configuration -- '
+                  'extlinux.conf, an EFI application, a script.',
+                  'located boot configuration'),
+            Stage('bootflow',
+                  'The concrete sequence produced by a bootmeth on a bootdev. The first valid '
+                  'one found is used by default.',
+                  'kernel + initrd + fixed-up FDT'),
         ),
         communication='Because the stages are separate images built from one tree, U-Boot '
                       'passes state forward explicitly: SPL hands U-Boot a `struct '
@@ -1436,18 +1703,23 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Initialises the board from reset and boots a kernel, with a shell and a '
                   'filesystem-like device model.',
         type_rationale='Type 3: hardware bring-up and OS launch in one image.',
+        target='Operating system',
         stages=(
-            ('PBL (pre-bootloader)',
-             'A small compressed prologue that runs from SRAM, sets up DRAM, and decompresses '
-             'barebox proper into it.'),
-            ('barebox proper',
-             'Full initialisation: driver model, filesystem layer, network stack, and the '
-             'shell.'),
-            ('bootentry discovery',
-             'Boot entries are collected from bootloader spec files, scripts in /env/boot, or '
-             'the device tree.'),
-            ('boot',
-             'The chosen entry loads a kernel, device tree and initrd, and starts it.'),
+            Stage('PBL (pre-bootloader)',
+                  'A small compressed prologue that runs from SRAM, sets up DRAM, and '
+                  'decompresses barebox proper into it.',
+                  'DRAM up, barebox decompressed'),
+            Stage('barebox proper',
+                  'Full initialisation: driver model, filesystem layer, network stack, and the '
+                  'shell.',
+                  'drivers, filesystems, env'),
+            Stage('bootentry discovery',
+                  'Boot entries are collected from bootloader spec files, scripts in /env/boot, '
+                  'or the device tree.',
+                  'bootentries + bootchooser slot'),
+            Stage('boot',
+                  'The chosen entry loads a kernel, device tree and initrd, and starts it.',
+                  'kernel + initrd + FDT'),
         ),
         communication="barebox follows U-Boot's role but borrows the kernel's design: a POSIX- "
                       'like filesystem layer where devices, variables and configuration all '
@@ -1469,21 +1741,27 @@ BOOTLOADERS: dict[str, Bootloader] = {
         type_rationale='Type 3: it runs from reset on the MCU and jumps straight into the '
                        'application -- there is no OS-loader stage to hand off to.',
         case_study='3.6',
+        target='Application<br/>(Zephyr · Mynewt · NuttX)',
         stages=(
-            ('reset vector',
-             'The MCU resets into MCUboot, which occupies the first region of flash.'),
-            ('bootutil',
-             'The core library: reads the image headers and TLV trailers, validates signatures '
-             'and hashes, and implements the swap logic.'),
-            ('slot selection',
-             "Decides between the primary and secondary slot based on the image trailer's flags "
-             '-- a pending update, a test image awaiting confirmation, or a revert.'),
-            ('swap or overwrite',
-             'If an update is pending, the slots are swapped through the scratch area, or the '
-             'secondary simply overwrites the primary.'),
-            ('boot application',
-             'Board- and RTOS-specific code sets the vector table and stack pointer and jumps '
-             "to the primary slot's entry point."),
+            Stage('reset vector',
+                  'The MCU resets into MCUboot, which occupies the first region of flash.',
+                  'reset handler entered'),
+            Stage('bootutil',
+                  'The core library: reads the image headers and TLV trailers, validates '
+                  'signatures and hashes, and implements the swap logic.',
+                  'headers and TLV trailers parsed'),
+            Stage('slot selection',
+                  "Decides between the primary and secondary slot based on the image trailer's "
+                  'flags -- a pending update, a test image awaiting confirmation, or a revert.',
+                  'chosen slot (primary or secondary)'),
+            Stage('swap or overwrite',
+                  'If an update is pending, the slots are swapped through the scratch area, or '
+                  'the secondary simply overwrites the primary.',
+                  'primary slot holds the valid image'),
+            Stage('boot application',
+                  'Board- and RTOS-specific code sets the vector table and stack pointer and '
+                  "jumps to the primary slot's entry point.",
+                  'vector table + SP set, branch'),
         ),
         communication="MCUboot's stage communication is flash layout. The image trailer at the "
                       'end of each slot holds the magic value, the image-OK and copy-done flags '
@@ -1505,21 +1783,28 @@ BOOTLOADERS: dict[str, Bootloader] = {
                   'enter the normal-world bootloader or OS.',
         type_rationale='Type 3 in this corpus: it spans reset to OS handoff. Arguably Type 1 in '
                        'a staged setup where BL33 is U-Boot.',
+        target='Non-secure world<br/>(U-Boot · EDK II · kernel)',
         stages=(
-            ('BL1',
-             'Runs from ROM at reset in EL3. Sets up the exception vectors and minimal platform '
-             'state, then loads and authenticates BL2.'),
-            ('BL2',
-             'Trusted boot firmware. Initialises DRAM, then loads and authenticates every image '
-             'that follows: BL31, BL32 and BL33.'),
-            ('BL31',
-             'The EL3 runtime firmware. Installs the SMC handler, PSCI implementation and '
-             'interrupt routing, and stays resident for the life of the system.'),
-            ('BL32',
-             'Optional secure-world payload -- OP-TEE, TF-M or another trusted OS -- running in '
-             'S-EL1.'),
-            ('BL33',
-             'The non-secure bootloader: U-Boot, EDK II or a kernel, entered in EL2 or EL1.'),
+            Stage('BL1',
+                  'Runs from ROM at reset in EL3. Sets up the exception vectors and minimal '
+                  'platform state, then loads and authenticates BL2.',
+                  'authenticated BL2'),
+            Stage('BL2',
+                  'Trusted boot firmware. Initialises DRAM, then loads and authenticates every '
+                  'image that follows: BL31, BL32 and BL33.',
+                  'entry_point_info for BL31/32/33'),
+            Stage('BL31',
+                  'The EL3 runtime firmware. Installs the SMC handler, PSCI implementation and '
+                  'interrupt routing, and stays resident for the life of the system.',
+                  'SMC handler + PSCI resident at EL3'),
+            Stage('BL32',
+                  'Optional secure-world payload -- OP-TEE, TF-M or another trusted OS -- '
+                  'running in S-EL1.',
+                  'secure services at S-EL1'),
+            Stage('BL33',
+                  'The non-secure bootloader: U-Boot, EDK II or a kernel, entered in EL2 or '
+                  'EL1.',
+                  'eret into EL2/EL1'),
         ),
         communication='Images are described to each other by `entry_point_info` and '
                       "`image_info` structures that BL2 fills in and passes through BL31's "
@@ -1540,21 +1825,28 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Secure boot (often MCUboot-based BL2) plus the secure processing environment '
                   'the non-secure application calls into.',
         type_rationale='Type 3: reset to application on a microcontroller.',
+        target='Non-secure application',
         stages=(
-            ('BL1',
-             'Optional immutable ROM stage on platforms that need one; verifies and loads BL2.'),
-            ('BL2 (MCUboot)',
-             'TF-M uses MCUboot as its second-stage loader to verify and, if needed, swap the '
-             'secure and non-secure images.'),
-            ('SPE initialisation',
-             'The Secure Processing Environment sets up the SAU/IDAU and MPU so secure memory '
-             'and peripherals are unreachable from the non-secure side.'),
-            ('secure partitions',
-             'The partition manager starts the PSA RoT services -- Crypto, Internal Trusted '
-             'Storage, Protected Storage, Initial Attestation.'),
-            ('NSPE jump',
-             'Control is transferred to the non-secure application through a non-secure '
-             'function call.'),
+            Stage('BL1',
+                  'Optional immutable ROM stage on platforms that need one; verifies and loads '
+                  'BL2.',
+                  'verified BL2'),
+            Stage('BL2 (MCUboot)',
+                  'TF-M uses MCUboot as its second-stage loader to verify and, if needed, swap '
+                  'the secure and non-secure images.',
+                  'verified images + measurements'),
+            Stage('SPE initialisation',
+                  'The Secure Processing Environment sets up the SAU/IDAU and MPU so secure '
+                  'memory and peripherals are unreachable from the non-secure side.',
+                  'SAU/IDAU and MPU configured'),
+            Stage('secure partitions',
+                  'The partition manager starts the PSA RoT services -- Crypto, Internal '
+                  'Trusted Storage, Protected Storage, Initial Attestation.',
+                  'PSA RoT services + NSC veneers'),
+            Stage('NSPE jump',
+                  'Control is transferred to the non-secure application through a non-secure '
+                  'function call.',
+                  'BLXNS: NS stack pointer + vector table'),
         ),
         communication='The boundary here is spatial rather than temporal: after the jump, both '
                       'sides are running, and the interface between them is the Armv8-M '
@@ -1573,20 +1865,27 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Verifies firmware signatures with wolfCrypt, supports rollback protection '
                   'and encrypted updates, then boots the application.',
         type_rationale='Type 3: MCU-class reset-to-application boot.',
+        target='Application<br/>(firmware or Linux)',
         stages=(
-            ('stage1',
-             'On platforms that need it, a minimal first stage loads wolfBoot itself from flash '
-             'into RAM.'),
-            ('wolfBoot start',
-             'Minimal HAL initialisation -- clock, flash access -- and nothing more.'),
-            ('image verification',
-             'Parses the image header, checks the SHA digest and verifies the signature with '
-             'wolfCrypt, against a public key compiled into the bootloader.'),
-            ('update or rollback',
-             'If the update partition holds a newer verified image, the partitions are swapped '
-             'through the sector-based swap area; a failed confirmation triggers rollback.'),
-            ('application jump',
-             'Sets the vector table and jumps to the verified image.'),
+            Stage('stage1',
+                  'On platforms that need it, a minimal first stage loads wolfBoot itself from '
+                  'flash into RAM.',
+                  'wolfBoot in RAM'),
+            Stage('wolfBoot start',
+                  'Minimal HAL initialisation -- clock, flash access -- and nothing more.',
+                  'flash + clock access'),
+            Stage('image verification',
+                  'Parses the image header, checks the SHA digest and verifies the signature '
+                  'with wolfCrypt, against a public key compiled into the bootloader.',
+                  'signature verified by wolfCrypt'),
+            Stage('update or rollback',
+                  'If the update partition holds a newer verified image, the partitions are '
+                  'swapped through the sector-based swap area; a failed confirmation triggers '
+                  'rollback.',
+                  'confirmed image in the boot partition'),
+            Stage('application jump',
+                  'Sets the vector table and jumps to the verified image.',
+                  'vector table set, branch (PCRs extended)'),
         ),
         communication='wolfBoot follows RFC 9019, and its state is the partition trailer: '
                       'magic, partition state (`NEW`, `UPDATING`, `TESTING`, `SUCCESS`) and the '
@@ -1605,18 +1904,24 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='Secure bootloader for MCUs written in Rust.',
         boot_role='Signature verification and A/B updates before jumping to the application.',
         type_rationale='Type 3: reset to application.',
+        target='Firmware or Linux kernel',
         stages=(
-            ('reset',
-             'The MCU or SoC resets into rustBoot, written entirely in Rust.'),
-            ('partition parse',
-             'Reads the boot and update partition headers and their trailers.'),
-            ('verification',
-             'Checks the image digest and verifies its ECC signature using RustCrypto.'),
-            ('swap or boot',
-             'Swaps partitions if an update is pending and confirmed-valid; otherwise boots the '
-             'existing image.'),
-            ('handoff',
-             'Jumps to the firmware image, or on Cortex-A loads and boots a Linux kernel.'),
+            Stage('reset',
+                  'The MCU or SoC resets into rustBoot, written entirely in Rust.',
+                  'reset handler entered'),
+            Stage('partition parse',
+                  'Reads the boot and update partition headers and their trailers.',
+                  'partition headers + trailers'),
+            Stage('verification',
+                  'Checks the image digest and verifies its ECC signature using RustCrypto.',
+                  'ECC signature verified'),
+            Stage('swap or boot',
+                  'Swaps partitions if an update is pending and confirmed-valid; otherwise '
+                  'boots the existing image.',
+                  'valid image in the boot partition'),
+            Stage('handoff',
+                  'Jumps to the firmware image, or on Cortex-A loads and boots a Linux kernel.',
+                  'branch, or kernel + FDT'),
         ),
         communication='rustBoot uses the same multi-slot, trailer-driven state machine the C '
                       'secure bootloaders use -- boot and update partitions, a state byte, a '
@@ -1634,20 +1939,27 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Provides firmware update over CAN, USB, UART or TCP/IP, then runs the '
                   'application.',
         type_rationale='Type 3: reset to application with an update path.',
+        target='Application',
         stages=(
-            ('reset into bootloader',
-             'OpenBLT occupies the first part of flash and runs at every reset.'),
-            ('backdoor window',
-             'For a short, configurable period it listens on the enabled transports -- RS232, '
-             'CAN, USB, TCP/IP, Modbus RTU -- for a host tool requesting an update.'),
-            ('firmware update',
-             'If a session is opened, XCP commands from MicroBoot or BootCommander erase and '
-             'program the application area; an SD card update path does the same from a file.'),
-            ('checksum check',
-             "The application's signature/checksum word is verified."),
-            ('application start',
-             'Vector table and stack pointer are set from the application and control jumps to '
-             'it.'),
+            Stage('reset into bootloader',
+                  'OpenBLT occupies the first part of flash and runs at every reset.',
+                  'reset handler entered'),
+            Stage('backdoor window',
+                  'For a short, configurable period it listens on the enabled transports -- '
+                  'RS232, CAN, USB, TCP/IP, Modbus RTU -- for a host tool requesting an update.',
+                  'no host session (or update done)'),
+            Stage('firmware update',
+                  'If a session is opened, XCP commands from MicroBoot or BootCommander erase '
+                  'and program the application area; an SD card update path does the same from '
+                  'a file.',
+                  'new image written to flash'),
+            Stage('checksum check',
+                  "The application's signature/checksum word is verified.",
+                  'checksum word valid'),
+            Stage('application start',
+                  'Vector table and stack pointer are set from the application and control '
+                  'jumps to it.',
+                  'vector table set, branch'),
         ),
         communication='The protocol between host and target is XCP over whichever transport is '
                       'configured, so the same PC tooling works across every supported MCU '
@@ -1665,21 +1977,27 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Provides a debug monitor, flash management and network download, then boots '
                   'an image.',
         type_rationale='Type 3: it owns the board from reset.',
+        target='Loaded image<br/>(Linux kernel or raw)',
         stages=(
-            ('eCos start-up',
-             'RedBoot is an eCos application, so the eCos HAL runs first: exception vectors, '
-             'memory and cache setup.'),
-            ('board init',
-             'Platform initialisation, then flash and network drivers are brought up.'),
-            ('configuration load',
-             'Persistent configuration is read from the fconfig block in flash -- boot script, '
-             'IP settings, console baud rate.'),
-            ('boot script or prompt',
-             'A stored script runs after a timeout, or an interactive prompt is offered on the '
-             'console or over telnet.'),
-            ('image load and go',
-             'The image is loaded from flash, TFTP or serial, and `exec`/`go` transfers '
-             'control.'),
+            Stage('eCos start-up',
+                  'RedBoot is an eCos application, so the eCos HAL runs first: exception '
+                  'vectors, memory and cache setup.',
+                  'eCos HAL, vectors, caches'),
+            Stage('board init',
+                  'Platform initialisation, then flash and network drivers are brought up.',
+                  'flash + network drivers'),
+            Stage('configuration load',
+                  'Persistent configuration is read from the fconfig block in flash -- boot '
+                  'script, IP settings, console baud rate.',
+                  'fconfig: boot script, IP, baud'),
+            Stage('boot script or prompt',
+                  'A stored script runs after a timeout, or an interactive prompt is offered on '
+                  'the console or over telnet.',
+                  'chosen command'),
+            Stage('image load and go',
+                  'The image is loaded from flash, TFTP or serial, and `exec`/`go` transfers '
+                  'control.',
+                  'exec/go: cmdline + initrd, or bare address'),
         ),
         communication="RedBoot's interface is the command monitor: `fis` manages the flash "
                       'image system -- a simple table of named images in flash -- `fconfig` '
@@ -1697,18 +2015,23 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Occupies the boot section, accepts an STK500 upload over serial, then jumps '
                   'to the sketch.',
         type_rationale='Type 3: reset to application on an 8-bit MCU.',
+        target='Sketch<br/>(application)',
         stages=(
-            ('reset into boot section',
-             'AVR fuses set the reset vector into the 512-byte boot section where Optiboot '
-             'lives.'),
-            ('entry check',
-             'Decides whether to enter programming mode: a reset cause check, and a short '
-             'window waiting for STK500 activity on the UART.'),
-            ('STK500v1 session',
-             'If a programmer is talking, receives pages over the serial line and writes them '
-             'to flash with SPM.'),
-            ('application jump',
-             'Times out or finishes, then jumps to address 0 to start the sketch.'),
+            Stage('reset into boot section',
+                  'AVR fuses set the reset vector into the 512-byte boot section where Optiboot '
+                  'lives.',
+                  'boot section entered'),
+            Stage('entry check',
+                  'Decides whether to enter programming mode: a reset cause check, and a short '
+                  'window waiting for STK500 activity on the UART.',
+                  'no programmer present (or flash written)'),
+            Stage('STK500v1 session',
+                  'If a programmer is talking, receives pages over the serial line and writes '
+                  'them to flash with SPM.',
+                  'pages written via SPM'),
+            Stage('application jump',
+                  'Times out or finishes, then jumps to address 0 to start the sketch.',
+                  'rjmp 0, MCUSR preserved in a register'),
         ),
         communication='Optiboot is 512 bytes, which dictates everything: the protocol is a '
                       'minimal subset of STK500v1 over the UART, there is no configuration '
@@ -1727,21 +2050,27 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Presents a USB mass-storage device for drag-and-drop firmware update, then '
                   'starts the application.',
         type_rationale='Type 3: reset to application.',
+        target='Application',
         stages=(
-            ('reset into bootloader',
-             'The nRF52 starts in the bootloader region; the MBR at the bottom of flash handles '
-             'vector forwarding.'),
-            ('DFU trigger check',
-             'Enters update mode on a double-tap reset, a GPIO condition, or a request left by '
-             'the application in a retained register.'),
-            ('interface presentation',
-             'Presents itself as a USB mass-storage device for UF2 drag-and-drop, a CDC serial '
-             'port for nrfutil DFU, or over BLE.'),
-            ('image write',
-             "Writes the received image into the application region, checking the package's CRC "
-             'and, for nrfutil packages, its signature.'),
-            ('application start',
-             'Sets the vector table through the MBR and starts the application.'),
+            Stage('reset into bootloader',
+                  'The nRF52 starts in the bootloader region; the MBR at the bottom of flash '
+                  'handles vector forwarding.',
+                  'MBR forwards to the bootloader'),
+            Stage('DFU trigger check',
+                  'Enters update mode on a double-tap reset, a GPIO condition, or a request '
+                  'left by the application in a retained register.',
+                  'GPREGRET / double-tap flag'),
+            Stage('interface presentation',
+                  'Presents itself as a USB mass-storage device for UF2 drag-and-drop, a CDC '
+                  'serial port for nrfutil DFU, or over BLE.',
+                  'UF2 mass storage, CDC or BLE'),
+            Stage('image write',
+                  'Writes the received image into the application region, checking the '
+                  "package's CRC and, for nrfutil packages, its signature.",
+                  'image in the application region'),
+            Stage('application start',
+                  'Sets the vector table through the MBR and starts the application.',
+                  'MBR sets the vector table, branch'),
         ),
         communication="The channel between application and bootloader is the nRF52's retained "
                       'GPREGRET register plus a double-tap flag in RAM, which survive a soft '
@@ -1759,19 +2088,26 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='CAN, USB and UART bootloader for MCUs, common on 3D printer boards.',
         boot_role='Accepts firmware over its supported transports, then runs the application.',
         type_rationale='Type 3: reset to application.',
+        target='Application<br/>(Klipper firmware)',
         stages=(
-            ('reset into bootloader',
-             'Katapult occupies the start of flash and runs first on every reset.'),
-            ('entry decision',
-             'Stays in the bootloader if a request flag was left in a known RAM location, a '
-             'button is held, or no valid application is present.'),
-            ('interface bring-up',
-             "Brings up CAN, USB or UART using Klipper's hardware abstraction layer, stripped "
-             'down.'),
-            ('flashing session',
-             'Receives the application image in blocks and writes it to the application region.'),
-            ('application jump',
-             'Verifies the image checksum, then jumps to the application.'),
+            Stage('reset into bootloader',
+                  'Katapult occupies the start of flash and runs first on every reset.',
+                  'reset handler entered'),
+            Stage('entry decision',
+                  'Stays in the bootloader if a request flag was left in a known RAM location, '
+                  'a button is held, or no valid application is present.',
+                  'RAM magic value or button state'),
+            Stage('interface bring-up',
+                  "Brings up CAN, USB or UART using Klipper's hardware abstraction layer, "
+                  'stripped down.',
+                  'CAN/USB/UART up, node addressable'),
+            Stage('flashing session',
+                  'Receives the application image in blocks and writes it to the application '
+                  'region.',
+                  'image in the application region'),
+            Stage('application jump',
+                  'Verifies the image checksum, then jumps to the application.',
+                  'vector table set, branch'),
         ),
         communication="Katapult shares Klipper's HAL, so the bootloader and the application it "
                       'loads are built from the same driver code -- unusual, and the reason its '
@@ -1789,18 +2125,23 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Flashes and verifies Tock applications over serial before starting the '
                   'kernel.',
         type_rationale='Type 3: reset to application.',
+        target='Tock kernel',
         stages=(
-            ('board start',
-             'The bootloader is itself a Tock kernel image: the board file initialises chips, '
-             'peripherals and the kernel.'),
-            ('entry check',
-             'Checks the bootloader entry condition -- typically a GPIO held at reset -- to '
-             'decide whether to run or pass through.'),
-            ('protocol service',
-             'Serves the Tock bootloader protocol over UART or USB CDC: read, write, erase, get '
-             'attributes.'),
-            ('application start',
-             'Jumps to the main Tock kernel image.'),
+            Stage('board start',
+                  'The bootloader is itself a Tock kernel image: the board file initialises '
+                  'chips, peripherals and the kernel.',
+                  'chips and peripherals up'),
+            Stage('entry check',
+                  'Checks the bootloader entry condition -- typically a GPIO held at reset -- '
+                  'to decide whether to run or pass through.',
+                  'GPIO entry condition'),
+            Stage('protocol service',
+                  'Serves the Tock bootloader protocol over UART or USB CDC: read, write, '
+                  'erase, get attributes.',
+                  'flash written, attributes exposed'),
+            Stage('application start',
+                  'Jumps to the main Tock kernel image.',
+                  'vector table set, branch'),
         ),
         communication="Because it is built on Tock itself, the bootloader reuses the kernel's "
                       'driver and capsule infrastructure rather than reimplementing it. Its '
@@ -1817,18 +2158,25 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='USB DFU bootloader for STM32F1 boards.',
         boot_role='Enumerates as a DFU device for upload, then jumps to the sketch.',
         type_rationale='Type 3: reset to application.',
+        target='Sketch<br/>(application)',
         stages=(
-            ('reset into bootloader',
-             'Occupies the first 8 or 16 KB of STM32F1 flash.'),
-            ('button/flag check',
-             'Checks the BOOT jumper, a button, or a magic value left in a backup register by '
-             'the application.'),
-            ('USB DFU enumeration',
-             'Enumerates as a USB DFU device using the bundled ST USB library.'),
-            ('download',
-             'Receives the application image over DFU and writes it to the application offset.'),
-            ('application jump',
-             'Relocates the vector table to the application offset and jumps.'),
+            Stage('reset into bootloader',
+                  'Occupies the first 8 or 16 KB of STM32F1 flash.',
+                  'flash base entered'),
+            Stage('button/flag check',
+                  'Checks the BOOT jumper, a button, or a magic value left in a backup register '
+                  'by the application.',
+                  'BOOT jumper or backup-register magic'),
+            Stage('USB DFU enumeration',
+                  'Enumerates as a USB DFU device using the bundled ST USB library.',
+                  'DFU endpoint enumerated'),
+            Stage('download',
+                  'Receives the application image over DFU and writes it to the application '
+                  'offset.',
+                  'image at the agreed offset'),
+            Stage('application jump',
+                  'Relocates the vector table to the application offset and jumps.',
+                  'VTOR relocated, branch'),
         ),
         communication='The bootloader and the Arduino core agree on a flash offset (0x8002000 '
                       'or 0x8005000) and on the backup-register magic value that means "reset '
@@ -1844,20 +2192,26 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='Mbed OS bootloader with firmware update support.',
         boot_role='Verifies and applies an update image, then boots the Mbed application.',
         type_rationale='Type 3: reset to application.',
+        target='Application',
         stages=(
-            ('reset into bootloader',
-             'Runs first from the start of flash.'),
-            ('update candidate check',
-             'Looks for a firmware candidate in internal or external storage, placed there by '
-             'Pelion Device Management Client.'),
-            ('verification',
-             "Checks the candidate's hash and signature against the manifest the update client "
-             'validated.'),
-            ('copy',
-             'Copies the candidate into the active application region, tracking progress so an '
-             'interrupted copy resumes.'),
-            ('application start',
-             'Jumps to the active application.'),
+            Stage('reset into bootloader',
+                  'Runs first from the start of flash.',
+                  'reset handler entered'),
+            Stage('update candidate check',
+                  'Looks for a firmware candidate in internal or external storage, placed there '
+                  'by Pelion Device Management Client.',
+                  'candidate image + metadata header'),
+            Stage('verification',
+                  "Checks the candidate's hash and signature against the manifest the update "
+                  'client validated.',
+                  'hash and signature verified'),
+            Stage('copy',
+                  'Copies the candidate into the active application region, tracking progress '
+                  'so an interrupted copy resumes.',
+                  'candidate copied into the active slot'),
+            Stage('application start',
+                  'Jumps to the active application.',
+                  'branch to the active application'),
         ),
         communication='The bootloader and the update client communicate through a firmware '
                       'metadata header written alongside each image -- version, size, hash and '
@@ -1874,18 +2228,24 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='IMProject bootloader for STM32.',
         boot_role='CRC-checked firmware update over UART or USB, then application start.',
         type_rationale='Type 3: reset to application.',
+        target='Application',
         stages=(
-            ('startup',
-             'Vendor startup code and the linker script place the bootloader at the base of '
-             'flash.'),
-            ('entry check',
-             'Decides whether to enter update mode based on a flag or host activity.'),
-            ('host session',
-             'Talks to the IMFlasher host tool over USB or UART.'),
-            ('verification',
-             'Checks the image signature using Monocypher before accepting it.'),
-            ('application jump',
-             'Writes the image to the application region and jumps to it.'),
+            Stage('startup',
+                  'Vendor startup code and the linker script place the bootloader at the base '
+                  'of flash.',
+                  'vector table from the linker script'),
+            Stage('entry check',
+                  'Decides whether to enter update mode based on a flag or host activity.',
+                  'update flag or host activity'),
+            Stage('host session',
+                  'Talks to the IMFlasher host tool over USB or UART.',
+                  'image received over USB/UART'),
+            Stage('verification',
+                  'Checks the image signature using Monocypher before accepting it.',
+                  'Monocypher signature verified'),
+            Stage('application jump',
+                  'Writes the image to the application region and jumps to it.',
+                  'image written, branch'),
         ),
         communication='The design goal is that one bootloader plus one host tool serve every '
                       'supported MCU, so the board differences are pushed into the Drivers and '
@@ -1901,21 +2261,27 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='STMicroelectronics OpenBootLoader middleware.',
         boot_role='Reimplements the STM32 system bootloader protocol in open source.',
         type_rationale='Type 3: the in-ROM-equivalent stage that owns the MCU from reset.',
+        target='Address chosen by the host',
         stages=(
-            ('reset or jump into Open Bootloader',
-             'Runs from wherever it was linked in user flash, having been started at reset or '
-             'jumped to by the application.'),
-            ('HAL initialisation',
-             'Brings up clocks, power and the configured interfaces through STM32Cube HAL/LL '
-             'drivers.'),
-            ('interface detection',
-             'Waits for a host on USART, I2C, SPI, USB-DFU or FDCAN and locks onto the first '
-             'that speaks.'),
-            ('command service',
-             'Serves the ST system bootloader command set -- Get, Read Memory, Write Memory, '
-             'Erase, Go, and the protection commands.'),
-            ('Go',
-             'The Go command transfers control to an address the host specifies.'),
+            Stage('reset or jump into Open Bootloader',
+                  'Runs from wherever it was linked in user flash, having been started at reset '
+                  'or jumped to by the application.',
+                  'linked address entered'),
+            Stage('HAL initialisation',
+                  'Brings up clocks, power and the configured interfaces through STM32Cube '
+                  'HAL/LL drivers.',
+                  'clocks, power, interfaces up'),
+            Stage('interface detection',
+                  'Waits for a host on USART, I2C, SPI, USB-DFU or FDCAN and locks onto the '
+                  'first that speaks.',
+                  'host locked onto one interface'),
+            Stage('command service',
+                  'Serves the ST system bootloader command set -- Get, Read Memory, Write '
+                  'Memory, Erase, Go, and the protection commands.',
+                  'Get/Read/Write/Erase served'),
+            Stage('Go',
+                  'The Go command transfers control to an address the host specifies.',
+                  'Go: SP and PC set from the host'),
         ),
         communication='Open Bootloader is deliberately protocol-compatible with the system '
                       'bootloader in STM32 ROM, so STM32CubeProgrammer and any tool written '
@@ -1934,20 +2300,27 @@ BOOTLOADERS: dict[str, Bootloader] = {
         boot_role='Configurable bootloader for PIC and SAM devices with several update '
                   'transports.',
         type_rationale='Type 3: reset to application.',
+        target='Application',
         stages=(
-            ('reset into bootloader',
-             'The Harmony bootloader occupies the reset region of the PIC32 or SAM device.'),
-            ('trigger evaluation',
-             'A configurable trigger -- GPIO, a RAM pattern written by the application, or a '
-             'missing valid application -- decides whether to enter update mode.'),
-            ('transport service',
-             'Serves the selected transport: UART, USB (device or host), CAN, Ethernet/UDP or '
-             'SD card.'),
-            ('programming',
-             'Receives the image, optionally verifies a CRC or signature, and writes it to the '
-             'application region -- with a dual-bank variant that programs the inactive bank.'),
-            ('application jump',
-             "Transfers control to the application's reset address."),
+            Stage('reset into bootloader',
+                  'The Harmony bootloader occupies the reset region of the PIC32 or SAM device.',
+                  'reset region entered'),
+            Stage('trigger evaluation',
+                  'A configurable trigger -- GPIO, a RAM pattern written by the application, or '
+                  'a missing valid application -- decides whether to enter update mode.',
+                  'GPIO, RAM pattern or missing image'),
+            Stage('transport service',
+                  'Serves the selected transport: UART, USB (device or host), CAN, Ethernet/UDP '
+                  'or SD card.',
+                  'transport session open'),
+            Stage('programming',
+                  'Receives the image, optionally verifies a CRC or signature, and writes it to '
+                  'the application region -- with a dual-bank variant that programs the '
+                  'inactive bank.',
+                  'image written (or inactive bank programmed)'),
+            Stage('application jump',
+                  "Transfers control to the application's reset address.",
+                  'branch to the reset vector, or bank swap'),
         ),
         communication="Harmony's bootloader is generated rather than hand-written: MPLAB "
                       'Harmony Configurator emits the bootloader for the chosen device and '
@@ -1963,18 +2336,24 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='Arduino variometer project including its bootloader.',
         boot_role='Application firmware with a small bootloader for a flight instrument.',
         type_rationale='Type 3: reset to application on AVR.',
+        target='Flight instrument<br/>(running)',
         stages=(
-            ('bootloader',
-             'A stock AVR bootloader (Optiboot or similar) occupies the boot section and '
-             'provides serial programming.'),
-            ('application start',
-             'The variometer firmware starts and initialises its sensors -- barometer, '
-             'accelerometer, magnetometer, GPS.'),
-            ('calibration data load',
-             'Calibration values are read from EEPROM, where the separate calibration sketches '
-             'in this repository wrote them.'),
-            ('main loop',
-             'Runs the flight instrument: sensor fusion, display and audio output, logging.'),
+            Stage('bootloader',
+                  'A stock AVR bootloader (Optiboot or similar) occupies the boot section and '
+                  'provides serial programming.',
+                  'rjmp 0 to the sketch'),
+            Stage('application start',
+                  'The variometer firmware starts and initialises its sensors -- barometer, '
+                  'accelerometer, magnetometer, GPS.',
+                  'sensors initialised'),
+            Stage('calibration data load',
+                  'Calibration values are read from EEPROM, where the separate calibration '
+                  'sketches in this repository wrote them.',
+                  'calibration values from EEPROM'),
+            Stage('main loop',
+                  'Runs the flight instrument: sensor fusion, display and audio output, '
+                  'logging.',
+                  'sensor fusion, display and audio'),
         ),
         communication='This project is application firmware with a conventional AVR bootloader '
                       'beneath it, and the only state crossing that boundary is EEPROM: '
@@ -1990,21 +2369,27 @@ BOOTLOADERS: dict[str, Bootloader] = {
         summary='Meshtastic device firmware.',
         boot_role='ESP32 and nRF52 firmware for LoRa mesh radios, including its update path.',
         type_rationale='Type 3: device firmware that owns the MCU from reset.',
+        target='Meshtastic application',
         stages=(
-            ('SoC ROM / second-stage loader',
-             'On ESP32 the mask ROM loads the second-stage bootloader from flash; on nRF52 an '
-             "existing bootloader (Adafruit's or Nordic's) occupies that role."),
-            ('partition selection',
-             'The bootloader reads the partition table and the OTA data partition to decide '
-             'which application slot to run.'),
-            ('verification',
-             "Where secure boot and flash encryption are enabled, the application image's "
-             'signature is checked and its flash is decrypted.'),
-            ('application start',
-             'The Meshtastic firmware starts: radio, display, GPS, and the mesh stack.'),
-            ('OTA update',
-             'New images are received over the network or USB, written to the inactive slot, '
-             'and marked for the next boot.'),
+            Stage('SoC ROM / second-stage loader',
+                  'On ESP32 the mask ROM loads the second-stage bootloader from flash; on nRF52 '
+                  "an existing bootloader (Adafruit's or Nordic's) occupies that role.",
+                  'second-stage bootloader from flash'),
+            Stage('partition selection',
+                  'The bootloader reads the partition table and the OTA data partition to '
+                  'decide which application slot to run.',
+                  'partition table + otadata slot pointer'),
+            Stage('verification',
+                  "Where secure boot and flash encryption are enabled, the application image's "
+                  'signature is checked and its flash is decrypted.',
+                  'signature checked, flash decrypted'),
+            Stage('application start',
+                  'The Meshtastic firmware starts: radio, display, GPS, and the mesh stack.',
+                  'radio, display and mesh stack up'),
+            Stage('OTA update',
+                  'New images are received over the network or USB, written to the inactive '
+                  'slot, and marked for the next boot.',
+                  'new image staged in the inactive slot'),
         ),
         communication='The boot-time interface is the ESP-IDF one: a partition table in flash, '
                       'an `otadata` partition holding the active-slot pointer and rollback '

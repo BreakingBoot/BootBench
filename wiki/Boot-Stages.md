@@ -2,6 +2,47 @@
 
 A boot is a sequence of stages, each setting up what the next one needs. The SoK divides it into eight, and every bootloader page walks its own phases against this model. Not every stage appears everywhere: Type 3 has no stage 4, because there is no second bootloader to hand off to, and Type 1 has no stages 5-8, because it stays OS-agnostic.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true}}}%%
+flowchart LR
+    HW(["Hardware<br/>power-on / reset"]):::edge --> S1
+    subgraph T1["Type 1 &mdash; firmware bootloader"]
+        direction LR
+        S1["<b>1</b><br/>Reset and<br/>early init"]:::fw --> S2["<b>2</b><br/>Permanent<br/>memory"]:::fw
+        S2 --> S3["<b>3</b><br/>Devices<br/>and drivers"]:::fw
+        S3 --> S4["<b>4</b><br/>Bootloader<br/>handoff"]:::fw
+    end
+    S4 --> S5
+    subgraph T2["Type 2 &mdash; OS bootloader"]
+        direction LR
+        S5["<b>5</b><br/>Boot<br/>libraries"]:::os --> S6["<b>6</b><br/>Boot<br/>configuration"]:::os
+        S6 --> S7["<b>7</b><br/>Modules and<br/>boot drivers"]:::os
+        S7 --> S8["<b>8</b><br/>OS<br/>handoff"]:::os
+    end
+    S8 --> OS(["Operating system<br/>or hypervisor"]):::edge
+    classDef fw fill:#eef3fb,stroke:#4a6fa5;
+    classDef os fill:#f3f0fb,stroke:#7a5aa5;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
+A Type 3 bootloader spans the same work in one image, with no stage 4 because there is no second bootloader to hand off to:
+
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true}}}%%
+flowchart LR
+    HW(["Hardware<br/>power-on / reset"]):::edge --> M1
+    subgraph T3["Type 3 &mdash; monolithic bootloader"]
+        direction LR
+        M1["<b>1</b><br/>Reset and<br/>early init"]:::mono --> M2["<b>2</b><br/>Permanent<br/>memory"]:::mono
+        M2 --> M3["<b>3</b><br/>Devices<br/>and drivers"]:::mono
+        M3 -. "no stage 4:<br/>nothing to hand off to" .-> M5["<b>5-7</b><br/>Libraries, config<br/>and drivers"]:::mono
+        M5 --> M8["<b>8</b><br/>OS<br/>handoff"]:::mono
+    end
+    M8 --> OS(["Operating system"]):::edge
+    classDef mono fill:#eefbf3,stroke:#4a8f6a;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 | Stage | | Present in |
 |---|---|---|
 | 1 | **Reset and early init.** Execution begins at the reset vector. Temporary memory is established, basic CPU state is set up, and the first integrity check establishes the root of trust. *EDK II SEC, coreboot bootblock, SeaBIOS preinit, U-Boot SoC ROM code.* | Type 1, Type 3 |

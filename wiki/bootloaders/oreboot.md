@@ -22,6 +22,24 @@ Type 1: same role and payload handoff as coreboot, different language.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Hardware<br/>power-on / reset"]):::edge
+    S0["<b>bt0</b>"]:::stage
+    S1["<b>bt1 / main</b>"]:::stage
+    S2["<b>mainboard</b>"]:::stage
+    S3["<b>payload</b>"]:::stage
+    TARGET(["LinuxBoot payload<br/>(kernel + u-root)"]):::edge
+    ENTRY --> S0
+    S0 -->|"clocks set, next stage loaded"| S1
+    S1 -->|"DRAM up"| S2
+    S2 -->|"board setup complete"| S3
+    S3 -->|"device tree pointer"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **bt0** -- First-stage ROM code in Rust: minimal clock and pin setup, enough to load the next stage.
 2. **bt1 / main** -- Memory controller initialisation and the remaining platform bring-up.
 3. **mainboard** -- Board-specific setup, then preparation of the payload environment.

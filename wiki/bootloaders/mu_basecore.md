@@ -22,6 +22,24 @@ Type 1: a UEFI implementation. Note it is a library repository, not a standalone
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
+flowchart TD
+    ENTRY(["Hardware<br/>power-on / reset"]):::edge
+    S0["<b>SEC</b>"]:::stage
+    S1["<b>PEI</b>"]:::stage
+    S2["<b>DXE</b>"]:::stage
+    S3["<b>BDS</b>"]:::stage
+    TARGET(["Type 2 bootloader"]):::edge
+    ENTRY --> S0
+    S0 -->|"temporary memory + PEI core"| S1
+    S1 -->|"HOB list"| S2
+    S2 -->|"EFI System Table + policy service"| S3
+    S3 -->|"image handle + system table pointer"| TARGET
+    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
+    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
+```
+
 1. **SEC** -- As in EDK II: reset-vector code, temporary memory, root of trust.
 2. **PEI** -- Permanent memory bring-up through PEIMs, results recorded as HOBs.
 3. **DXE** -- Driver dispatch, device enumeration, Boot and Runtime Services.
