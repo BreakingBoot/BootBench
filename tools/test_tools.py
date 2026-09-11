@@ -898,6 +898,22 @@ class TestWiki(unittest.TestCase):
         pages = {p.stem for p in (self.WIKI / "tools").glob("*.md")}
         self.assertEqual(tools - pages, set(), "tools with no wiki page")
 
+    def test_flat_mode_produces_one_directory_of_pages(self):
+        """A GitHub wiki addresses pages by filename, so --flat must not nest."""
+        import subprocess
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "w"
+            result = subprocess.run(
+                [sys.executable, str(HERE / "generate_wiki.py"),
+                 "--root", str(ROOT), "--output", str(out), "--flat"],
+                capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual([p for p in out.rglob("*.md") if p.parent != out], [],
+                             "--flat must not create subdirectories")
+            index = (out / "Bootloaders.md").read_text()
+            self.assertIn("(Bootloaders-u-boot)", index)
+            self.assertNotIn("(bootloaders/", index)
+
     def test_curated_prose_matches_the_corpus(self):
         import configparser
         from wiki_content import BOOTLOADERS

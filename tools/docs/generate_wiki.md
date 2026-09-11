@@ -4,8 +4,13 @@ Generates [`wiki/`](../../wiki/): a page per bootloader and a page per analysis
 tool.
 
 ```bash
-python3 generate_wiki.py --root .. --output ../wiki
+python3 generate_wiki.py --root .. --output ../wiki          # for the repo
+python3 generate_wiki.py --root .. --output /tmp/w --flat    # for a GitHub wiki
 ```
+
+`--flat` writes every page at the top level with a prefix
+(`Bootloaders-u-boot.md`) and rewrites links to match, because a GitHub wiki
+addresses pages by filename. `scripts/publish-wiki.sh` uses it.
 
 ## Split between generated and curated
 

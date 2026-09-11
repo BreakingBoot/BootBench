@@ -17,6 +17,7 @@ changed.
 | [`add-bootloaders.sh`](add-bootloaders.sh) | Add the bootloaders in `tools/new_bootloaders.json` to `oss-bootloaders`. |
 | [`add-analysis-tools.sh`](add-analysis-tools.sh) | Add the tools in `tools/analysis_tools.json` under `analysis-tools/`. |
 | [`analysis/run-tool.sh`](analysis/run-tool.sh) | Run one of the analysis tools against a bootloader. See [`analysis/`](analysis/). |
+| [`publish-wiki.sh`](publish-wiki.sh) | Push the generated wiki to the GitHub wiki repository. |
 
 Common flags: `-y` skips the confirmation prompt, `--dry-run` on the `add-*`
 scripts lists what would be added, `--stage-only` on the `update-*` refresh
@@ -35,6 +36,27 @@ a bootloader is [`analysis/run-tool.sh`](analysis/):
 Everything there works through docker, so the host needs no toolchain. See
 [`analysis/README.md`](analysis/README.md), and
 [`analysis/PATCHES.md`](analysis/PATCHES.md) for what the harder tools need.
+
+## Publishing the wiki
+
+A GitHub wiki is a **separate git repository** — `<repo>.wiki.git` — not a
+folder in the main one, so `wiki/` does not appear on GitHub by itself. Two
+things have to happen on github.com first:
+
+1. **Settings → General → Features →** tick **Wikis**
+2. Open the **Wiki** tab and save any page. The wiki repository does not exist
+   until a first page is saved, so cloning before that fails.
+
+Then:
+
+```bash
+./scripts/publish-wiki.sh --dry-run   # stage and show what would change
+./scripts/publish-wiki.sh             # asks before pushing
+```
+
+It regenerates the pages with `--flat` first. GitHub wiki pages are addressed
+by filename, so the checked-in `wiki/bootloaders/u-boot.md` becomes
+`Bootloaders-u-boot.md` there, and links are rewritten to match.
 
 ## Checking things
 

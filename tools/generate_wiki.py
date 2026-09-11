@@ -38,6 +38,24 @@ def slug(name: str) -> str:
     return name.replace("/", "-").replace(" ", "-")
 
 
+# A GitHub wiki is a separate repository whose pages are addressed by filename.
+# Subdirectories are not reliably navigable there, so --flat writes every page
+# to the top level with a prefix instead.
+FLAT = False
+
+
+def page_path(out: Path, section: str, name: str) -> Path:
+    if FLAT:
+        return out / f"{section.capitalize()}-{slug(name)}.md"
+    return out / section / f"{slug(name)}.md"
+
+
+def page_link(section: str, name: str) -> str:
+    if FLAT:
+        return f"{section.capitalize()}-{slug(name)}"
+    return f"{section}/{slug(name)}"
+
+
 def load(root: Path) -> dict[str, Any]:
     parser = configparser.ConfigParser()
     parser.read_string((root / "oss-bootloaders" / ".gitmodules").read_text(encoding="utf-8"))
@@ -225,21 +243,28 @@ def main() -> int:
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--root", type=Path, default=here.parent)
     parser.add_argument("--output", type=Path, default=here.parent / "wiki")
+    parser.add_argument("--flat", action="store_true",
+                        help="write every page at the top level, for a GitHub wiki")
     args = parser.parse_args()
+
+    global FLAT
+    FLAT = args.flat
 
     root = args.root.resolve()
     out = args.output.resolve()
-    (out / "bootloaders").mkdir(parents=True, exist_ok=True)
-    (out / "tools").mkdir(parents=True, exist_ok=True)
+    out.mkdir(parents=True, exist_ok=True)
+    if not FLAT:
+        (out / "bootloaders").mkdir(parents=True, exist_ok=True)
+        (out / "tools").mkdir(parents=True, exist_ok=True)
     data = load(root)
 
     for name in sorted(data["corpus"]):
-        (out / "bootloaders" / f"{slug(name)}.md").write_text(
+        page_path(out, "bootloaders", name).write_text(
             bootloader_page(name, data), encoding="utf-8")
     runners = {r["name"]: r for r in data["runners"]}
     for tool in data["tools"]:
         runner = runners.get(tool["name"], {})
-        (out / "tools" / f"{slug(tool['name'])}.md").write_text(
+        page_path(out, "tools", tool["name"]).write_text(
             tool_page(tool, runner, root), encoding="utf-8")
 
     write_indexes(out, data)
@@ -284,7 +309,7 @@ def write_indexes(out: Path, data: dict[str, Any]) -> None:
                   "| Bootloader | What it is |", "|---|---|"]
         for name in sorted(by_type[btype]):
             summary = BOOTLOADERS.get(name, ("", "", ""))[0]
-            lines.append(f"| [{name}](bootloaders/{slug(name)}) | {summary} |")
+            lines.append(f"| [{name}]({page_link('bootloaders', name)}) | {summary} |")
         lines.append("")
     (out / "Bootloaders.md").write_text("\n".join(lines), encoding="utf-8")
 
@@ -328,7 +353,7 @@ def write_indexes(out: Path, data: dict[str, Any]) -> None:
         lines += [f"## {TYPE_LABELS[btype]} (`{btype}`)", "", summary, "",
                   f"**The test:** {test}", "",
                   f"{len(by_type[btype])} in the corpus: " +
-                  ", ".join(f"[{n}](bootloaders/{slug(n)})" for n in sorted(by_type[btype])), ""]
+                  ", ".join(f"[{n}]({page_link('bootloaders', n)})" for n in sorted(by_type[btype])), ""]
     lines += ["## Staged versus monolithic booting", "",
               "Type 1 and Type 2 chained together are *staged booting* — modular and "
               "hardware-abstracting, at the cost of firmware size and start-up time, and "
