@@ -22,25 +22,7 @@ Type 2: it starts from hostboot's initialised state and prepares an OS.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
-    S0["<b>entry from Hostboot</b>"]:::stage
-    S1["<b>HDAT parse</b>"]:::stage
-    S2["<b>hardware init</b>"]:::stage
-    S3["<b>OPAL publication</b>"]:::stage
-    S4["<b>payload boot</b>"]:::stage
-    TARGET(["Payload<br/>(Linux running Petitboot)"]):::edge
-    ENTRY --> S0
-    S0 -->|"HDAT pointer"| S1
-    S1 -->|"flattened device tree"| S2
-    S2 -->|"PCIe, interrupts, NVRAM up"| S3
-    S3 -->|"OPAL call interface registered"| S4
-    S4 -->|"r3 = device tree, /ibm,opal node"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for skiboot](../figures/skiboot.svg)
 
 1. **entry from Hostboot** -- Hostboot loads skiboot into memory and enters it with a pointer to the HDAT hardware description.
 2. **HDAT parse** -- Converts HDAT into a flattened device tree describing processors, memory, PCIe and service interfaces.

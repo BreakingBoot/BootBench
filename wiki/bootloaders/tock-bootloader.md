@@ -22,23 +22,7 @@ Type 3: reset to application.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Hardware<br/>power-on / reset"]):::edge
-    S0["<b>board start</b>"]:::stage
-    S1["<b>entry check</b>"]:::stage
-    S2["<b>protocol service</b>"]:::stage
-    S3["<b>application start</b>"]:::stage
-    TARGET(["Tock kernel"]):::edge
-    ENTRY --> S0
-    S0 -->|"chips and peripherals up"| S1
-    S1 -->|"GPIO entry condition"| S2
-    S2 -->|"flash written, attributes exposed"| S3
-    S3 -->|"vector table set, branch"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for tock-bootloader](../figures/tock-bootloader.svg)
 
 1. **board start** -- The bootloader is itself a Tock kernel image: the board file initialises chips, peripherals and the kernel.
 2. **entry check** -- Checks the bootloader entry condition -- typically a GPIO held at reset -- to decide whether to run or pass through.

@@ -22,23 +22,7 @@ Type 2: a UEFI application that selects and starts an OS.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
-    S0["<b>systemd-boot</b>"]:::stage
-    S1["<b>loader entries</b>"]:::stage
-    S2["<b>stub (UKI)</b>"]:::stage
-    S3["<b>kernel start</b>"]:::stage
-    TARGET(["Linux kernel"]):::edge
-    ENTRY --> S0
-    S0 -->|"menu selection"| S1
-    S1 -->|"kernel path, initrd, cmdline"| S2
-    S2 -->|"signed PE with cmdline inside"| S3
-    S3 -->|"boot params + TPM measurements"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for systemd](../figures/systemd.svg)
 
 1. **systemd-boot** -- A UEFI boot manager loaded by the firmware. It reads loader entries from the ESP and presents a menu.
 2. **loader entries** -- Plain text files under /loader/entries name a kernel, an initrd and a command line, or a single unified kernel image.

@@ -33,7 +33,7 @@ Each entry is a `Bootloader` dataclass:
 | `boot_role` | What it does at boot |
 | `type_rationale` | Why it is Type 1, 2 or 3 |
 | `stages` | Ordered `Stage` records: `name`, `what` it does, and what it `carries` to the next stage |
-| `target` | What the last stage hands control to |
+| `target` | What the last stage hands control to — the right-hand chip in the figure |
 | `communication` | How state reaches the next stage |
 | `handoff` | What is passed at the final boundary, and to whom |
 | `case_study` | SoK section, for the six the paper details |
@@ -53,16 +53,30 @@ either layout does not resolve.
 
 ## Figures
 
-Every bootloader page carries a Mermaid flowchart of its boot: stages as nodes,
-what crosses each boundary as the arrow label, and an entry node naming where
-control comes from (hardware reset for Type 1 and 3, firmware for Type 2).
-`Boot-Stages` and `Bootloader-Types` carry overview figures.
+Every bootloader page carries a **boot timeline**: stages left to right, an
+axis beneath them with an arrow per transition, and the label under each
+segment naming what crosses that boundary. The chip on the left says where
+control comes from — hardware reset for Type 1 and 3, firmware for Type 2 — and
+the chip on the right is what it hands to. Each type has its own accent colour.
 
-GitHub renders Mermaid itself, so a syntax error becomes a broken page rather
-than a build failure. [`scripts/check-diagrams.sh`](../../scripts/check-diagrams.sh)
-renders all 65 with the real renderer; the test suite additionally checks each
-figure structurally — one per page, no edge to an undeclared node, one arrow per
-stage, and no character that would end a quoted label early.
+These are SVG, written to `wiki/figures/<name>.svg` by
+[`boot_figure.py`](../boot_figure.py), because Mermaid lays diagrams out
+automatically and cannot put an axis under a row of stages. Column widths are
+driven by the text, so a figure is as wide as it needs to be and no wider;
+median is about 1000px, which GitHub shows near full size.
+
+Two projects get no figure: `lbmk` is a build system and `edk2-platforms` is a
+set of packages, so drawing either as reset → stage → OS would assert a boot
+sequence they do not have. `has_real_flow()` detects the placeholder stage.
+
+The three overview diagrams on `Boot-Stages` and `Bootloader-Types` remain
+Mermaid, since they group things into bands rather than showing a timeline.
+
+[`scripts/check-diagrams.sh`](../../scripts/check-diagrams.sh) checks both: the
+SVGs for well-formed XML, a figure per page that claims one, and orphans; the
+Mermaid blocks through the real renderer. The test suite additionally checks
+that every stage and ordinal reaches the figure and that stage names do not
+wrap out of their boxes.
 
 ## Pages
 

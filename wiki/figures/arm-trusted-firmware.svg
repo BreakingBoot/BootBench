@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 975 169" width="975" height="169" role="img">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3f8a6a"/></marker></defs>
+<rect width="975" height="169" fill="#ffffff"/>
+<rect x="16.0" y="35.5" width="145.6" height="44.0" rx="22" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="88.8" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Hardware power-on</text><text x="88.8" y="69.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">/ reset</text>
+<rect x="183.6" y="35.5" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
+<text x="229.6" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">BL1</text>
+<text x="229.6" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">1</text>
+<rect x="309.1" y="35.5" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
+<text x="355.1" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">BL2</text>
+<text x="355.1" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">2</text>
+<rect x="428.3" y="35.5" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
+<text x="474.3" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">BL31</text>
+<text x="474.3" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">3</text>
+<rect x="560.1" y="35.5" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
+<text x="606.1" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">BL32</text>
+<text x="606.1" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">4</text>
+<rect x="692.0" y="35.5" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
+<text x="738.0" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">BL33</text>
+<text x="738.0" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">5</text>
+<rect x="806.0" y="28.0" width="152.7" height="59.0" rx="30" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="882.3" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Non-secure world</text><text x="882.3" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">(U-Boot · EDK II ·</text><text x="882.3" y="76.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">kernel)</text>
+<line x1="88.8" y1="115" x2="227.6" y2="115" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="88.8" y1="110" x2="88.8" y2="120" stroke="#3f8a6a" stroke-width="1.2"/>
+<line x1="229.6" y1="115" x2="353.1" y2="115" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="229.6" y1="110" x2="229.6" y2="120" stroke="#3f8a6a" stroke-width="1.2"/>
+<text x="292.3" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">authenticated BL2</text>
+<line x1="355.1" y1="115" x2="472.3" y2="115" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="355.1" y1="110" x2="355.1" y2="120" stroke="#3f8a6a" stroke-width="1.2"/>
+<text x="414.7" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">entry_point_info</text><text x="414.7" y="150.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">for BL31/32/33</text>
+<line x1="474.3" y1="115" x2="604.1" y2="115" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="474.3" y1="110" x2="474.3" y2="120" stroke="#3f8a6a" stroke-width="1.2"/>
+<text x="540.2" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">SMC handler + PSCI</text><text x="540.2" y="150.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">resident at EL3</text>
+<line x1="606.1" y1="115" x2="736.0" y2="115" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="606.1" y1="110" x2="606.1" y2="120" stroke="#3f8a6a" stroke-width="1.2"/>
+<text x="672.0" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">secure services at</text><text x="672.0" y="150.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">S-EL1</text>
+<line x1="738.0" y1="115" x2="880.3" y2="115" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="738.0" y1="110" x2="738.0" y2="120" stroke="#3f8a6a" stroke-width="1.2"/>
+<text x="810.2" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">eret into EL2/EL1</text>
+<line x1="882.3" y1="110" x2="882.3" y2="120" stroke="#3f8a6a" stroke-width="1.2"/>
+</svg>

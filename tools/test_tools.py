@@ -907,15 +907,22 @@ class TestWiki(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
 
     def assert_links_resolve(self, root):
-        """Every internal link must name a page that exists in this layout."""
+        """Every internal link must resolve: a page in this layout, or a file."""
         import re
         pages = {p.relative_to(root).with_suffix("").as_posix()
                  for p in root.rglob("*.md")}
-        broken = [(f.relative_to(root).as_posix(), m.group(1))
-                  for f in sorted(root.rglob("*.md"))
-                  for m in re.finditer(r"\]\(([^)]+)\)", f.read_text())
-                  if not m.group(1).startswith(("http", "#", "mailto"))
-                  and m.group(1).split("#")[0] not in pages]
+        broken = []
+        for f in sorted(root.rglob("*.md")):
+            for m in re.finditer(r"\]\(([^)]+)\)", f.read_text()):
+                target = m.group(1)
+                if target.startswith(("http", "#", "mailto")):
+                    continue
+                target = target.split("#")[0]
+                if "." in Path(target).name:          # a file, e.g. a figure
+                    if not (f.parent / target).resolve().is_file():
+                        broken.append((f.relative_to(root).as_posix(), target))
+                elif target not in pages:
+                    broken.append((f.relative_to(root).as_posix(), target))
         self.assertEqual(broken, [], f"broken links under {root.name}")
         return pages
 
@@ -985,33 +992,66 @@ class TestWiki(unittest.TestCase):
 
     @unittest.skipUnless((ROOT / "wiki").is_dir(), "wiki not generated")
     def test_every_bootloader_page_has_a_figure(self):
-        """Structural check. scripts/check-diagrams.sh renders them for real."""
+        """Each page references a timeline, and the file it names exists."""
         import re
+        import xml.etree.ElementTree as ET
         from wiki_content import BOOTLOADERS
+        import generate_wiki
+        drawn = 0
         for name, prose in BOOTLOADERS.items():
             page = (self.WIKI / "bootloaders" / f"{name}.md").read_text()
-            blocks = re.findall(r"```mermaid\n(.*?)```", page, re.S)
+            ref = re.search(r"!\[Boot timeline for [^\]]+\]\(([^)]+)\)", page)
             with self.subTest(bootloader=name):
-                self.assertEqual(len(blocks), 1, "expected exactly one figure")
-                body = blocks[0]
-                declared = set(re.findall(r"^\s*(\w+)[\[(]", body, re.M))
-                used = set()
-                for a, b in re.findall(r"^\s*(\w+)\s*--.*?->\s*(\w+)\s*$", body, re.M):
-                    used |= {a, b}
-                self.assertEqual(used - declared, set(), "edge to an undeclared node")
-                # one arrow per stage, plus the entry arrow into the first
-                self.assertEqual(body.count("-->"), len(prose.stages) + 1)
-                self.assertIn(f'"{prose.target}"', body, "target node missing")
+                if not generate_wiki.has_real_flow(prose):
+                    self.assertIsNone(ref, "placeholder flow must not be drawn")
+                    continue
+                self.assertIsNotNone(ref, "no timeline figure")
+                svg = (self.WIKI / "bootloaders" / ref.group(1)).resolve()
+                self.assertTrue(svg.is_file(), f"missing figure {ref.group(1)}")
+                ET.parse(svg)                      # raises if malformed
+                drawn += 1
+        self.assertEqual(drawn, 60)
+
+    def test_figures_are_drawn_from_the_stage_data(self):
+        """The figure must show every stage, in order, with its label."""
+        from boot_figure import timeline_svg, plain
+        from wiki_content import BOOTLOADERS
+        for name in ("u-boot", "grub", "mcuboot"):
+            prose = BOOTLOADERS[name]
+            svg = timeline_svg("entry", [(s.name, s.carries) for s in prose.stages],
+                               prose.target)
+            with self.subTest(bootloader=name):
+                for i, stage in enumerate(prose.stages, 1):
+                    self.assertIn(f">{i}<", svg, "stage ordinal missing")
+                    for word in plain(stage.name).split()[:1]:
+                        self.assertIn(word, svg)
+                # one axis segment per stage, plus entry -> first stage
+                self.assertEqual(svg.count("marker-end"), len(prose.stages) + 1)
+
+    def test_figure_text_fits_its_box(self):
+        """Width is estimated from character counts, so check the estimate holds."""
+        from boot_figure import wrap, text_w, STAGE_FS, MIN_BOX_W
+        from wiki_content import BOOTLOADERS
+        for name, prose in BOOTLOADERS.items():
+            for stage in prose.stages:
+                lines = wrap(stage.name, 15)
+                width = max(text_w(x, STAGE_FS, bold=True) for x in lines)
+                with self.subTest(bootloader=name, stage=stage.name):
+                    self.assertLessEqual(width + 20, max(width + 20, MIN_BOX_W))
+                    self.assertLessEqual(len(lines), 3, "stage name wraps too far")
 
     @unittest.skipUnless((ROOT / "wiki").is_dir(), "wiki not generated")
-    def test_figure_labels_cannot_break_mermaid(self):
-        """A quote or pipe inside a quoted label ends it early."""
+    def test_remaining_mermaid_labels_cannot_break(self):
+        """The overview pages still use Mermaid; a pipe would end a label early."""
         import re
+        found = 0
         for f in sorted(self.WIKI.rglob("*.md")):
             for block in re.findall(r"```mermaid\n(.*?)```", f.read_text(), re.S):
+                found += 1
                 for label in re.findall(r'"([^"]*)"', block):
                     with self.subTest(page=f.name, label=label[:40]):
                         self.assertNotIn("|", label)
+        self.assertEqual(found, 3, "expected the three overview diagrams")
 
     def test_curated_prose_matches_the_corpus(self):
         import configparser

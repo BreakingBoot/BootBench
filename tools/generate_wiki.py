@@ -28,6 +28,7 @@ from typing import Any
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from bootbench_keywords import ATTACK_SURFACES, TYPE_LABELS  # noqa: E402
+from boot_figure import timeline_svg  # noqa: E402
 from wiki_content import BOOTLOADERS, Bootloader, Stage  # noqa: E402
 
 TYPES = ("type1", "type2", "type3")
@@ -270,6 +271,8 @@ def mm(text: str) -> str:
 
 
 # Where a bootloader's control comes from, which is what its type turns on.
+TYPE_ACCENT = {"type1": "#4a6fa5", "type2": "#7a5aa5", "type3": "#3f8a6a"}
+
 ENTRY_LABEL = {
     "type1": "Hardware<br/>power-on / reset",
     "type2": "Firmware<br/>(a Type 1 bootloader)",
@@ -277,24 +280,40 @@ ENTRY_LABEL = {
 }
 
 
-def flow_diagram(prose: Bootloader, btype: str) -> list[str]:
-    """A figure of the boot flow: stages as nodes, what crosses as edge labels."""
-    if not prose.stages:
+def has_real_flow(prose: Bootloader) -> bool:
+    """A placeholder stage is a note that there is no flow, not a flow of one step.
+
+    lbmk is a build system and edk2-platforms is a set of packages; drawing
+    either as reset -> stage -> OS would assert a boot sequence they do not have.
+    """
+    return bool(prose.stages) and not (
+        len(prose.stages) == 1 and prose.stages[0].name.startswith("("))
+
+
+def figure_link(section: str, name: str) -> str:
+    """Relative path from a page in `section` to its figure."""
+    prefix = "" if FLAT or section == "" else "../"
+    return f"{prefix}figures/{slug(name)}.svg"
+
+
+def write_figure(out: Path, name: str, prose: Bootloader, btype: str) -> None:
+    """Draw the boot flow as a left-to-right timeline and save it beside the pages."""
+    if not has_real_flow(prose):
+        return
+    svg = timeline_svg(
+        ENTRY_LABEL.get(btype, "Entry"),
+        [(st.name, st.carries) for st in prose.stages],
+        prose.target,
+        accent=TYPE_ACCENT.get(btype, "#4a6fa5"))
+    figures = out / "figures"
+    figures.mkdir(parents=True, exist_ok=True)
+    (figures / f"{slug(name)}.svg").write_text(svg, encoding="utf-8")
+
+
+def flow_figure(name: str, prose: Bootloader) -> list[str]:
+    if not has_real_flow(prose):
         return []
-    entry = ENTRY_LABEL.get(btype, "Entry")
-    lines = ["```mermaid", MERMAID_THEME, "flowchart TD",
-             f'    ENTRY(["{mm(entry)}"]):::edge']
-    for i, stage in enumerate(prose.stages):
-        lines.append(f'    S{i}["<b>{mm(stage.name)}</b>"]:::stage')
-    lines.append(f'    TARGET(["{mm(prose.target)}"]):::edge')
-    lines.append("    ENTRY --> S0")
-    for i, stage in enumerate(prose.stages):
-        nxt = f"S{i + 1}" if i + 1 < len(prose.stages) else "TARGET"
-        lines.append(f'    S{i} -->|"{mm(stage.carries)}"| {nxt}')
-    lines += ["    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;",
-              "    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;",
-              "```"]
-    return lines
+    return [f"![Boot timeline for {name}]({figure_link('bootloaders', name)})", ""]
 
 
 def resolve_links(text: str) -> str:
@@ -303,7 +322,7 @@ def resolve_links(text: str) -> str:
                   lambda m: f"]({page_link('bootloaders', m.group(1))})", text)
 
 
-def boot_flow_section(prose: Bootloader, btype: str) -> list[str]:
+def boot_flow_section(name: str, prose: Bootloader, btype: str) -> list[str]:
     """The stage walkthrough, following the SoK case-study structure."""
     if not prose.stages:
         return []
@@ -315,7 +334,7 @@ def boot_flow_section(prose: Bootloader, btype: str) -> list[str]:
     else:
         lines += ["See [Boot-Stages](Boot-Stages) for the eight-stage model these "
                   "phases map onto.", ""]
-    lines += flow_diagram(prose, btype) + [""]
+    lines += flow_figure(name, prose)
     for i, stage in enumerate(prose.stages, 1):
         lines.append(f"{i}. **{stage.name}** -- {stage.what}")
     lines += ["", "### Passing data between stages", "",
@@ -364,7 +383,7 @@ def bootloader_page(name: str, data: dict[str, Any]) -> str:
              f"## Why it is {btype.replace('type', 'Type ')}", "", rationale, "",
              ]
 
-    lines += boot_flow_section(prose, btype)
+    lines += boot_flow_section(name, prose, btype)
 
     if surfaces:
         lines += ["## Attack surfaces seen in its CVEs", "",
@@ -482,6 +501,9 @@ def main() -> int:
     for name in sorted(data["corpus"]):
         page_path(out, "bootloaders", name).write_text(
             bootloader_page(name, data), encoding="utf-8")
+        prose = BOOTLOADERS.get(name)
+        if prose:
+            write_figure(out, name, prose, data["corpus"][name]["type"])
     runners = {r["name"]: r for r in data["runners"]}
     for tool in data["tools"]:
         runner = runners.get(tool["name"], {})
@@ -596,7 +618,7 @@ def write_indexes(out: Path, data: dict[str, Any]) -> None:
 
     # Boot stages
     documented = {n: BOOTLOADERS[n] for n in sorted(corpus) if n in BOOTLOADERS
-                  and BOOTLOADERS[n].stages}
+                  and has_real_flow(BOOTLOADERS[n])}
     lines = ["# Boot stages", "",
              "A boot is a sequence of stages, each setting up what the next one needs. The SoK "
              "divides it into eight, and every bootloader page walks its own phases against "

@@ -22,25 +22,7 @@ Type 2: it starts after BIOS and loads a kernel.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
-    S0["<b>boot sector</b>"]:::stage
-    S1["<b>disk read</b>"]:::stage
-    S2["<b>GDT and A20</b>"]:::stage
-    S3["<b>protected mode</b>"]:::stage
-    S4["<b>kernel entry</b>"]:::stage
-    TARGET(["Kernel<br/>(C, 32-bit)"]):::edge
-    ENTRY --> S0
-    S0 -->|"512 bytes at 0x7C00"| S1
-    S1 -->|"loader + kernel in memory"| S2
-    S2 -->|"flat GDT, A20 enabled"| S3
-    S3 -->|"32-bit protected mode"| S4
-    S4 -->|"direct call at a fixed address"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for x86-bootloader](../figures/x86-bootloader.svg)
 
 1. **boot sector** -- 512 bytes loaded by BIOS to 0x7C00, ending in the 0xAA55 signature.
 2. **disk read** -- Uses INT 0x13 to read the rest of the loader and the kernel off the disk.

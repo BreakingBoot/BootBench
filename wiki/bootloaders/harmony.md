@@ -22,25 +22,7 @@ Type 3: reset to application.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Hardware<br/>power-on / reset"]):::edge
-    S0["<b>reset into bootloader</b>"]:::stage
-    S1["<b>trigger evaluation</b>"]:::stage
-    S2["<b>transport service</b>"]:::stage
-    S3["<b>programming</b>"]:::stage
-    S4["<b>application jump</b>"]:::stage
-    TARGET(["Application"]):::edge
-    ENTRY --> S0
-    S0 -->|"reset region entered"| S1
-    S1 -->|"GPIO, RAM pattern or missing image"| S2
-    S2 -->|"transport session open"| S3
-    S3 -->|"image written (or inactive bank programmed)"| S4
-    S4 -->|"branch to the reset vector, or bank swap"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for harmony](../figures/harmony.svg)
 
 1. **reset into bootloader** -- The Harmony bootloader occupies the reset region of the PIC32 or SAM device.
 2. **trigger evaluation** -- A configurable trigger -- GPIO, a RAM pattern written by the application, or a missing valid application -- decides whether to enter update mode.

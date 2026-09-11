@@ -46,7 +46,7 @@ what each bootloader defends itself with: Secure Boot, measured boot, signature
 verification, rollback protection, and the mitigations a build actually enables.
 30 of 63 implement Secure Boot; 4 randomise their load address.
 
-**[`wiki/`](wiki/)** — a page per bootloader with a figure of its boot flow,
+**[`wiki/`](wiki/)** — a page per bootloader with a timeline figure of its boot,
 covering the stages it runs through, how each stage passes state to the next,
 what it hands off, and why it is classified as it is; plus a page per analysis
 tool with a walkthrough. Start at [`wiki/Home.md`](wiki/Home.md).

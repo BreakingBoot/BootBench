@@ -22,25 +22,7 @@ Type 2: it is the OS-loading stage layered on vendor Type 1 firmware.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
-    S0["<b>vendor firmware PEI</b>"]:::stage
-    S1["<b>DXE replacement</b>"]:::stage
-    S2["<b>Linux start</b>"]:::stage
-    S3["<b>u-root policy</b>"]:::stage
-    S4["<b>kexec</b>"]:::stage
-    TARGET(["Target OS kernel"]):::edge
-    ENTRY --> S0
-    S0 -->|"DRAM up (vendor PEI)"| S1
-    S1 -->|"kernel + initramfs spliced into flash"| S2
-    S2 -->|"drivers loaded"| S3
-    S3 -->|"boot policy decision"| S4
-    S4 -->|"kexec: kernel + initrd"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for linuxboot](../figures/linuxboot.svg)
 
 1. **vendor firmware PEI** -- The platform's existing UEFI firmware runs SEC and PEI to bring up memory.
 2. **DXE replacement** -- Most of the DXE volume is removed and replaced with a Linux kernel and initramfs.

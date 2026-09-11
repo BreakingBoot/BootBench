@@ -22,23 +22,7 @@ Type 3: hardware bring-up and OS launch in one image.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Hardware<br/>power-on / reset"]):::edge
-    S0["<b>PBL (pre-bootloader)</b>"]:::stage
-    S1["<b>barebox proper</b>"]:::stage
-    S2["<b>bootentry discovery</b>"]:::stage
-    S3["<b>boot</b>"]:::stage
-    TARGET(["Operating system"]):::edge
-    ENTRY --> S0
-    S0 -->|"DRAM up, barebox decompressed"| S1
-    S1 -->|"drivers, filesystems, env"| S2
-    S2 -->|"bootentries + bootchooser slot"| S3
-    S3 -->|"kernel + initrd + FDT"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for barebox](../figures/barebox.svg)
 
 1. **PBL (pre-bootloader)** -- A small compressed prologue that runs from SRAM, sets up DRAM, and decompresses barebox proper into it.
 2. **barebox proper** -- Full initialisation: driver model, filesystem layer, network stack, and the shell.

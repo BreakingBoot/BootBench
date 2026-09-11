@@ -22,23 +22,7 @@ Type 2: it loads an OS from an initialised BIOS machine.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
-    S0["<b>boot0</b>"]:::stage
-    S1["<b>boot1</b>"]:::stage
-    S2["<b>boot2</b>"]:::stage
-    S3["<b>kernel load</b>"]:::stage
-    TARGET(["XNU kernel"]):::edge
-    ENTRY --> S0
-    S0 -->|"active partition located"| S1
-    S1 -->|"boot file found in filesystem"| S2
-    S2 -->|"org.chameleon.Boot.plist applied"| S3
-    S3 -->|"boot-args + constructed device tree"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for chameleon](../figures/chameleon.svg)
 
 1. **boot0** -- MBR code that finds the active partition and loads boot1.
 2. **boot1** -- Partition boot sector code that locates the boot file in the filesystem.

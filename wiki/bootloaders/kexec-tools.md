@@ -22,23 +22,7 @@ Type 2: an OS-loading stage that assumes a fully initialised machine.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
-    S0["<b>kexec -l</b>"]:::stage
-    S1["<b>segment placement</b>"]:::stage
-    S2["<b>purgatory</b>"]:::stage
-    S3["<b>kexec -e</b>"]:::stage
-    TARGET(["New kernel"]):::edge
-    ENTRY --> S0
-    S0 -->|"segments loaded via kexec_load"| S1
-    S1 -->|"placement map recorded"| S2
-    S2 -->|"purgatory stub + checksums"| S3
-    S3 -->|"boot_params or device tree"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for kexec-tools](../figures/kexec-tools.svg)
 
 1. **kexec -l** -- Loads a kernel, initrd and command line into the running kernel's memory through the kexec_load syscall.
 2. **segment placement** -- The kernel decides where the segments live, avoiding memory in use, and records them for the reboot path.

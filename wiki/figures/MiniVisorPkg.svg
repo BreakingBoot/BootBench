@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 944 169" width="944" height="169" role="img">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a5aa5"/></marker></defs>
+<rect width="944" height="169" fill="#ffffff"/>
+<rect x="16.0" y="35.5" width="152.7" height="44.0" rx="22" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="92.4" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Firmware (a Type 1</text><text x="92.4" y="69.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">bootloader)</text>
+<rect x="190.7" y="33.5" width="117.0" height="48.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="249.2" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">UEFI driver</text><text x="249.2" y="69.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">load</text>
+<text x="249.2" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">1</text>
+<rect x="329.7" y="35.5" width="99.4" height="44.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="379.4" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">VMX setup</text>
+<text x="379.4" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">2</text>
+<rect x="451.1" y="26.0" width="143.5" height="63.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="522.8" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">virtualisation</text><text x="522.8" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">of the running</text><text x="522.8" y="76.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">context</text>
+<text x="522.8" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">3</text>
+<rect x="616.6" y="35.5" width="143.5" height="44.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="688.3" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">boot continues</text>
+<text x="688.3" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">4</text>
+<rect x="782.1" y="35.5" width="145.6" height="44.0" rx="22" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="854.8" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Firmware (now</text><text x="854.8" y="69.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">running as guest)</text>
+<line x1="92.4" y1="115" x2="247.2" y2="115" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="92.4" y1="110" x2="92.4" y2="120" stroke="#7a5aa5" stroke-width="1.2"/>
+<line x1="249.2" y1="115" x2="377.4" y2="115" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="249.2" y1="110" x2="249.2" y2="120" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="314.3" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">image handle +</text><text x="314.3" y="150.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">system table</text>
+<line x1="379.4" y1="115" x2="520.8" y2="115" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="379.4" y1="110" x2="379.4" y2="120" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="451.1" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">VMCS + EPT per</text><text x="451.1" y="150.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">processor</text>
+<line x1="522.8" y1="115" x2="686.3" y2="115" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="522.8" y1="110" x2="522.8" y2="120" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="605.6" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">VM-exit interface</text>
+<line x1="688.3" y1="115" x2="852.8" y2="115" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="688.3" y1="110" x2="688.3" y2="120" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="771.6" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">control returned,</text><text x="771.6" y="150.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">boot continues</text>
+<line x1="854.8" y1="110" x2="854.8" y2="120" stroke="#7a5aa5" stroke-width="1.2"/>
+</svg>

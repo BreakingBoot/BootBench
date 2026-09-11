@@ -22,23 +22,7 @@ Type 2: an OS-loading stage.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
-    S0["<b>SRM console</b>"]:::stage
-    S1["<b>bootstrap loader</b>"]:::stage
-    S2["<b>filesystem access</b>"]:::stage
-    S3["<b>kernel load</b>"]:::stage
-    TARGET(["Linux kernel<br/>(Alpha)"]):::edge
-    ENTRY --> S0
-    S0 -->|"SRM callback interface"| S1
-    S1 -->|"aboot loaded from bootblocks"| S2
-    S2 -->|"kernel located in filesystem"| S3
-    S3 -->|"kernel + cmdline from aboot.conf"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for aboot](../figures/aboot.svg)
 
 1. **SRM console** -- Alpha's SRM firmware initialises the machine and reads the bootstrap blocks from the boot device.
 2. **bootstrap loader** -- The bootblock loads aboot itself from the reserved area at the start of the disk.

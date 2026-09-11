@@ -22,23 +22,7 @@ Type 2: explicitly a second stage that prepares an OS.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
-    S0["<b>stock bootloader</b>"]:::stage
-    S1["<b>hardware detection</b>"]:::stage
-    S2["<b>device tree fixup</b>"]:::stage
-    S3["<b>menu and boot</b>"]:::stage
-    TARGET(["Mainline kernel"]):::edge
-    ENTRY --> S0
-    S0 -->|"loaded as an Android boot image"| S1
-    S1 -->|"board, panel and battery IDs from SMEM"| S2
-    S2 -->|"patched device tree"| S3
-    S3 -->|"kernel + fixed-up DTB"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for lk2nd](../figures/lk2nd.svg)
 
 1. **stock bootloader** -- The device's own LK or ABL loads lk2nd as if it were an Android boot image.
 2. **hardware detection** -- Identifies the board, display panel and battery from the SMEM and device tree information the firmware left.

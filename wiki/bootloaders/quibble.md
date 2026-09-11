@@ -22,25 +22,7 @@ Type 2: it prepares and launches an OS.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
-    S0["<b>loaded by firmware</b>"]:::stage
-    S1["<b>registry read</b>"]:::stage
-    S2["<b>filesystem drivers</b>"]:::stage
-    S3["<b>image loading</b>"]:::stage
-    S4["<b>kernel start</b>"]:::stage
-    TARGET(["Windows kernel<br/>(ntoskrnl.exe)"]):::edge
-    ENTRY --> S0
-    S0 -->|"image handle + system table"| S1
-    S1 -->|"boot-start driver list"| S2
-    S2 -->|"readable non-NTFS volumes"| S3
-    S3 -->|"relocated kernel, HAL and drivers"| S4
-    S4 -->|"LOADER_PARAMETER_BLOCK"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for quibble](../figures/quibble.svg)
 
 1. **loaded by firmware** -- quibble.efi is loaded from the ESP in place of bootmgfw.efi.
 2. **registry read** -- Reads the SYSTEM hive to find the boot-start drivers and the services the kernel needs.

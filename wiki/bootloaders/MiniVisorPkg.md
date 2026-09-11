@@ -22,23 +22,7 @@ Type 2: a UEFI-loaded stage that runs before and hands off to an OS.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
-    S0["<b>UEFI driver load</b>"]:::stage
-    S1["<b>VMX setup</b>"]:::stage
-    S2["<b>virtualisation of the running context</b>"]:::stage
-    S3["<b>boot continues</b>"]:::stage
-    TARGET(["Firmware<br/>(now running as guest)"]):::edge
-    ENTRY --> S0
-    S0 -->|"image handle + system table"| S1
-    S1 -->|"VMCS + EPT per processor"| S2
-    S2 -->|"VM-exit interface"| S3
-    S3 -->|"control returned, boot continues"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for MiniVisorPkg](../figures/MiniVisorPkg.svg)
 
 1. **UEFI driver load** -- MiniVisor is loaded as a UEFI driver, typically from the UEFI shell, before any OS starts.
 2. **VMX setup** -- Enables VMX operation, allocates VMCS and EPT structures for each processor.

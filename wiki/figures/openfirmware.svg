@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 954 154" width="954" height="154" role="img">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4a6fa5"/></marker></defs>
+<rect width="954" height="154" fill="#ffffff"/>
+<rect x="16.0" y="28.0" width="145.6" height="44.0" rx="22" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="88.8" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Hardware power-on</text><text x="88.8" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">/ reset</text>
+<rect x="183.6" y="26.0" width="152.3" height="48.0" rx="5" fill="#eef3fb" stroke="#4a6fa5"/>
+<text x="259.7" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">reset and Forth</text><text x="259.7" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">bring-up</text>
+<text x="259.7" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">1</text>
+<rect x="357.9" y="26.0" width="125.8" height="48.0" rx="5" fill="#eef3fb" stroke="#4a6fa5"/>
+<text x="420.8" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">device tree</text><text x="420.8" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">construction</text>
+<text x="420.8" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">2</text>
+<rect x="505.7" y="28.0" width="143.5" height="44.0" rx="5" fill="#eef3fb" stroke="#4a6fa5"/>
+<text x="577.4" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">user interface</text>
+<text x="577.4" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">3</text>
+<rect x="671.2" y="28.0" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#4a6fa5"/>
+<text x="717.2" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">boot</text>
+<text x="717.2" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">4</text>
+<rect x="785.2" y="28.0" width="152.7" height="44.0" rx="22" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="861.5" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Client program (OS</text><text x="861.5" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">loader)</text>
+<line x1="88.8" y1="100" x2="257.7" y2="100" stroke="#4a6fa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="88.8" y1="95" x2="88.8" y2="105" stroke="#4a6fa5" stroke-width="1.2"/>
+<line x1="259.7" y1="100" x2="418.8" y2="100" stroke="#4a6fa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="259.7" y1="95" x2="259.7" y2="105" stroke="#4a6fa5" stroke-width="1.2"/>
+<text x="340.2" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">Forth kernel</text><text x="340.2" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">running</text>
+<line x1="420.8" y1="100" x2="575.4" y2="100" stroke="#4a6fa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="420.8" y1="95" x2="420.8" y2="105" stroke="#4a6fa5" stroke-width="1.2"/>
+<text x="499.1" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">device tree +</text><text x="499.1" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">FCode drivers</text>
+<line x1="577.4" y1="100" x2="715.2" y2="100" stroke="#4a6fa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="577.4" y1="95" x2="577.4" y2="105" stroke="#4a6fa5" stroke-width="1.2"/>
+<text x="647.3" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">NVRAM boot</text><text x="647.3" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">variables</text>
+<line x1="717.2" y1="100" x2="859.5" y2="100" stroke="#4a6fa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="717.2" y1="95" x2="717.2" y2="105" stroke="#4a6fa5" stroke-width="1.2"/>
+<text x="789.3" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">client interface</text><text x="789.3" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">entry point</text>
+<line x1="861.5" y1="95" x2="861.5" y2="105" stroke="#4a6fa5" stroke-width="1.2"/>
+</svg>

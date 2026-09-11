@@ -22,23 +22,7 @@ Type 1: FSP-based silicon init with a payload handoff, the same structure as cor
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Hardware<br/>power-on / reset"]):::edge
-    S0["<b>Stage1A</b>"]:::stage
-    S1["<b>Stage1B</b>"]:::stage
-    S2["<b>Stage2</b>"]:::stage
-    S3["<b>Payload</b>"]:::stage
-    TARGET(["Payload<br/>(OsLoader · UEFI payload)"]):::edge
-    ENTRY --> S0
-    S0 -->|"cache-as-RAM via FSP TempRamInit"| S1
-    S1 -->|"DRAM up, HOBs migrated"| S2
-    S2 -->|"ACPI + SMBIOS tables, CFGDATA"| S3
-    S3 -->|"HOB list pointer"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for slimbootloader](../figures/slimbootloader.svg)
 
 1. **Stage1A** -- Runs from reset out of flash. Calls the Intel FSP `TempRamInit` entry to get cache-as-RAM, then loads Stage1B.
 2. **Stage1B** -- Calls FSP `FspMemoryInit` to bring up DRAM, verifies and loads Stage2, and migrates state out of temporary memory.

@@ -22,25 +22,7 @@ Type 3: reset to application on a microcontroller.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Hardware<br/>power-on / reset"]):::edge
-    S0["<b>BL1</b>"]:::stage
-    S1["<b>BL2 (MCUboot)</b>"]:::stage
-    S2["<b>SPE initialisation</b>"]:::stage
-    S3["<b>secure partitions</b>"]:::stage
-    S4["<b>NSPE jump</b>"]:::stage
-    TARGET(["Non-secure application"]):::edge
-    ENTRY --> S0
-    S0 -->|"verified BL2"| S1
-    S1 -->|"verified images + measurements"| S2
-    S2 -->|"SAU/IDAU and MPU configured"| S3
-    S3 -->|"PSA RoT services + NSC veneers"| S4
-    S4 -->|"BLXNS: NS stack pointer + vector table"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for trusted-firmware-m](../figures/trusted-firmware-m.svg)
 
 1. **BL1** -- Optional immutable ROM stage on platforms that need one; verifies and loads BL2.
 2. **BL2 (MCUboot)** -- TF-M uses MCUboot as its second-stage loader to verify and, if needed, swap the secure and non-secure images.

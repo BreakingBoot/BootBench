@@ -22,23 +22,7 @@ Type 2 by association: it is boot-path infrastructure for network boot rather th
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
-    S0["<b>firmware or iBFT stage</b>"]:::stage
-    S1["<b>initramfs start</b>"]:::stage
-    S2["<b>session re-establishment</b>"]:::stage
-    S3["<b>root mount</b>"]:::stage
-    TARGET(["Root filesystem<br/>(remote volume)"]):::edge
-    ENTRY --> S0
-    S0 -->|"iBFT in ACPI: target, LUN, CHAP"| S1
-    S1 -->|"iscsistart in initramfs"| S2
-    S2 -->|"kernel-owned session"| S3
-    S3 -->|"SCSI disk ready to mount"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for open-iscsi](../figures/open-iscsi.svg)
 
 1. **firmware or iBFT stage** -- A network card's option ROM or the firmware establishes the initial iSCSI session and records the parameters in the iSCSI Boot Firmware Table.
 2. **initramfs start** -- Linux boots far enough to run an initramfs containing iscsistart.

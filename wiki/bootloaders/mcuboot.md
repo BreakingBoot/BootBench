@@ -22,25 +22,7 @@ Type 3: it runs from reset on the MCU and jumps straight into the application --
 
 The SoK paper gives a full case study of this bootloader in section 3.6. See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Hardware<br/>power-on / reset"]):::edge
-    S0["<b>reset vector</b>"]:::stage
-    S1["<b>bootutil</b>"]:::stage
-    S2["<b>slot selection</b>"]:::stage
-    S3["<b>swap or overwrite</b>"]:::stage
-    S4["<b>boot application</b>"]:::stage
-    TARGET(["Application<br/>(Zephyr · Mynewt · NuttX)"]):::edge
-    ENTRY --> S0
-    S0 -->|"reset handler entered"| S1
-    S1 -->|"headers and TLV trailers parsed"| S2
-    S2 -->|"chosen slot (primary or secondary)"| S3
-    S3 -->|"primary slot holds the valid image"| S4
-    S4 -->|"vector table + SP set, branch"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for mcuboot](../figures/mcuboot.svg)
 
 1. **reset vector** -- The MCU resets into MCUboot, which occupies the first region of flash.
 2. **bootutil** -- The core library: reads the image headers and TLV trailers, validates signatures and hashes, and implements the swap logic.

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1350 184" width="1350" height="184" role="img">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3f8a6a"/></marker></defs>
+<rect width="1350" height="184" fill="#ffffff"/>
+<rect x="16.0" y="35.5" width="145.6" height="44.0" rx="22" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="88.8" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Hardware power-on</text><text x="88.8" y="69.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">/ reset</text>
+<rect x="183.6" y="35.5" width="125.8" height="44.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
+<text x="246.5" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">SoC ROM code</text>
+<text x="246.5" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">1</text>
+<rect x="332.3" y="35.5" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
+<text x="378.3" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">TPL</text>
+<text x="378.3" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">2</text>
+<rect x="457.8" y="35.5" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
+<text x="503.8" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">VPL</text>
+<text x="503.8" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">3</text>
+<rect x="583.4" y="35.5" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
+<text x="629.4" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">SPL</text>
+<text x="629.4" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">4</text>
+<rect x="697.4" y="35.5" width="134.7" height="44.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
+<text x="764.7" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">U-Boot proper</text>
+<text x="764.7" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">5</text>
+<rect x="854.0" y="35.5" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
+<text x="900.0" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">bootdev</text>
+<text x="900.0" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">6</text>
+<rect x="968.0" y="35.5" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
+<text x="1014.0" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">bootmeth</text>
+<text x="1014.0" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">7</text>
+<rect x="1082.0" y="35.5" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
+<text x="1128.0" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">bootflow</text>
+<text x="1128.0" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">8</text>
+<rect x="1196.0" y="28.0" width="138.4" height="59.0" rx="30" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="1265.2" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Operating system</text><text x="1265.2" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">(Linux · EFI</text><text x="1265.2" y="76.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">application)</text>
+<line x1="88.8" y1="115" x2="244.5" y2="115" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="88.8" y1="110" x2="88.8" y2="120" stroke="#3f8a6a" stroke-width="1.2"/>
+<line x1="246.5" y1="115" x2="376.3" y2="115" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="246.5" y1="110" x2="246.5" y2="120" stroke="#3f8a6a" stroke-width="1.2"/>
+<text x="312.4" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">next image from a</text><text x="312.4" y="150.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">fixed flash offset</text>
+<line x1="378.3" y1="115" x2="501.8" y2="115" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="378.3" y1="110" x2="378.3" y2="120" stroke="#3f8a6a" stroke-width="1.2"/>
+<text x="441.1" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">early hardware up</text>
+<line x1="503.8" y1="115" x2="627.4" y2="115" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="503.8" y1="110" x2="503.8" y2="120" stroke="#3f8a6a" stroke-width="1.2"/>
+<text x="566.6" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">chosen SPL binary</text>
+<line x1="629.4" y1="115" x2="762.7" y2="115" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="629.4" y1="110" x2="629.4" y2="120" stroke="#3f8a6a" stroke-width="1.2"/>
+<text x="697.0" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">DRAM up,</text><text x="697.0" y="150.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">spl_image_info +</text><text x="697.0" y="165.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">bloblist</text>
+<line x1="764.7" y1="115" x2="898.0" y2="115" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="764.7" y1="110" x2="764.7" y2="120" stroke="#3f8a6a" stroke-width="1.2"/>
+<text x="832.4" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">drivers, env,</text><text x="832.4" y="150.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">shell ready</text>
+<line x1="900.0" y1="115" x2="1012.0" y2="115" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="900.0" y1="110" x2="900.0" y2="120" stroke="#3f8a6a" stroke-width="1.2"/>
+<text x="957.0" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">candidate boot</text><text x="957.0" y="150.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">devices</text>
+<line x1="1014.0" y1="115" x2="1126.0" y2="115" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="1014.0" y1="110" x2="1014.0" y2="120" stroke="#3f8a6a" stroke-width="1.2"/>
+<text x="1071.0" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">located boot</text><text x="1071.0" y="150.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">configuration</text>
+<line x1="1128.0" y1="115" x2="1263.2" y2="115" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="1128.0" y1="110" x2="1128.0" y2="120" stroke="#3f8a6a" stroke-width="1.2"/>
+<text x="1196.6" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">kernel + initrd +</text><text x="1196.6" y="150.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">fixed-up FDT</text>
+<line x1="1265.2" y1="110" x2="1265.2" y2="120" stroke="#3f8a6a" stroke-width="1.2"/>
+</svg>

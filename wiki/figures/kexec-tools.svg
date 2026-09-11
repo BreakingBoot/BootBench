@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 799 154" width="799" height="154" role="img">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a5aa5"/></marker></defs>
+<rect width="799" height="154" fill="#ffffff"/>
+<rect x="16.0" y="28.0" width="152.7" height="44.0" rx="22" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="92.4" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Firmware (a Type 1</text><text x="92.4" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">bootloader)</text>
+<rect x="190.7" y="28.0" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="236.7" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">kexec -l</text>
+<text x="236.7" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">1</text>
+<rect x="304.7" y="26.0" width="99.4" height="48.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="354.4" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">segment</text><text x="354.4" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">placement</text>
+<text x="354.4" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">2</text>
+<rect x="426.1" y="28.0" width="99.4" height="44.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="475.8" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">purgatory</text>
+<text x="475.8" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">3</text>
+<rect x="549.0" y="28.0" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="595.0" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">kexec -e</text>
+<text x="595.0" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">4</text>
+<rect x="663.0" y="30.0" width="120.0" height="40.0" rx="20" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="723.0" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">New kernel</text>
+<line x1="92.4" y1="100" x2="234.7" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="92.4" y1="95" x2="92.4" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<line x1="236.7" y1="100" x2="352.4" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="236.7" y1="95" x2="236.7" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="295.5" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">segments loaded</text><text x="295.5" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">via kexec_load</text>
+<line x1="354.4" y1="100" x2="473.8" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="354.4" y1="95" x2="354.4" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="415.1" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">placement map</text><text x="415.1" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">recorded</text>
+<line x1="475.8" y1="100" x2="593.0" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="475.8" y1="95" x2="475.8" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="535.4" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">purgatory stub +</text><text x="535.4" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">checksums</text>
+<line x1="595.0" y1="100" x2="721.0" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="595.0" y1="95" x2="595.0" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="659.0" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">boot_params or</text><text x="659.0" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">device tree</text>
+<line x1="723.0" y1="95" x2="723.0" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+</svg>

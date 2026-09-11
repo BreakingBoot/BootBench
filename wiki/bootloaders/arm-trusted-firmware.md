@@ -22,25 +22,7 @@ Type 3 in this corpus: it spans reset to OS handoff. Arguably Type 1 in a staged
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Hardware<br/>power-on / reset"]):::edge
-    S0["<b>BL1</b>"]:::stage
-    S1["<b>BL2</b>"]:::stage
-    S2["<b>BL31</b>"]:::stage
-    S3["<b>BL32</b>"]:::stage
-    S4["<b>BL33</b>"]:::stage
-    TARGET(["Non-secure world<br/>(U-Boot · EDK II · kernel)"]):::edge
-    ENTRY --> S0
-    S0 -->|"authenticated BL2"| S1
-    S1 -->|"entry_point_info for BL31/32/33"| S2
-    S2 -->|"SMC handler + PSCI resident at EL3"| S3
-    S3 -->|"secure services at S-EL1"| S4
-    S4 -->|"eret into EL2/EL1"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for arm-trusted-firmware](../figures/arm-trusted-firmware.svg)
 
 1. **BL1** -- Runs from ROM at reset in EL3. Sets up the exception vectors and minimal platform state, then loads and authenticates BL2.
 2. **BL2** -- Trusted boot firmware. Initialises DRAM, then loads and authenticates every image that follows: BL31, BL32 and BL33.

@@ -22,25 +22,7 @@ Type 3: the in-ROM-equivalent stage that owns the MCU from reset.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Hardware<br/>power-on / reset"]):::edge
-    S0["<b>reset or jump into Open Bootloader</b>"]:::stage
-    S1["<b>HAL initialisation</b>"]:::stage
-    S2["<b>interface detection</b>"]:::stage
-    S3["<b>command service</b>"]:::stage
-    S4["<b>Go</b>"]:::stage
-    TARGET(["Address chosen by the host"]):::edge
-    ENTRY --> S0
-    S0 -->|"linked address entered"| S1
-    S1 -->|"clocks, power, interfaces up"| S2
-    S2 -->|"host locked onto one interface"| S3
-    S3 -->|"Get/Read/Write/Erase served"| S4
-    S4 -->|"Go: SP and PC set from the host"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for stm32-mw-openbl](../figures/stm32-mw-openbl.svg)
 
 1. **reset or jump into Open Bootloader** -- Runs from wherever it was linked in user flash, having been started at reset or jumped to by the application.
 2. **HAL initialisation** -- Brings up clocks, power and the configured interfaces through STM32Cube HAL/LL drivers.

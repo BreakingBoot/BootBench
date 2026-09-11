@@ -22,23 +22,7 @@ Type 2 in this corpus: it runs after the SoC's primary bootloader has brought th
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
-    S0["<b>reset and platform early init</b>"]:::stage
-    S1["<b>kernel init</b>"]:::stage
-    S2["<b>target init</b>"]:::stage
-    S3["<b>app start</b>"]:::stage
-    TARGET(["Android kernel"]):::edge
-    ENTRY --> S0
-    S0 -->|"MMU, caches, stack"| S1
-    S1 -->|"threads, timers, heap"| S2
-    S2 -->|"storage, USB, display"| S3
-    S3 -->|"boot image + cmdline, ARM protocol"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for lk](../figures/lk.svg)
 
 1. **reset and platform early init** -- Architecture entry code sets up the MMU, caches and stack, then calls platform early init.
 2. **kernel init** -- Brings up the threading kernel, timers and heap -- LK is a small preemptive kernel, not just a loader.

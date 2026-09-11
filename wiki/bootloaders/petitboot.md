@@ -22,25 +22,7 @@ Type 2: it runs on an initialised platform and its only job is launching an OS.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
-    S0["<b>Linux userspace start</b>"]:::stage
-    S1["<b>device discovery</b>"]:::stage
-    S2["<b>configuration parsing</b>"]:::stage
-    S3["<b>user interface</b>"]:::stage
-    S4["<b>kexec</b>"]:::stage
-    TARGET(["Target OS kernel"]):::edge
-    ENTRY --> S0
-    S0 -->|"running kernel + drivers"| S1
-    S1 -->|"mounted disks, DHCP leases"| S2
-    S2 -->|"parsed boot options"| S3
-    S3 -->|"user selection (or timeout)"| S4
-    S4 -->|"kexec: kernel + initrd + cmdline"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for petitboot](../figures/petitboot.svg)
 
 1. **Linux userspace start** -- Petitboot runs on a small Linux already booted by the platform firmware, so the kernel and drivers are in place before it starts.
 2. **device discovery** -- udev events drive discovery: disks are mounted, network interfaces configured by DHCP.

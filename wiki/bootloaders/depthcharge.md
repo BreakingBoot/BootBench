@@ -22,25 +22,7 @@ Type 2: it is the payload that coreboot (Type 1) hands off to, and it prepares a
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
-    S0["<b>loaded as coreboot payload</b>"]:::stage
-    S1["<b>vboot verification</b>"]:::stage
-    S2["<b>recovery or normal mode</b>"]:::stage
-    S3["<b>kernel load</b>"]:::stage
-    S4["<b>boot</b>"]:::stage
-    TARGET(["Linux kernel<br/>(ChromeOS)"]):::edge
-    ENTRY --> S0
-    S0 -->|"coreboot table + vboot handoff"| S1
-    S1 -->|"verified kernel partition, TPM counters"| S2
-    S2 -->|"selected boot mode"| S3
-    S3 -->|"kernel image in memory"| S4
-    S4 -->|"cmdline with dm-verity root"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for depthcharge](../figures/depthcharge.svg)
 
 1. **loaded as coreboot payload** -- coreboot's ramstage loads depthcharge and passes it the coreboot table, including the vboot handoff block.
 2. **vboot verification** -- Verifies the kernel partition signature against keys in the GBB and the TPM's rollback counters.

@@ -22,25 +22,7 @@ Type 3: reset to application with an update path.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Hardware<br/>power-on / reset"]):::edge
-    S0["<b>reset into bootloader</b>"]:::stage
-    S1["<b>backdoor window</b>"]:::stage
-    S2["<b>firmware update</b>"]:::stage
-    S3["<b>checksum check</b>"]:::stage
-    S4["<b>application start</b>"]:::stage
-    TARGET(["Application"]):::edge
-    ENTRY --> S0
-    S0 -->|"reset handler entered"| S1
-    S1 -->|"no host session (or update done)"| S2
-    S2 -->|"new image written to flash"| S3
-    S3 -->|"checksum word valid"| S4
-    S4 -->|"vector table set, branch"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for openblt](../figures/openblt.svg)
 
 1. **reset into bootloader** -- OpenBLT occupies the first part of flash and runs at every reset.
 2. **backdoor window** -- For a short, configurable period it listens on the enabled transports -- RS232, CAN, USB, TCP/IP, Modbus RTU -- for a host tool requesting an update.

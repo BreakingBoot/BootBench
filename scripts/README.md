@@ -18,7 +18,7 @@ changed.
 | [`add-analysis-tools.sh`](add-analysis-tools.sh) | Add the tools in `tools/analysis_tools.json` under `analysis-tools/`. |
 | [`analysis/run-tool.sh`](analysis/run-tool.sh) | Run one of the analysis tools against a bootloader. See [`analysis/`](analysis/). |
 | [`publish-wiki.sh`](publish-wiki.sh) | Push the generated wiki to the GitHub wiki repository. |
-| [`check-diagrams.sh`](check-diagrams.sh) | Render every Mermaid figure in `wiki/` to prove it parses. |
+| [`check-diagrams.sh`](check-diagrams.sh) | Validate the wiki figures: SVG timelines and Mermaid diagrams. |
 
 Common flags: `-y` skips the confirmation prompt, `--dry-run` on the `add-*`
 scripts lists what would be added, `--stage-only` on the `update-*` refresh
@@ -55,10 +55,15 @@ Then:
 ./scripts/publish-wiki.sh             # asks before pushing
 ```
 
-Before publishing, `./scripts/check-diagrams.sh` renders every Mermaid figure
-with the real renderer. GitHub renders these blocks itself, so a syntax error
-would otherwise show up as a broken page rather than a failed build. It needs
-Docker.
+Before publishing, `./scripts/check-diagrams.sh` validates the figures: the SVG
+boot timelines for well-formed XML and for matching what the pages reference,
+and the Mermaid overview diagrams through the real renderer, since GitHub
+renders those itself and a syntax error would otherwise surface as a broken
+page. The Mermaid half needs Docker.
+
+The figures live in `figures/` and are copied to the wiki repository alongside
+the pages. Only *pages* have to be flat in a GitHub wiki; files a page
+references may be nested.
 
 It regenerates the pages with `--flat` first. GitHub wiki pages are addressed
 by filename, so the checked-in `wiki/bootloaders/u-boot.md` becomes

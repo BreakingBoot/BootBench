@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1074 154" width="1074" height="154" role="img">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a5aa5"/></marker></defs>
+<rect width="1074" height="154" fill="#ffffff"/>
+<rect x="16.0" y="28.0" width="152.7" height="44.0" rx="22" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="92.4" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Firmware (a Type 1</text><text x="92.4" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">bootloader)</text>
+<rect x="190.7" y="28.0" width="117.0" height="44.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="249.2" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">boot sector</text>
+<text x="249.2" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">1</text>
+<rect x="329.7" y="28.0" width="99.4" height="44.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="379.4" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">disk read</text>
+<text x="379.4" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">2</text>
+<rect x="452.8" y="28.0" width="117.0" height="44.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="511.3" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">GDT and A20</text>
+<text x="511.3" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">3</text>
+<rect x="591.8" y="28.0" width="143.5" height="44.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="663.5" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">protected mode</text>
+<text x="663.5" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">4</text>
+<rect x="757.3" y="28.0" width="125.8" height="44.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="820.2" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">kernel entry</text>
+<text x="820.2" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">5</text>
+<rect x="905.1" y="30.0" width="152.7" height="40.0" rx="20" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="981.4" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Kernel (C, 32-bit)</text>
+<line x1="92.4" y1="100" x2="247.2" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="92.4" y1="95" x2="92.4" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<line x1="249.2" y1="100" x2="377.4" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="249.2" y1="95" x2="249.2" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="314.3" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">512 bytes at</text><text x="314.3" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">0x7C00</text>
+<line x1="379.4" y1="100" x2="509.3" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="379.4" y1="95" x2="379.4" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="445.3" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">loader + kernel in</text><text x="445.3" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">memory</text>
+<line x1="511.3" y1="100" x2="661.5" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="511.3" y1="95" x2="511.3" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="587.4" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">flat GDT, A20</text><text x="587.4" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">enabled</text>
+<line x1="663.5" y1="100" x2="818.2" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="663.5" y1="95" x2="663.5" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="741.8" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">32-bit protected</text><text x="741.8" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">mode</text>
+<line x1="820.2" y1="100" x2="979.4" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="820.2" y1="95" x2="820.2" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="900.8" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">direct call at a</text><text x="900.8" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">fixed address</text>
+<line x1="981.4" y1="95" x2="981.4" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+</svg>

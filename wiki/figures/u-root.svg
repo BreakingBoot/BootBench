@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 938 154" width="938" height="154" role="img">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a5aa5"/></marker></defs>
+<rect width="938" height="154" fill="#ffffff"/>
+<rect x="16.0" y="28.0" width="152.7" height="44.0" rx="22" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="92.4" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Firmware (a Type 1</text><text x="92.4" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">bootloader)</text>
+<rect x="190.7" y="28.0" width="152.3" height="44.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="266.9" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">initramfs start</text>
+<text x="266.9" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">1</text>
+<rect x="365.0" y="28.0" width="143.5" height="44.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="436.7" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">init and shell</text>
+<text x="436.7" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">2</text>
+<rect x="530.5" y="28.0" width="117.0" height="44.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="589.0" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">boot policy</text>
+<text x="589.0" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">3</text>
+<rect x="669.5" y="28.0" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="715.5" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">kexec</text>
+<text x="715.5" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">4</text>
+<rect x="783.5" y="30.0" width="138.4" height="40.0" rx="20" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="852.7" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Target OS kernel</text>
+<line x1="92.4" y1="100" x2="264.9" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="92.4" y1="95" x2="92.4" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<line x1="266.9" y1="100" x2="434.7" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="266.9" y1="95" x2="266.9" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="351.8" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">PID 1 in initramfs</text>
+<line x1="436.7" y1="100" x2="587.0" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="436.7" y1="95" x2="436.7" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="512.9" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">/proc, /sys, /dev</text><text x="512.9" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">ready</text>
+<line x1="589.0" y1="100" x2="713.5" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="589.0" y1="95" x2="589.0" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="652.2" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">discovered boot</text><text x="652.2" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">targets</text>
+<line x1="715.5" y1="100" x2="850.7" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="715.5" y1="95" x2="715.5" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="784.1" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">kexec: kernel +</text><text x="784.1" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">initrd + cmdline</text>
+<line x1="852.7" y1="95" x2="852.7" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+</svg>

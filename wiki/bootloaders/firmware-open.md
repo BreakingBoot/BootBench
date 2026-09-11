@@ -22,23 +22,7 @@ Type 1: vendor packaging of Type 1 firmware.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Hardware<br/>power-on / reset"]):::edge
-    S0["<b>coreboot bootblock/romstage/ramstage</b>"]:::stage
-    S1["<b>EC firmware</b>"]:::stage
-    S2["<b>EDK II payload</b>"]:::stage
-    S3["<b>boot application</b>"]:::stage
-    TARGET(["Operating system"]):::edge
-    ENTRY --> S0
-    S0 -->|"coreboot table"| S1
-    S1 -->|"power sequencing over eSPI"| S2
-    S2 -->|"UEFI services rebuilt from BlParseLib"| S3
-    S3 -->|"system table pointer"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for firmware-open](../figures/firmware-open.svg)
 
 1. **coreboot bootblock/romstage/ramstage** -- Silicon and memory initialisation, using Intel FSP binaries for the parts that are not open.
 2. **EC firmware** -- Separately built firmware for the embedded controller, handling power sequencing, keyboard and thermals alongside the main boot.

@@ -22,25 +22,7 @@ Type 1: it is the privileged firmware layer presenting a stable interface to wha
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Hardware<br/>power-on / reset"]):::edge
-    S0["<b>_start</b>"]:::stage
-    S1["<b>cold boot path</b>"]:::stage
-    S2["<b>warm boot path</b>"]:::stage
-    S3["<b>sbi_init</b>"]:::stage
-    S4["<b>next stage</b>"]:::stage
-    TARGET(["S-mode payload<br/>(U-Boot · Linux)"]):::edge
-    ENTRY --> S0
-    S0 -->|"per-hart scratch space"| S1
-    S1 -->|"console + parsed device tree"| S2
-    S2 -->|"traps and timers per hart"| S3
-    S3 -->|"SBI extensions + domains, PMP set"| S4
-    S4 -->|"mret: a0 = hartid, a1 = FDT"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for opensbi](../figures/opensbi.svg)
 
 1. **_start** -- The first hart enters the firmware; others are held in a wait loop. Sets up the stack and the per-hart scratch space.
 2. **cold boot path** -- The boot hart relocates the firmware if needed, initialises the console and platform, and parses the device tree.

@@ -22,25 +22,7 @@ Type 2: it runs as an option ROM or UEFI application on an initialised machine a
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
-    S0["<b>ROM or image entry</b>"]:::stage
-    S1["<b>driver and stack bring-up</b>"]:::stage
-    S2["<b>script execution</b>"]:::stage
-    S3["<b>image load</b>"]:::stage
-    S4["<b>boot</b>"]:::stage
-    TARGET(["Kernel or chainloaded loader"]):::edge
-    ENTRY --> S0
-    S0 -->|"NIC reachable"| S1
-    S1 -->|"DHCP lease + settings tree"| S2
-    S2 -->|"chosen URL and boot method"| S3
-    S3 -->|"image in memory"| S4
-    S4 -->|"kernel + cmdline, or hooked INT 13h"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for ipxe](../figures/ipxe.svg)
 
 1. **ROM or image entry** -- Runs as a PCI option ROM, a UEFI driver, or an image chainloaded by another bootloader.
 2. **driver and stack bring-up** -- Initialises the network card, then its own TCP/IP stack, DHCP client and TLS.

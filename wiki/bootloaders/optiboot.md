@@ -22,23 +22,7 @@ Type 3: reset to application on an 8-bit MCU.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Hardware<br/>power-on / reset"]):::edge
-    S0["<b>reset into boot section</b>"]:::stage
-    S1["<b>entry check</b>"]:::stage
-    S2["<b>STK500v1 session</b>"]:::stage
-    S3["<b>application jump</b>"]:::stage
-    TARGET(["Sketch<br/>(application)"]):::edge
-    ENTRY --> S0
-    S0 -->|"boot section entered"| S1
-    S1 -->|"no programmer present (or flash written)"| S2
-    S2 -->|"pages written via SPM"| S3
-    S3 -->|"rjmp 0, MCUSR preserved in a register"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for optiboot](../figures/optiboot.svg)
 
 1. **reset into boot section** -- AVR fuses set the reset vector into the 512-byte boot section where Optiboot lives.
 2. **entry check** -- Decides whether to enter programming mode: a reset cause check, and a short window waiting for STK500 activity on the UART.

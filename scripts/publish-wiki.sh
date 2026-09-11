@@ -40,6 +40,11 @@ fi
 
 git -C "$STAGING/repo" rm -q -r --ignore-unmatch . >/dev/null 2>&1 || true
 cp "$STAGING/pages"/*.md "$STAGING/repo/"
+# Figures live in a subdirectory. Only *pages* have to be flat in a GitHub
+# wiki; files referenced by a page may be nested, and the markdown refers to
+# them by the same relative path in both layouts.
+rm -rf "$STAGING/repo/figures"
+cp -r "$STAGING/pages/figures" "$STAGING/repo/figures"
 git -C "$STAGING/repo" add -A
 
 if git -C "$STAGING/repo" diff --cached --quiet; then

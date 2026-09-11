@@ -97,4 +97,4 @@ Every corpus page carries a **How it boots** section with its own phases, the me
 
 The seventh, Windows Boot Manager, is closed source and so is not in the corpus; its structure is described under stages 5-8 above and in SoK § 3.4.
 
-The remaining 56 pages are written from each project's own documentation and source.
+The remaining 54 pages are written from each project's own documentation and source.

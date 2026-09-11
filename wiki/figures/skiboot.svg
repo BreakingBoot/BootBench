@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1063 169" width="1063" height="169" role="img">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a5aa5"/></marker></defs>
+<rect width="1063" height="169" fill="#ffffff"/>
+<rect x="16.0" y="28.0" width="152.7" height="44.0" rx="22" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="92.4" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Firmware (a Type 1</text><text x="92.4" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">bootloader)</text>
+<rect x="190.7" y="26.0" width="108.2" height="48.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="244.8" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">entry from</text><text x="244.8" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">Hostboot</text>
+<text x="244.8" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">1</text>
+<rect x="320.9" y="28.0" width="108.2" height="44.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="375.0" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">HDAT parse</text>
+<text x="375.0" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">2</text>
+<rect x="451.1" y="28.0" width="134.7" height="44.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="518.4" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">hardware init</text>
+<text x="518.4" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">3</text>
+<rect x="607.8" y="26.0" width="117.0" height="48.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="666.3" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">OPAL</text><text x="666.3" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">publication</text>
+<text x="666.3" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">4</text>
+<rect x="746.8" y="28.0" width="125.8" height="44.0" rx="5" fill="#eef3fb" stroke="#7a5aa5"/>
+<text x="809.7" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">payload boot</text>
+<text x="809.7" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">5</text>
+<rect x="894.6" y="28.0" width="152.7" height="44.0" rx="22" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="971.0" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Payload (Linux</text><text x="971.0" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">running Petitboot)</text>
+<line x1="92.4" y1="100" x2="242.8" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="92.4" y1="95" x2="92.4" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<line x1="244.8" y1="100" x2="373.0" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="244.8" y1="95" x2="244.8" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="309.9" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">HDAT pointer</text>
+<line x1="375.0" y1="100" x2="516.4" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="375.0" y1="95" x2="375.0" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="446.7" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">flattened device</text><text x="446.7" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">tree</text>
+<line x1="518.4" y1="100" x2="664.3" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="518.4" y1="95" x2="518.4" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="592.4" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">PCIe, interrupts,</text><text x="592.4" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">NVRAM up</text>
+<line x1="666.3" y1="100" x2="807.7" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="666.3" y1="95" x2="666.3" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="738.0" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">OPAL call</text><text x="738.0" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">interface</text><text x="738.0" y="150.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">registered</text>
+<line x1="809.7" y1="100" x2="969.0" y2="100" stroke="#7a5aa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="809.7" y1="95" x2="809.7" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+<text x="890.3" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">r3 = device tree,</text><text x="890.3" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">/ibm,opal node</text>
+<line x1="971.0" y1="95" x2="971.0" y2="105" stroke="#7a5aa5" stroke-width="1.2"/>
+</svg>

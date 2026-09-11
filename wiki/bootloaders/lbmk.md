@@ -22,18 +22,6 @@ Type 1: a distribution of Type 1 firmware; the payload it bundles is Type 2.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Hardware<br/>power-on / reset"]):::edge
-    S0["<b>(build system)</b>"]:::stage
-    TARGET(["Operating system"]):::edge
-    ENTRY --> S0
-    S0 -->|"coreboot image + payload, flashed"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
-
 1. **(build system)** -- lbmk assembles the boot firmware; at runtime the flow is coreboot's -- bootblock, romstage, ramstage -- followed by the payload lbmk configured.
 
 ### Passing data between stages

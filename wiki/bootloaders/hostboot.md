@@ -22,25 +22,7 @@ Type 1: bare-hardware bring-up that hands off to a separate OS-facing stage.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Hardware<br/>power-on / reset"]):::edge
-    S0["<b>SBE</b>"]:::stage
-    S1["<b>HBBL (bootloader)</b>"]:::stage
-    S2["<b>HBB (base image)</b>"]:::stage
-    S3["<b>isteps</b>"]:::stage
-    S4["<b>payload load</b>"]:::stage
-    TARGET(["Payload<br/>(skiboot · PHYP)"]):::edge
-    ENTRY --> S0
-    S0 -->|"first core up, HBBL loaded"| S1
-    S1 -->|"verified base image in L3 cache"| S2
-    S2 -->|"targeting model + istep engine"| S3
-    S3 -->|"trained DRAM, attributes in PNOR"| S4
-    S4 -->|"HDAT + device tree in memory"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for hostboot](../figures/hostboot.svg)
 
 1. **SBE** -- The Self-Boot Engine, running on the processor's on-chip controller, initialises the first core and loads the Hostboot base image.
 2. **HBBL (bootloader)** -- A small loader that verifies the base image and unpacks it into L3 cache configured as memory, because DRAM does not exist yet.

@@ -22,25 +22,7 @@ Type 3: reset to application.
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Hardware<br/>power-on / reset"]):::edge
-    S0["<b>startup</b>"]:::stage
-    S1["<b>entry check</b>"]:::stage
-    S2["<b>host session</b>"]:::stage
-    S3["<b>verification</b>"]:::stage
-    S4["<b>application jump</b>"]:::stage
-    TARGET(["Application"]):::edge
-    ENTRY --> S0
-    S0 -->|"vector table from the linker script"| S1
-    S1 -->|"update flag or host activity"| S2
-    S2 -->|"image received over USB/UART"| S3
-    S3 -->|"Monocypher signature verified"| S4
-    S4 -->|"image written, branch"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for IMBootloader](../figures/IMBootloader.svg)
 
 1. **startup** -- Vendor startup code and the linker script place the bootloader at the base of flash.
 2. **entry check** -- Decides whether to enter update mode based on a flag or host activity.

@@ -22,25 +22,7 @@ Type 2: it runs on top of UEFI firmware and exists solely to get an OS loader tr
 
 See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": true, "curve": "linear"}}}%%
-flowchart TD
-    ENTRY(["Firmware<br/>(a Type 1 bootloader)"]):::edge
-    S0["<b>loaded by firmware</b>"]:::stage
-    S1["<b>certificate and policy setup</b>"]:::stage
-    S2["<b>MokManager</b>"]:::stage
-    S3["<b>second-stage load</b>"]:::stage
-    S4["<b>fallback</b>"]:::stage
-    TARGET(["Second-stage loader<br/>(grubx64.efi)"]):::edge
-    ENTRY --> S0
-    S0 -->|"image handle + system table"| S1
-    S1 -->|"vendor cert + MokList loaded"| S2
-    S2 -->|"newly enrolled keys"| S3
-    S3 -->|"Shim Lock protocol installed"| S4
-    S4 -->|"rebuilt Boot#### entries"| TARGET
-    classDef stage fill:#eef3fb,stroke:#4a6fa5,stroke-width:1px;
-    classDef edge fill:#f6f6f6,stroke:#888,stroke-dasharray:3 3;
-```
+![Boot timeline for shim](../figures/shim.svg)
 
 1. **loaded by firmware** -- The firmware's BDS phase loads shimx64.efi, which is signed by a key already in the platform's db.
 2. **certificate and policy setup** -- shim installs its own verification protocol and reads MokList, MokListX and the built-in vendor certificate.

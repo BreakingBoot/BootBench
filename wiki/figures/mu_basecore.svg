@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 837 169" width="837" height="169" role="img">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4a6fa5"/></marker></defs>
+<rect width="837" height="169" fill="#ffffff"/>
+<rect x="16.0" y="28.0" width="145.6" height="44.0" rx="22" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="88.8" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Hardware power-on</text><text x="88.8" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">/ reset</text>
+<rect x="183.6" y="28.0" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#4a6fa5"/>
+<text x="229.6" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">SEC</text>
+<text x="229.6" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">1</text>
+<rect x="315.4" y="28.0" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#4a6fa5"/>
+<text x="361.4" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">PEI</text>
+<text x="361.4" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">2</text>
+<rect x="429.4" y="28.0" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#4a6fa5"/>
+<text x="475.4" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">DXE</text>
+<text x="475.4" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">3</text>
+<rect x="561.2" y="28.0" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#4a6fa5"/>
+<text x="607.2" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">BDS</text>
+<text x="607.2" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">4</text>
+<rect x="675.2" y="30.0" width="145.6" height="40.0" rx="20" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="748.0" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Type 2 bootloader</text>
+<line x1="88.8" y1="100" x2="227.6" y2="100" stroke="#4a6fa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="88.8" y1="95" x2="88.8" y2="105" stroke="#4a6fa5" stroke-width="1.2"/>
+<line x1="229.6" y1="100" x2="359.4" y2="100" stroke="#4a6fa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="229.6" y1="95" x2="229.6" y2="105" stroke="#4a6fa5" stroke-width="1.2"/>
+<text x="295.5" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">temporary memory +</text><text x="295.5" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">PEI core</text>
+<line x1="361.4" y1="100" x2="473.4" y2="100" stroke="#4a6fa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="361.4" y1="95" x2="361.4" y2="105" stroke="#4a6fa5" stroke-width="1.2"/>
+<text x="418.4" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">HOB list</text>
+<line x1="475.4" y1="100" x2="605.2" y2="100" stroke="#4a6fa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="475.4" y1="95" x2="475.4" y2="105" stroke="#4a6fa5" stroke-width="1.2"/>
+<text x="541.3" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">EFI System Table +</text><text x="541.3" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">policy service</text>
+<line x1="607.2" y1="100" x2="746.0" y2="100" stroke="#4a6fa5" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="607.2" y1="95" x2="607.2" y2="105" stroke="#4a6fa5" stroke-width="1.2"/>
+<text x="677.6" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">image handle +</text><text x="677.6" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">system table</text><text x="677.6" y="150.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">pointer</text>
+<line x1="748.0" y1="95" x2="748.0" y2="105" stroke="#4a6fa5" stroke-width="1.2"/>
+</svg>

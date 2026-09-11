@@ -8,3 +8,4 @@ __pycache__/
 
 # transient render workspace for scripts/check-diagrams.sh
 .mermaid-check.*/
+.figcheck/
