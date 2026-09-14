@@ -16,8 +16,12 @@ Three submodules hold the data. `tools/` builds it.
 **[`oss-bootloaders`](https://github.com/BreakingBoot/oss-bootloaders)** — the
 corpus. 63 bootloader repositories pinned as nested submodules and grouped by
 type (14 Type 1, 28 Type 2, 21 Type 3). Pointers only, nothing vendored. The
-paper studied 47 of these; the rest were added afterwards and have no mined data
-yet.
+SoK identified 43 bootloaders (§ 2.2) and studied 7 in depth (§ 3); the rest
+were added afterwards and have no mined data yet.
+
+Two submodules are both named `bootloader` — `type2/bootloader` (rust-osdev)
+and `type3/bootloader` (wookey-project). Tooling keyed by directory name sees
+62 distinct names, so the second is not scanned and has no wiki page.
 
 **[`bootloader_cve_db`](https://github.com/BreakingBoot/bootloader_cve_db)** —
 1,432 CVEs mined from the [CVE Project](https://github.com/CVEProject/cvelistV5)
@@ -44,7 +48,7 @@ exists to evaluate.
 **[`oss-bootloaders/DEFENSES.md`](https://github.com/BreakingBoot/oss-bootloaders/blob/main/DEFENSES.md)** —
 what each bootloader defends itself with: Secure Boot, measured boot, signature
 verification, rollback protection, and the mitigations a build actually enables.
-30 of 63 implement Secure Boot; 4 randomise their load address.
+30 of the 62 scanned implement Secure Boot; 4 randomise their load address.
 
 **[`wiki/`](wiki/)** — a page per bootloader with a timeline figure of its boot,
 covering the stages it runs through, how each stage passes state to the next,

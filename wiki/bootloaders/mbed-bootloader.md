@@ -26,7 +26,7 @@ See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
 1. **reset into bootloader** -- Runs first from the start of flash.
 2. **update candidate check** -- Looks for a firmware candidate in internal or external storage, placed there by Pelion Device Management Client.
-3. **verification** -- Checks the candidate's hash and signature against the manifest the update client validated.
+3. **image verification** -- Checks the candidate's hash and signature against the manifest the update client validated.
 4. **copy** -- Copies the candidate into the active application region, tracking progress so an interrupted copy resumes.
 5. **application start** -- Jumps to the active application.
 

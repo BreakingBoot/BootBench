@@ -31,7 +31,7 @@ See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
 ### Passing data between stages
 
-Two mechanisms meet here. coreboot hands the payload a coreboot table describing memory and the framebuffer; the EDK II payload reads that table through `BlParseLib` and rebuilds it as UEFI HOBs and system tables, so the OS sees a normal UEFI machine. The EC runs its own firmware and communicates with the host over the LPC/eSPI interface, out of band from the boot sequence.
+Two mechanisms meet here. coreboot hands the payload a coreboot table describing memory and the framebuffer; the EDK II payload reads that table through edk2's `BlParseLib` (the `CbParseLib` instance) and rebuilds it as UEFI HOBs and system tables, so the OS sees a normal UEFI machine. The EC runs its own firmware and communicates with the host over the LPC/eSPI interface, out of band from the boot sequence.
 
 ### Handoff
 

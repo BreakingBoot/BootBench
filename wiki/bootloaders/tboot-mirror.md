@@ -32,7 +32,7 @@ See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
 ### Passing data between stages
 
-tboot's communication is with the TPM rather than with the next stage. The dynamic PCRs (17-22) are reset by the SENTER instruction and extended with measurements of the ACM, tboot itself, and each module it was given; policies are stored in TPM NVRAM so they cannot be swapped along with the disk image. What tboot passes forward to the OS is a `txt_info` structure and the TXT heap, telling the kernel it was launched measured and where the protected regions are.
+tboot's communication is with the TPM rather than with the next stage. The dynamic PCRs (17-22) are reset by the SENTER instruction and extended with measurements of the ACM, tboot itself, and each module it was given; policies are stored in TPM NVRAM so they cannot be swapped along with the disk image. What tboot passes forward to the OS is a `tboot_shared_t` structure (declared in `include/tboot.h`) and the TXT heap, telling the kernel it was launched measured and where the protected regions are.
 
 ### Handoff
 

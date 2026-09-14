@@ -27,7 +27,7 @@ See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 1. **startup** -- Vendor startup code and the linker script place the bootloader at the base of flash.
 2. **entry check** -- Decides whether to enter update mode based on a flag or host activity.
 3. **host session** -- Talks to the IMFlasher host tool over USB or UART.
-4. **verification** -- Checks the image signature using Monocypher before accepting it.
+4. **image verification** -- Checks the image signature using Monocypher before accepting it.
 5. **application jump** -- Writes the image to the application region and jumps to it.
 
 ### Passing data between stages

@@ -26,7 +26,7 @@ See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
 1. **SoC ROM / second-stage loader** -- On ESP32 the mask ROM loads the second-stage bootloader from flash; on nRF52 an existing bootloader (Adafruit's or Nordic's) occupies that role.
 2. **partition selection** -- The bootloader reads the partition table and the OTA data partition to decide which application slot to run.
-3. **verification** -- Where secure boot and flash encryption are enabled, the application image's signature is checked and its flash is decrypted.
+3. **image verification** -- Where secure boot and flash encryption are enabled, the application image's signature is checked and its flash is decrypted.
 4. **application start** -- The Meshtastic firmware starts: radio, display, GPS, and the mesh stack.
 5. **OTA update** -- New images are received over the network or USB, written to the inactive slot, and marked for the next boot.
 

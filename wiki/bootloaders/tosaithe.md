@@ -27,7 +27,7 @@ See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 1. **loaded by firmware** -- A UEFI application started from the ESP.
 2. **configuration** -- Reads its menu configuration and presents entries.
 3. **image load** -- Loads a Linux kernel, chainloads another EFI program, or loads a TSBP kernel.
-4. **handoff** -- Enters the kernel according to the protocol it uses.
+4. **kernel handoff** -- Enters the kernel according to the protocol it uses.
 
 ### Passing data between stages
 

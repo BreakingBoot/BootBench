@@ -664,6 +664,16 @@ def write_indexes(out: Path, data: dict[str, Any]) -> None:
         if hits:
             surfaces[hits[0]["surface"]] += 1
             per_type[entry["_type"]][hits[0]["surface"]] += 1
+    n_cve = len(data["cves"])
+    n_cve_mapped = sum(1 for c in data["cves"].values() if c.get("attack_surfaces"))
+    n_commit = n_commit_mapped = 0
+    for buckets in data["commits"].values():
+        for bucket in buckets.values():
+            if isinstance(bucket, list):
+                for c in bucket:
+                    if isinstance(c, dict):
+                        n_commit += 1
+                        n_commit_mapped += bool(c.get("attack_surfaces"))
     lines = ["# Attack surfaces", "",
              "The six surfaces the SoK defines, and how the dataset maps onto them. Every CVE "
              "and every mined commit carries an `attack_surfaces` field listing the surfaces "
@@ -696,10 +706,14 @@ def write_indexes(out: Path, data: dict[str, Any]) -> None:
               "attack surface is mostly the images and data it parses.", "",
               "## Limits", "",
               "Mapping is done on the text of a CVE description or commit message, so it "
-              "inherits their vagueness. Around a third of CVEs and a sixth of commits map to "
-              "any surface at all; the rest simply do not say enough. A description that "
-              "mentions PXE in passing will be counted as remote access even if the flaw is in "
-              "configuration parsing — BootHole is exactly that case.", ""]
+              "inherits their vagueness. "
+              f"{n_cve_mapped:,} of {n_cve:,} CVEs ({n_cve_mapped / n_cve:.0%}) and "
+              f"{n_commit_mapped:,} of {n_commit:,} commits "
+              f"({n_commit_mapped / n_commit:.0%}) map to any surface at all; the rest simply "
+              "do not say enough. A description that mentions PXE in passing will be counted "
+              "as remote access even if the flaw is in configuration parsing — CVE-2020-10713 "
+              "(BootHole) is mapped to `SAS1` on the word *pxe* alone, and is exactly that "
+              "case.", ""]
     (out / "Attack-Surfaces.md").write_text("\n".join(lines), encoding="utf-8")
 
     # Security mechanisms

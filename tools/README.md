@@ -31,6 +31,7 @@ performs against CVEs whose fixing commit is known.
 | [`evaluate_tools.py`](evaluate_tools.py) | Score an analysis tool against the CVE-linked ground truth | [docs](docs/evaluate_tools.md) |
 | [`map_attack_surfaces.py`](map_attack_surfaces.py) | Map CVEs and commits onto the six attack surfaces | — |
 | [`generate_wiki.py`](generate_wiki.py) | Generate the bootloader and tool wiki | [docs](docs/generate_wiki.md) |
+| [`verify_claims.py`](verify_claims.py) | Check the wiki's technical claims against the source they describe | [docs](docs/verify_claims.md) |
 | [`validate_dataset.py`](validate_dataset.py) | Consistency checks across all three submodules | [docs](docs/validate_dataset.md) |
 | [`refresh_dataset.py`](refresh_dataset.py) | Stage a refresh, diff it, apply only on request | [docs](docs/refresh_dataset.md) |
 | [`generate_tools_table.py`](generate_tools_table.py) | Render `analysis-tools/README.md` from the tool manifest | [docs](docs/generate_tools_table.md) |

@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1028 169" width="1028" height="169" role="img">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1079 169" width="1079" height="169" role="img">
 <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3f8a6a"/></marker></defs>
-<rect width="1028" height="169" fill="#ffffff"/>
+<rect width="1079" height="169" fill="#ffffff"/>
 <rect x="16.0" y="28.0" width="145.6" height="44.0" rx="22" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
 <text x="88.8" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Hardware power-on</text><text x="88.8" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">/ reset</text>
 <rect x="183.6" y="26.0" width="108.2" height="48.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
@@ -12,14 +12,14 @@
 <rect x="452.8" y="26.0" width="117.0" height="48.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
 <text x="511.3" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">USB DFU</text><text x="511.3" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">enumeration</text>
 <text x="511.3" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">3</text>
-<rect x="591.8" y="28.0" width="92.0" height="44.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
-<text x="637.8" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">download</text>
-<text x="637.8" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">4</text>
-<rect x="705.8" y="26.0" width="117.0" height="48.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
-<text x="764.3" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">application</text><text x="764.3" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">jump</text>
-<text x="764.3" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">5</text>
-<rect x="844.8" y="30.0" width="167.0" height="40.0" rx="20" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
-<text x="928.3" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Sketch (application)</text>
+<rect x="591.8" y="28.0" width="143.5" height="44.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
+<text x="663.5" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">image download</text>
+<text x="663.5" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">4</text>
+<rect x="757.3" y="26.0" width="117.0" height="48.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
+<text x="815.8" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">application</text><text x="815.8" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">jump</text>
+<text x="815.8" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">5</text>
+<rect x="896.3" y="30.0" width="167.0" height="40.0" rx="20" fill="#f4f4f5" stroke="#9aa0a6" stroke-dasharray="4 3"/>
+<text x="979.8" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13.0" font-weight="normal" fill="#3c4043">Sketch (application)</text>
 <line x1="88.8" y1="100" x2="235.7" y2="100" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
 <line x1="88.8" y1="95" x2="88.8" y2="105" stroke="#3f8a6a" stroke-width="1.2"/>
 <line x1="237.7" y1="100" x2="370.3" y2="100" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
@@ -28,14 +28,14 @@
 <line x1="372.3" y1="100" x2="509.3" y2="100" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
 <line x1="372.3" y1="95" x2="372.3" y2="105" stroke="#3f8a6a" stroke-width="1.2"/>
 <text x="441.8" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">BOOT jumper or</text><text x="441.8" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">backup-register</text><text x="441.8" y="150.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">magic</text>
-<line x1="511.3" y1="100" x2="635.8" y2="100" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="511.3" y1="100" x2="661.5" y2="100" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
 <line x1="511.3" y1="95" x2="511.3" y2="105" stroke="#3f8a6a" stroke-width="1.2"/>
-<text x="574.5" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">DFU endpoint</text><text x="574.5" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">enumerated</text>
-<line x1="637.8" y1="100" x2="762.3" y2="100" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
-<line x1="637.8" y1="95" x2="637.8" y2="105" stroke="#3f8a6a" stroke-width="1.2"/>
-<text x="701.0" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">image at the</text><text x="701.0" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">agreed offset</text>
-<line x1="764.3" y1="100" x2="926.3" y2="100" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
-<line x1="764.3" y1="95" x2="764.3" y2="105" stroke="#3f8a6a" stroke-width="1.2"/>
-<text x="846.3" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">VTOR relocated,</text><text x="846.3" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">branch</text>
-<line x1="928.3" y1="95" x2="928.3" y2="105" stroke="#3f8a6a" stroke-width="1.2"/>
+<text x="587.4" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">DFU endpoint</text><text x="587.4" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">enumerated</text>
+<line x1="663.5" y1="100" x2="813.8" y2="100" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="663.5" y1="95" x2="663.5" y2="105" stroke="#3f8a6a" stroke-width="1.2"/>
+<text x="739.7" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">image at the</text><text x="739.7" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">agreed offset</text>
+<line x1="815.8" y1="100" x2="977.8" y2="100" stroke="#3f8a6a" stroke-width="1.6" marker-end="url(#a)"/>
+<line x1="815.8" y1="95" x2="815.8" y2="105" stroke="#3f8a6a" stroke-width="1.2"/>
+<text x="897.8" y="120.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">VTOR relocated,</text><text x="897.8" y="135.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#5f6368">branch</text>
+<line x1="979.8" y1="95" x2="979.8" y2="105" stroke="#3f8a6a" stroke-width="1.2"/>
 </svg>

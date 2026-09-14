@@ -26,9 +26,9 @@ See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 
 1. **reset** -- The MCU or SoC resets into rustBoot, written entirely in Rust.
 2. **partition parse** -- Reads the boot and update partition headers and their trailers.
-3. **verification** -- Checks the image digest and verifies its ECC signature using RustCrypto.
+3. **image verification** -- Checks the image digest and verifies its ECC signature using RustCrypto.
 4. **swap or boot** -- Swaps partitions if an update is pending and confirmed-valid; otherwise boots the existing image.
-5. **handoff** -- Jumps to the firmware image, or on Cortex-A loads and boots a Linux kernel.
+5. **kernel handoff** -- Jumps to the firmware image, or on Cortex-A loads and boots a Linux kernel.
 
 ### Passing data between stages
 

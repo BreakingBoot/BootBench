@@ -32,7 +32,7 @@ The SoK paper gives a full case study of this bootloader in section 3.5. See [Bo
 
 ### Passing data between stages
 
-GRUB's stage boundaries exist because of a size limit, not a privilege boundary: each stage is the smallest thing that can find the next one. Once kernel.img is running, configuration moves into text -- `grub.cfg`, plus the environment block at `/boot/grub/grubenv` for values that must survive a reboot, such as the saved default entry and `recordfail`. Modules communicate through the command table they register into, which is why a menu entry can `insmod` a filesystem driver and then use it in the next line. On a UEFI machine the first two stages collapse: the firmware loads `grubx64.efi`, a single image with the modules already built in.
+GRUB's stage boundaries exist because of a size limit, not a privilege boundary: each stage is the smallest thing that can find the next one. Once kernel.img is running, configuration moves into text -- `grub.cfg`, plus the environment block at `/boot/grub/grubenv` for values that must survive a reboot, such as the saved default entry -- and, on Debian-derived systems, `recordfail`, which those distributions add rather than GRUB itself. Modules communicate through the command table they register into, which is why a menu entry can `insmod` a filesystem driver and then use it in the next line. On a UEFI machine the first two stages collapse: the firmware loads `grubx64.efi`, a single image with the modules already built in.
 
 ### Handoff
 

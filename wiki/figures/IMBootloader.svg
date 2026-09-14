@@ -12,8 +12,8 @@
 <rect x="436.6" y="28.0" width="125.8" height="44.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
 <text x="499.5" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">host session</text>
 <text x="499.5" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">3</text>
-<rect x="584.4" y="28.0" width="125.8" height="44.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
-<text x="647.3" y="54.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">verification</text>
+<rect x="584.4" y="26.0" width="125.8" height="48.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
+<text x="647.3" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">image</text><text x="647.3" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">verification</text>
 <text x="647.3" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" fill="#80868b">4</text>
 <rect x="732.2" y="26.0" width="117.0" height="48.0" rx="5" fill="#eef3fb" stroke="#3f8a6a"/>
 <text x="790.8" y="46.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">application</text><text x="790.8" y="61.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14.0" font-weight="600" fill="#1f2328">jump</text>

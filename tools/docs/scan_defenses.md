@@ -10,7 +10,7 @@ python3 scan_defenses.py --root .. \
     --binary path/to/built.efi
 ```
 
-About 8 minutes for the full 63-bootloader corpus.
+About 8 minutes for the corpus.
 
 ## Two sources, deliberately kept apart
 
@@ -29,15 +29,20 @@ protector. Collapsing the two would state something false about both.
 
 | Mechanism | Bootloaders |
 |---|---:|
-| Secure Boot / verified boot | 30 of 63 |
-| Rollback / anti-downgrade | 28 of 63 |
-| Measured boot / TPM | 22 of 63 |
-| Image signature verification | 19 of 63 |
-| Stack protector (declared) | 18 of 63 |
-| Image encryption | 15 of 63 |
-| FORTIFY_SOURCE (declared) | 13 of 63 |
-| Control-flow integrity | 10 of 63 |
-| Load-address randomisation | 4 of 63 |
+| Secure Boot / verified boot | 30 of 62 |
+| Rollback / anti-downgrade | 28 of 62 |
+| Measured boot / TPM | 22 of 62 |
+| Image signature verification | 19 of 62 |
+| Stack protector (declared) | 18 of 62 |
+| Image encryption | 15 of 62 |
+| FORTIFY_SOURCE (declared) | 13 of 62 |
+| Control-flow integrity | 10 of 62 |
+| Load-address randomisation | 4 of 62 |
+
+The denominator is 62, not the 63 submodules in `oss-bootloaders`: the corpus is
+keyed by directory name, and two submodules are both named `bootloader`
+(`type2/bootloader`, rust-osdev; `type3/bootloader`, wookey-project), so the
+second is not scanned. See the note in [`../../README.md`](../../README.md).
 
 Fewer than half the corpus implements Secure Boot, and four bootloaders
 randomise their load address.

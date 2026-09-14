@@ -1053,6 +1053,91 @@ class TestWiki(unittest.TestCase):
                         self.assertNotIn("|", label)
         self.assertEqual(found, 3, "expected the three overview diagrams")
 
+    def test_every_claimed_identifier_has_evidence(self):
+        """Prose names concrete things; each must be found in source or excused.
+
+        tools/verify_claims.py does the greps and records where each was found.
+        This is the fast half: it checks the record covers what the prose says.
+        """
+        import verify_claims
+        record = json.loads((HERE / "claim_evidence.json").read_text())
+        verified, excused = record["verified"], record["cross_reference"]
+        for name in verify_claims.BOOTLOADERS:
+            for tok in verify_claims.claimed_identifiers(name):
+                with self.subTest(bootloader=name, identifier=tok):
+                    self.assertTrue(
+                        tok in verified.get(name, {}) or f"{name}:{tok}" in excused,
+                        f"`{tok}` is claimed on the {name} page with no evidence; "
+                        f"run tools/verify_claims.py --write")
+
+    def test_claim_evidence_points_at_real_files(self):
+        record = json.loads((HERE / "claim_evidence.json").read_text())
+        corpus = ROOT / "oss-bootloaders"
+        missing = [(n, t, w) for n, toks in record["verified"].items()
+                   for t, w in toks.items() if not (corpus / w).is_file()]
+        self.assertEqual(missing, [], "evidence names a file that no longer exists")
+
+    def test_cross_references_are_explained(self):
+        """An unexplained exemption would let a wrong claim through silently."""
+        record = json.loads((HERE / "claim_evidence.json").read_text())
+        for key, reason in record["cross_reference"].items():
+            with self.subTest(claim=key):
+                self.assertRegex(key, r"^[^:]+:[^:]+$", "expected <bootloader>:<identifier>")
+                self.assertGreater(len(reason), 40, "reason is too thin to audit")
+
+    def test_documented_numbers_match_the_data(self):
+        """Hand-written counts in README and docs must match what is on disk.
+
+        Every one of these was checked by hand once; this keeps them checked.
+        """
+        import configparser
+        readme = (ROOT / "README.md").read_text()
+        cp = configparser.ConfigParser()
+        cp.read_string((ROOT / "oss-bootloaders" / ".gitmodules").read_text())
+        paths = [cp.get(s, "path") for s in cp.sections()]
+
+        self.assertIn(f"{len(paths)} bootloader repositories", readme)
+        for btype, label in (("type1", "Type 1"), ("type2", "Type 2"), ("type3", "Type 3")):
+            n = sum(1 for p in paths if p.startswith(btype + "/"))
+            self.assertIn(f"{n} {label}", readme)
+
+        defenses = json.loads(
+            (ROOT / "oss-bootloaders" / "defenses.json").read_text())["bootloaders"]
+        self.assertIn(f"of the {len(defenses)} scanned", readme,
+                      "README's defense denominator must be what was scanned")
+        scan_doc = (HERE / "docs" / "scan_defenses.md").read_text()
+        self.assertNotIn(" of 63 |", scan_doc,
+                         "defense table denominator must be the scanned count")
+
+        cves = 0
+        for btype in ("type1", "type2", "type3"):
+            f = ROOT / "bootloader_cve_db" / btype / f"{btype}-results.json"
+            if f.exists():
+                cves += len(json.loads(f.read_text()))
+        self.assertIn(f"{cves:,} CVEs", readme)
+
+        links = json.loads(
+            (ROOT / "bootloader_vuln_commits" / "cve-commit-links.json").read_text())
+        self.assertIn(f"{len(links['links'])} CVEs", readme)
+
+        recipes = json.loads((HERE / "build_commands.json").read_text())
+        verified = [r["name"] for r in recipes if r.get("verified")]
+        overview = (HERE / "OVERVIEW.md").read_text()
+        self.assertIn(f"{len(verified)} of {len(recipes)} recipes", overview)
+        for name in verified:
+            self.assertIn(name, overview, "OVERVIEW must list each verified recipe")
+
+    def test_paper_derived_numbers(self):
+        """Counts attributed to the SoK must be the paper's, not ours.
+
+        The paper says 43 bootloaders identified and 7 studied in depth. An
+        earlier draft said 47, which is the citation marker [47] for BootHole.
+        """
+        readme = (ROOT / "README.md").read_text()
+        self.assertIn("identified 43 bootloaders", readme)
+        self.assertIn("studied 7 in depth", readme)
+        self.assertNotIn("studied 47", readme)
+
     def test_curated_prose_matches_the_corpus(self):
         import configparser
         from wiki_content import BOOTLOADERS

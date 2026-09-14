@@ -113,8 +113,10 @@ BOOTLOADERS: dict[str, Bootloader] = {
                 'payload is given the full set because it is already a Type 2 loader, while a '
                 'UEFI payload is given little more than memory ranges and a framebuffer because '
                 'it rebuilds its own system tables from the DXE phase onward. coreboot ships '
-                '`libpayload` and `BlParseLib` so the payload does not have to parse the table '
-                'itself.',
+                '`libpayload` so a payload need not parse the table by hand; on the UEFI side '
+                "edk2's `UefiPayloadPkg` supplies the `BlParseLib` class, implemented by "
+                '`CbParseLib`, which reads the same table. (SoK S 3.3 attributes both '
+                'libraries to coreboot; `BlParseLib` is edk2 code.)',
     ),
     'edk2': Bootloader(
         summary="TianoCore's reference implementation of UEFI.",
@@ -403,7 +405,7 @@ BOOTLOADERS: dict[str, Bootloader] = {
             Stage('EDK II payload',
                   "A UEFI payload runs as coreboot's payload, publishing UEFI services for the "
                   'OS.',
-                  'UEFI services rebuilt from BlParseLib'),
+                  'coreboot table parsed by CbParseLib'),
             Stage('boot application',
                   "The UEFI payload's BDS phase loads the distribution's bootloader from the "
                   'EFI system partition.',
@@ -411,7 +413,8 @@ BOOTLOADERS: dict[str, Bootloader] = {
         ),
         communication='Two mechanisms meet here. coreboot hands the payload a coreboot table '
                       'describing memory and the framebuffer; the EDK II payload reads that '
-                      'table through `BlParseLib` and rebuilds it as UEFI HOBs and system '
+                      "table through edk2's `BlParseLib` (the `CbParseLib` instance) and rebuilds "
+                      'it as UEFI HOBs and system '
                       'tables, so the OS sees a normal UEFI machine. The EC runs its own '
                       'firmware and communicates with the host over the LPC/eSPI interface, out '
                       'of band from the boot sequence.',
@@ -619,7 +622,9 @@ BOOTLOADERS: dict[str, Bootloader] = {
                       'boundary: each stage is the smallest thing that can find the next one. '
                       'Once kernel.img is running, configuration moves into text -- `grub.cfg`, '
                       'plus the environment block at `/boot/grub/grubenv` for values that must '
-                      'survive a reboot, such as the saved default entry and `recordfail`. '
+                      'survive a reboot, such as the saved default entry -- and, on Debian-derived '
+                      'systems, `recordfail`, which those distributions add rather than '
+                      'GRUB itself. '
                       'Modules communicate through the command table they register into, which '
                       'is why a menu entry can `insmod` a filesystem driver and then use it in '
                       'the next line. On a UEFI machine the first two stages collapse: the '
@@ -1350,14 +1355,15 @@ BOOTLOADERS: dict[str, Bootloader] = {
             Stage('kernel start',
                   'If policy is satisfied, the kernel or VMM is started in the measured '
                   'environment.',
-                  'txt_info + TXT heap, DMA protected'),
+                  'tboot_shared_t + TXT heap'),
         ),
         communication="tboot's communication is with the TPM rather than with the next stage. "
                       'The dynamic PCRs (17-22) are reset by the SENTER instruction and '
                       'extended with measurements of the ACM, tboot itself, and each module it '
                       'was given; policies are stored in TPM NVRAM so they cannot be swapped '
                       'along with the disk image. What tboot passes forward to the OS is a '
-                      '`txt_info` structure and the TXT heap, telling the kernel it was '
+                      '`tboot_shared_t` structure (declared in `include/tboot.h`) and the TXT heap, '
+                      'telling the kernel it was '
                       'launched measured and where the protected regions are.',
         handoff='Control reaches the kernel or hypervisor through the normal Multiboot handoff, '
                 'but in a machine state SENTER established: DMA protection is in place for the '
@@ -1484,7 +1490,7 @@ BOOTLOADERS: dict[str, Bootloader] = {
                   'Loads a Linux kernel, chainloads another EFI program, or loads a TSBP '
                   'kernel.',
                   'kernel in memory'),
-            Stage('handoff',
+            Stage('kernel handoff',
                   'Enters the kernel according to the protocol it uses.',
                   'TSBP struct, paging on'),
         ),
@@ -1912,14 +1918,14 @@ BOOTLOADERS: dict[str, Bootloader] = {
             Stage('partition parse',
                   'Reads the boot and update partition headers and their trailers.',
                   'partition headers + trailers'),
-            Stage('verification',
+            Stage('image verification',
                   'Checks the image digest and verifies its ECC signature using RustCrypto.',
                   'ECC signature verified'),
             Stage('swap or boot',
                   'Swaps partitions if an update is pending and confirmed-valid; otherwise '
                   'boots the existing image.',
                   'valid image in the boot partition'),
-            Stage('handoff',
+            Stage('kernel handoff',
                   'Jumps to the firmware image, or on Cortex-A loads and boots a Linux kernel.',
                   'branch, or kernel + FDT'),
         ),
@@ -2170,7 +2176,7 @@ BOOTLOADERS: dict[str, Bootloader] = {
             Stage('USB DFU enumeration',
                   'Enumerates as a USB DFU device using the bundled ST USB library.',
                   'DFU endpoint enumerated'),
-            Stage('download',
+            Stage('image download',
                   'Receives the application image over DFU and writes it to the application '
                   'offset.',
                   'image at the agreed offset'),
@@ -2201,7 +2207,7 @@ BOOTLOADERS: dict[str, Bootloader] = {
                   'Looks for a firmware candidate in internal or external storage, placed there '
                   'by Pelion Device Management Client.',
                   'candidate image + metadata header'),
-            Stage('verification',
+            Stage('image verification',
                   "Checks the candidate's hash and signature against the manifest the update "
                   'client validated.',
                   'hash and signature verified'),
@@ -2240,7 +2246,7 @@ BOOTLOADERS: dict[str, Bootloader] = {
             Stage('host session',
                   'Talks to the IMFlasher host tool over USB or UART.',
                   'image received over USB/UART'),
-            Stage('verification',
+            Stage('image verification',
                   'Checks the image signature using Monocypher before accepting it.',
                   'Monocypher signature verified'),
             Stage('application jump',
@@ -2379,7 +2385,7 @@ BOOTLOADERS: dict[str, Bootloader] = {
                   'The bootloader reads the partition table and the OTA data partition to '
                   'decide which application slot to run.',
                   'partition table + otadata slot pointer'),
-            Stage('verification',
+            Stage('image verification',
                   "Where secure boot and flash encryption are enabled, the application image's "
                   'signature is checked and its flash is decrypted.',
                   'signature checked, flash decrypted'),

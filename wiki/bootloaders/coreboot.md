@@ -38,7 +38,7 @@ coreboot exposes no interface of its own. State reaches later stages through CBM
 
 ### Handoff
 
-ramstage loads the payload and jumps to it with a pointer to the coreboot table. How much is in that table depends on who is receiving it: a Depthcharge payload is given the full set because it is already a Type 2 loader, while a UEFI payload is given little more than memory ranges and a framebuffer because it rebuilds its own system tables from the DXE phase onward. coreboot ships `libpayload` and `BlParseLib` so the payload does not have to parse the table itself.
+ramstage loads the payload and jumps to it with a pointer to the coreboot table. How much is in that table depends on who is receiving it: a Depthcharge payload is given the full set because it is already a Type 2 loader, while a UEFI payload is given little more than memory ranges and a framebuffer because it rebuilds its own system tables from the DXE phase onward. coreboot ships `libpayload` so a payload need not parse the table by hand; on the UEFI side edk2's `UefiPayloadPkg` supplies the `BlParseLib` class, implemented by `CbParseLib`, which reads the same table. (SoK S 3.3 attributes both libraries to coreboot; `BlParseLib` is edk2 code.)
 
 ## Attack surfaces seen in its CVEs
 

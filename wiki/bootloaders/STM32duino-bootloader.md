@@ -27,7 +27,7 @@ See [Boot-Stages](Boot-Stages) for the eight-stage model these phases map onto.
 1. **reset into bootloader** -- Occupies the first 8 or 16 KB of STM32F1 flash.
 2. **button/flag check** -- Checks the BOOT jumper, a button, or a magic value left in a backup register by the application.
 3. **USB DFU enumeration** -- Enumerates as a USB DFU device using the bundled ST USB library.
-4. **download** -- Receives the application image over DFU and writes it to the application offset.
+4. **image download** -- Receives the application image over DFU and writes it to the application offset.
 5. **application jump** -- Relocates the vector table to the application offset and jumps.
 
 ### Passing data between stages

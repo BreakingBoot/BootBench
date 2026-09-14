@@ -25,4 +25,4 @@ The shape matches the taxonomy. Type 1 is dominated by post-boot features — SM
 
 ## Limits
 
-Mapping is done on the text of a CVE description or commit message, so it inherits their vagueness. Around a third of CVEs and a sixth of commits map to any surface at all; the rest simply do not say enough. A description that mentions PXE in passing will be counted as remote access even if the flaw is in configuration parsing — BootHole is exactly that case.
+Mapping is done on the text of a CVE description or commit message, so it inherits their vagueness. 524 of 1,432 CVEs (37%) and 520 of 3,513 commits (15%) map to any surface at all; the rest simply do not say enough. A description that mentions PXE in passing will be counted as remote access even if the flaw is in configuration parsing — CVE-2020-10713 (BootHole) is mapped to `SAS1` on the word *pxe* alone, and is exactly that case.
